@@ -25,15 +25,15 @@ class Router {
 }
 
 @Composable
-fun RouterHost(router: Router, startDestination: Screen, screens: List<Screen>) {
+fun RouterHost(router: Router, startDestination: Screen, screens: Map<Screen, @Composable (Router) -> Unit>) {
     val navController = rememberNavController()
 
-    screens.forEach { router.registerScreen(it, navController) }
+    screens.forEach { router.registerScreen(it.key, navController) }
 
     NavHost(navController = navController, startDestination = startDestination.route) {
         screens.forEach { screen ->
-            composable(screen.route) {
-                screen.composable.invoke(router)
+            composable(screen.key.route) {
+                screen.value.invoke(router)
             }
         }
     }

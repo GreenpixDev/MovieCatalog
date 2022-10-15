@@ -1,27 +1,17 @@
 package ru.greenpix.moviecatalog.navigation
 
-import androidx.compose.runtime.Composable
-import ru.greenpix.moviecatalog.screen.AuthScreen
-import ru.greenpix.moviecatalog.screen.HomeScreen
-import ru.greenpix.moviecatalog.screen.MovieScreen
-import ru.greenpix.moviecatalog.screen.auth.SignInScreen
-import ru.greenpix.moviecatalog.screen.auth.SignUpScreen
-import ru.greenpix.moviecatalog.screen.home.MainScreen
-import ru.greenpix.moviecatalog.screen.home.ProfileScreen
-
 sealed class Screen(
-    val route: String,
-    val composable: @Composable (Router) -> Unit
+    val route: String
 ) {
 
-    object Auth: Screen("auth", { AuthScreen(it) }) {
-        object SignIn: Screen("auth/sign-in", { SignInScreen(it) })
-        object SignUp: Screen("auth/sign-up", { SignUpScreen(it) })
+    object Auth: Screen("auth") {
+        object SignIn: Screen("auth/sign-in")
+        object SignUp: Screen("auth/sign-up")
     }
-    object Home: Screen("home", { HomeScreen(it) }) {
-        object Main: Screen("home/main", { MainScreen(it) })
-        object Profile: Screen("home/profile", { ProfileScreen(it) })
+    object Home: Screen("home") {
+        object Main: Screen("home/main")
+        object Profile: Screen("home/profile")
     }
-    object Movie: Screen("movie", { MovieScreen(it) })
+    object Movie: Screen("movie")
 
 }

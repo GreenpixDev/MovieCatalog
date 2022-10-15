@@ -7,6 +7,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.navigation.RouterHost
 import ru.greenpix.moviecatalog.navigation.Screen
+import ru.greenpix.moviecatalog.screen.home.MainScreen
+import ru.greenpix.moviecatalog.screen.home.ProfileScreen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 
 @Composable
@@ -18,7 +20,10 @@ fun HomeScreen(
         RouterHost(
             router = router,
             startDestination = Screen.Home.Main,
-            screens = listOf(Screen.Home.Main, Screen.Home.Profile)
+            screens = mapOf(
+                Screen.Home.Main to { MainScreen(it) },
+                Screen.Home.Profile to { ProfileScreen(it) }
+            )
         )
     }
 }

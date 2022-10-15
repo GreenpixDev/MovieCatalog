@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.navigation.RouterHost
 import ru.greenpix.moviecatalog.navigation.Screen
+import ru.greenpix.moviecatalog.screen.AuthScreen
+import ru.greenpix.moviecatalog.screen.HomeScreen
+import ru.greenpix.moviecatalog.screen.MovieScreen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +39,11 @@ private fun ActivityScreen() {
         RouterHost(
             router = router,
             startDestination = Screen.Auth,
-            screens = listOf(Screen.Auth, Screen.Home, Screen.Movie)
+            screens = mapOf(
+                Screen.Auth to { AuthScreen(it) },
+                Screen.Home to { HomeScreen(it) },
+                Screen.Movie to { MovieScreen(it) }
+            )
         )
     }
 }
