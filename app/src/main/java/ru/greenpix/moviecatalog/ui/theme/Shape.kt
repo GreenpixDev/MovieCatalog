@@ -1,4 +1,4 @@
-package ru.greenpix.moviescatalog.ui.theme
+package ru.greenpix.moviecatalog.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

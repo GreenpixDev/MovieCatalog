@@ -1,4 +1,4 @@
-package ru.greenpix.moviescatalog
+package ru.greenpix.moviecatalog
 
 import org.junit.Test
 

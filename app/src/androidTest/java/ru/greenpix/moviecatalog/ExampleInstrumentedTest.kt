@@ -1,4 +1,4 @@
-package ru.greenpix.moviescatalog
+package ru.greenpix.moviecatalog
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("ru.greenpix.moviescatalog", appContext.packageName)
+        assertEquals("ru.greenpix.moviecatalog", appContext.packageName)
     }
 }

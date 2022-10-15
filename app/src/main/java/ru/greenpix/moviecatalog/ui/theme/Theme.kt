@@ -1,4 +1,4 @@
-package ru.greenpix.moviescatalog.ui.theme
+package ru.greenpix.moviecatalog.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -28,7 +28,7 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun MoviesCatalogTheme(
+fun MovieCatalogTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
