@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'ru.greenpix.moviescatalog'
+    namespace 'ru.greenpix.moviecatalog'
     compileSdk 32
 
     defaultConfig {
-        applicationId "ru.greenpix.moviescatalog"
+        applicationId "ru.greenpix.moviecatalog"
         minSdk 31
         targetSdk 32
         versionCode 1
