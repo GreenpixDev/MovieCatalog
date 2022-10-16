@@ -26,7 +26,7 @@ fun MainScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun MainPreview() {
+private fun MainScreenPreview() {
     MovieCatalogTheme {
         MainScreen()
     }

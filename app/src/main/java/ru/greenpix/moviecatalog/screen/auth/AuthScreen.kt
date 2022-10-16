@@ -59,7 +59,7 @@ fun AuthScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun AuthPreview() {
+private fun AuthScreenPreview() {
     MovieCatalogTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

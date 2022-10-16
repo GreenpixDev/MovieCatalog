@@ -28,7 +28,7 @@ fun SignUpScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun SignUpPreview() {
+private fun SignUpScreenPreview() {
     MovieCatalogTheme {
         SignUpScreen()
     }

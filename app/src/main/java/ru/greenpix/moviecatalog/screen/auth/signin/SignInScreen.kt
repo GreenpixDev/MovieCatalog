@@ -1,29 +1,26 @@
 package ru.greenpix.moviecatalog.screen.auth
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.ui.theme.*
-import ru.greenpix.moviecatalog.util.noRippleClickable
+import ru.greenpix.moviecatalog.screen.shared.StyledButton
+import ru.greenpix.moviecatalog.screen.shared.StyledClickableText
+import ru.greenpix.moviecatalog.screen.shared.StyledTextField
+import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 
 @Composable
 fun SignInScreen(
@@ -83,97 +80,9 @@ fun SignInScreen(
     }
 }
 
-@Composable
-private fun StyledClickableText(
-    onClick: () -> Unit,
-    text: String
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(32.dp)
-    ) {
-        Text(
-            text = text,
-            color = Accent,
-            style = Body,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .noRippleClickable(onClick),
-        )
-    }
-}
-
-@Composable
-private fun StyledButton(
-    onClick: () -> Unit,
-    enabled: Boolean,
-    text: String
-) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Accent,
-            contentColor = BrightWhite,
-            disabledBackgroundColor = Color.Transparent,
-            disabledContentColor = Accent
-        ),
-        shape = Shapes.medium,
-        border = if (!enabled) BorderStroke(1.dp, Gray) else null
-    ) {
-        Text(
-            text = text,
-            style = Body
-        )
-    }
-}
-
-@Composable
-private fun StyledTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholderText: String,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Text,
-        imeAction = ImeAction.Next
-    ),
-    keyboardActions: KeyboardActions = KeyboardActions(),
-    visualTransformation: VisualTransformation = VisualTransformation.None
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        textStyle = BodySmall,
-        placeholder = {
-            Text(
-                text = placeholderText,
-                style = BodySmall,
-                color = GrayFaded
-            )
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Accent,
-            focusedIndicatorColor = Color.Transparent,
-            backgroundColor = Color.Transparent
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(Shapes.small)
-            .border(1.dp, Gray, Shapes.small),
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        visualTransformation = visualTransformation
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-private fun SignInPreview() {
+private fun SignInScreenPreview() {
     MovieCatalogTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

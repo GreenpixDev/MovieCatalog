@@ -26,7 +26,7 @@ fun ProfileScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun ProfilePreview() {
+private fun ProfileScreenPreview() {
     MovieCatalogTheme {
         ProfileScreen()
     }

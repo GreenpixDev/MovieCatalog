@@ -30,7 +30,7 @@ fun HomeScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun HomePreview() {
+private fun HomeScreenPreview() {
     MovieCatalogTheme {
         HomeScreen()
     }

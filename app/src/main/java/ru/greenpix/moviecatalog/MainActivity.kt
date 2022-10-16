@@ -50,7 +50,7 @@ private fun ActivityScreen() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ActivityPreview() {
+private fun ActivityScreenPreview() {
     MovieCatalogTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
