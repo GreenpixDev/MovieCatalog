@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen
+package ru.greenpix.moviecatalog.screen.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
@@ -7,8 +7,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.navigation.RouterHost
 import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.home.MainScreen
-import ru.greenpix.moviecatalog.screen.home.ProfileScreen
+import ru.greenpix.moviecatalog.screen.home.main.MainScreen
+import ru.greenpix.moviecatalog.screen.home.profile.ProfileScreen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 
 @Composable

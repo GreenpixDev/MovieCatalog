@@ -2,6 +2,14 @@
     <string name="app_name">MovieCatalog</string>
     <string name="login">Логин</string>
     <string name="password">Пароль</string>
+    <string name="email">E-mail</string>
+    <string name="name">Имя</string>
+    <string name="repeat_password">Подтвердите пароль</string>
+    <string name="birthday">Дата рождения</string>
+    <string name="male">Мужчина</string>
+    <string name="female">Женщина</string>
     <string name="sign_in">Войти</string>
-    <string name="go_to_sign_up">Регистрация</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="registration">Регистрация</string>
+    <string name="have_account">У меня уже есть аккаунт</string>
 </resources>

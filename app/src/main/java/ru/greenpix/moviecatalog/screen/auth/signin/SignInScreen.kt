@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.auth
+package ru.greenpix.moviecatalog.screen.auth.signin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -75,7 +75,7 @@ fun SignInScreen(
         // Кликабельный текст "Регистрация"
         StyledClickableText(
             onClick = { router.routeTo(Screen.Auth.SignUp) },
-            text = stringResource(R.string.go_to_sign_up)
+            text = stringResource(R.string.registration)
         )
     }
 }

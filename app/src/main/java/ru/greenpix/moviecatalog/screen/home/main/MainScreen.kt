@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.home
+package ru.greenpix.moviecatalog.screen.home.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

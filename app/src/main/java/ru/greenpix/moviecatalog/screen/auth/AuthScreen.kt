@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen
+package ru.greenpix.moviecatalog.screen.auth
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
@@ -15,8 +15,8 @@ import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.navigation.RouterHost
 import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.auth.SignInScreen
-import ru.greenpix.moviecatalog.screen.auth.SignUpScreen
+import ru.greenpix.moviecatalog.screen.auth.signin.SignInScreen
+import ru.greenpix.moviecatalog.screen.auth.signup.SignUpScreen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 
 @Composable
