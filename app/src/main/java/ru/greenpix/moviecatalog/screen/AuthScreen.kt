@@ -1,6 +1,6 @@
 package ru.greenpix.moviecatalog.screen
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -24,7 +24,8 @@ fun AuthScreen(
     router: Router = Router()
 ) {
     var logoScaled by remember { mutableStateOf(true) }
-    val logoScale by animateFloatAsState(if (logoScaled) 1f else 0.58964f)
+    val logoWidth by animateDpAsState(if (logoScaled) 250.dp else 147.41.dp)
+    val logoHeight by animateDpAsState(if (logoScaled) 170.dp else 100.dp)
 
     Column(
         modifier = Modifier
@@ -35,9 +36,9 @@ fun AuthScreen(
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(vertical = 50.dp)
-                .width(250.dp * logoScale)
-                .height(170.dp * logoScale)
+                .padding(top = 32.dp)
+                .width(logoWidth)
+                .height(logoHeight)
         )
         RouterHost(
             router = router,
