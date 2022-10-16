@@ -53,7 +53,7 @@ fun StyledTextField(
             .border(1.dp, Gray, Shapes.small),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
     )
 }
 

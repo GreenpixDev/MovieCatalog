@@ -2,4 +2,10 @@
 <resources>
     <color name="background">#FF150D0B</color>
     <color name="black">#FF000000</color>
+    <color name="base_white">#FFE7E7E7</color>
+    <color name="bright_white">#FFFFFFFF</color>
+    <color name="accent">#FFEF3A01</color>
+    <color name="accent_faded">#FFFF8A48</color>
+    <color name="gray">#FFB7B7B7</color>
+    <color name="gray_faded">#FFD1D1D1</color>
 </resources>
