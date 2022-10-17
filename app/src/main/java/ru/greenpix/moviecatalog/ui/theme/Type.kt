@@ -2,58 +2,60 @@ package ru.greenpix.moviecatalog.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import ru.greenpix.moviecatalog.R
 
-// TODO указать шрифт IBM Plex Sans
+val IBMPlexSans = FontFamily(
+    Font(R.font.imb_plex_sans_regular, FontWeight.Normal),
+    Font(R.font.imb_plex_sans_medium, FontWeight.Medium),
+    Font(R.font.imb_plex_sans_bold, FontWeight.Bold)
+)
+
 val Body = TextStyle(
-    fontFamily = FontFamily.Default,
+    fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Medium,
     fontSize = 16.sp,
     lineHeight = 20.sp,
     letterSpacing = 0.sp,
 )
 
-// TODO указать шрифт IBM Plex Sans
 val BodySmall = TextStyle(
-    fontFamily = FontFamily.Default,
+    fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Normal,
     fontSize = 14.sp,
     lineHeight = 18.sp,
     letterSpacing = 0.sp,
 )
 
-// TODO указать шрифт IBM Plex Sans
 val H1 = TextStyle(
-    fontFamily = FontFamily.Default,
+    fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Bold,
     fontSize = 24.sp,
     lineHeight = 32.sp,
     letterSpacing = 0.sp,
 )
 
-// TODO указать шрифт IBM Plex Sans
 val H2 = TextStyle(
-    fontFamily = FontFamily.Default,
+    fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Bold,
     fontSize = 20.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.sp,
 )
 
-// TODO указать шрифт IBM Plex Sans
 val Title = TextStyle(
-    fontFamily = FontFamily.Default,
+    fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Bold,
     fontSize = 36.sp,
     lineHeight = 40.sp,
     letterSpacing = 0.sp,
 )
 
-// TODO указать шрифт IBM Plex Sans
 val Footnote = TextStyle(
-    fontFamily = FontFamily.Default,
+    fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Medium,
     fontSize = 14.sp,
     lineHeight = 16.sp,
