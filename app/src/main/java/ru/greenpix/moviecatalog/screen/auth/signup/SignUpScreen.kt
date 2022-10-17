@@ -1,22 +1,15 @@
 package ru.greenpix.moviecatalog.screen.auth.signup
 
-import android.app.DatePickerDialog
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,13 +19,10 @@ import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.shared.StyledButton
-import ru.greenpix.moviecatalog.screen.shared.StyledClickableText
-import ru.greenpix.moviecatalog.screen.shared.StyledTextField
-import ru.greenpix.moviecatalog.ui.theme.*
-import ru.greenpix.moviecatalog.util.compose.noRippleClickable
-import ru.greenpix.moviecatalog.util.compose.roundedAtEnd
-import ru.greenpix.moviecatalog.util.compose.roundedAtStart
+import ru.greenpix.moviecatalog.screen.shared.*
+import ru.greenpix.moviecatalog.ui.theme.Accent
+import ru.greenpix.moviecatalog.ui.theme.H1
+import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 import java.time.LocalDate
 
 @Composable
@@ -163,102 +153,24 @@ private fun ColumnScope.SignUpFieldsView() {
 
 @Composable
 private fun BirthdayFieldView() {
-    val now = LocalDate.now()
-    var date by remember { mutableStateOf("") }
+    // TODO интегрировать с ViewModel
+    var date by remember { mutableStateOf<LocalDate?>(null) }
 
-    val datePickerDialog = DatePickerDialog(
-        LocalContext.current,
-        { _, year, month, dayOfMonth ->
-            date = "$dayOfMonth.$month.$year"
-        },
-        now.year,
-        now.monthValue,
-        now.dayOfMonth
+    StyledDateField(
+        value = date,
+        onValueChange = { date = it }
     )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .clip(Shapes.small)
-            .border(1.dp, Gray, Shapes.small)
-            .noRippleClickable { datePickerDialog.show() },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        Text(
-            text = date.ifBlank { stringResource(R.string.birthday) },
-            style = BodySmall,
-            color = if (date.isBlank()) GrayFaded else Accent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(start = 16.dp)
-        )
-        Image(
-            painter = painterResource(R.drawable.ic_calendar),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(end = 16.dp)
-        )
-    }
 }
 
 @Composable
 private fun GenderFieldView() {
     // TODO интегрировать с ViewModel
-    var isMale by remember { mutableStateOf(false) }
-    // TODO интегрировать с ViewModel
-    var isFemale by remember { mutableStateOf(false) }
+    var isMale by remember { mutableStateOf<Boolean?>(null) }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(36.dp)
-    ) {
-        // Мужской
-        Button(
-            onClick = {
-                isMale = true
-                isFemale = false
-            },
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (isMale) Accent else Color.Transparent,
-                contentColor = if (isMale) BaseWhite else GrayFaded,
-            ),
-            shape = Shapes.small.roundedAtStart(),
-            border = BorderStroke(1.dp, Gray)
-        ) {
-            Text(
-                text = stringResource(R.string.male),
-                style = BodySmall,
-            )
-        }
-        // Женский
-        Button(
-            onClick = {
-                isFemale = true
-                isMale = false
-            },
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (isFemale) Accent else Color.Transparent,
-                contentColor = if (isFemale) BaseWhite else GrayFaded,
-            ),
-            shape = Shapes.small.roundedAtEnd(),
-            border = BorderStroke(1.dp, Gray)
-        ) {
-            Text(
-                text = stringResource(R.string.female),
-                style = BodySmall
-            )
-        }
-    }
+    StyledGenderField(
+        value = isMale,
+        onValueChange = { isMale = it }
+    )
 }
 
 @Preview(showBackground = true)
