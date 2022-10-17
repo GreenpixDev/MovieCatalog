@@ -30,9 +30,9 @@ import ru.greenpix.moviecatalog.screen.shared.StyledButton
 import ru.greenpix.moviecatalog.screen.shared.StyledClickableText
 import ru.greenpix.moviecatalog.screen.shared.StyledTextField
 import ru.greenpix.moviecatalog.ui.theme.*
-import ru.greenpix.moviecatalog.util.noRippleClickable
-import ru.greenpix.moviecatalog.util.roundedAtEnd
-import ru.greenpix.moviecatalog.util.roundedAtStart
+import ru.greenpix.moviecatalog.util.compose.noRippleClickable
+import ru.greenpix.moviecatalog.util.compose.roundedAtEnd
+import ru.greenpix.moviecatalog.util.compose.roundedAtStart
 import java.time.LocalDate
 
 @Composable

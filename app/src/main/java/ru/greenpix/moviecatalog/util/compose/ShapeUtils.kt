@@ -1,20 +1,8 @@
-package ru.greenpix.moviecatalog.util
+package ru.greenpix.moviecatalog.util.compose
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.unit.dp
-
-inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier = composed {
-    clickable(indication = null,
-        interactionSource = remember { MutableInteractionSource() }) {
-        onClick()
-    }
-}
 
 fun CornerBasedShape.roundedAtStart(): CornerBasedShape {
     return copy(

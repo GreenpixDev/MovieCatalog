@@ -16,7 +16,7 @@ import ru.greenpix.moviecatalog.ui.theme.*
 @Composable
 fun StyledButton(
     onClick: () -> Unit,
-    enabled: Boolean,
+    enabled: Boolean = true,
     text: String
 ) {
     Button(

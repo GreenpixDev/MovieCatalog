@@ -1,7 +1,6 @@
 package ru.greenpix.moviecatalog.screen.home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import ru.greenpix.moviecatalog.navigation.Router
@@ -16,7 +15,6 @@ fun HomeScreen(
     router: Router = Router()
 ) {
     Column {
-        Text(text = "Home")
         RouterHost(
             router = router,
             startDestination = Screen.Home.Main,

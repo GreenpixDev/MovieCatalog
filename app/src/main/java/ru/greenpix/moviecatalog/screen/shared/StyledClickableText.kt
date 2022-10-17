@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.Body
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
-import ru.greenpix.moviecatalog.util.noRippleClickable
+import ru.greenpix.moviecatalog.util.compose.noRippleClickable
 
 @Composable
 fun StyledClickableText(

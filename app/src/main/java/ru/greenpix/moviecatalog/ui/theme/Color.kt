@@ -2,6 +2,7 @@ package ru.greenpix.moviecatalog.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val Background = Color(0xFF150D0B)
 val BaseWhite = Color(0xFFE7E7E7)
 val BrightWhite = Color(0xFFFFFFFF)
 val Accent = Color(0xFFEF3A01)
