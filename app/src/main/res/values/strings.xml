@@ -28,4 +28,17 @@
     <string name="example_email">test@example.com</string>
     <string name="example_avatar_url">https://vk.cc/example</string>
     <string name="example_name">Иван Иванович</string>
+    <!-- Фильм -->
+    <string name="about_movie">О фильме</string>
+    <string name="year">Год</string>
+    <string name="country">Страна</string>
+    <string name="duration">Время</string>
+    <string name="tagline">Слоган</string>
+    <string name="producer">Режиссёр</string>
+    <string name="budget">Бюджет</string>
+    <string name="fees_in_the_world">Сборы в мире</string>
+    <string name="age">Возраст</string>
+    <string name="genres">Жанры</string>
+    <string name="reviews">Отзывы</string>
+    <string name="my_review">мой отзыв</string>
 </resources>

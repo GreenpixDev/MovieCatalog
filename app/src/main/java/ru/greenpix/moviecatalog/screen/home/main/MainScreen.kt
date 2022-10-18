@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.navigation.Router
+import ru.greenpix.moviecatalog.navigation.Screen
 import ru.greenpix.moviecatalog.screen.shared.StyledButton
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.util.compose.rememberLazyListFirstPosition
@@ -45,7 +46,7 @@ fun MainScreen(
          * TODO заглушка, убрать её и реализовать с ViewModel
          */
         item {
-            BannerView(imageUrl = exampleImageUrl)
+            BannerView(router = router, imageUrl = exampleImageUrl)
         }
         item { Spacer(modifier = Modifier.height(32.dp)) }
 
@@ -115,6 +116,7 @@ fun MainScreen(
 
 @Composable
 private fun BannerView(
+    router: Router,
     imageUrl: String,
 ) {
     Box(
@@ -156,7 +158,10 @@ private fun BannerView(
                     .padding(bottom = 32.dp)
             ) {
                 StyledButton(
-                    onClick = { /*TODO view model*/ },
+                    onClick = {
+                        router.routeTo(Screen.Movie) // Аргументы?
+                        // TODO view model
+                    },
                     text = stringResource(R.string.watch)
                 )
             }
