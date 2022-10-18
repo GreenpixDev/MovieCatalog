@@ -14,6 +14,10 @@ val IBMPlexSans = FontFamily(
     Font(R.font.imb_plex_sans_bold, FontWeight.Bold)
 )
 
+val Montserrat = FontFamily(
+    Font(R.font.montserrat_medium, FontWeight.Medium)
+)
+
 val Body = TextStyle(
     fontFamily = IBMPlexSans,
     fontWeight = FontWeight.Medium,
@@ -59,6 +63,20 @@ val Footnote = TextStyle(
     fontWeight = FontWeight.Medium,
     fontSize = 14.sp,
     lineHeight = 16.sp,
+    letterSpacing = 0.sp,
+)
+
+val BodyMontserrat = TextStyle(
+    fontFamily = Montserrat,
+    fontWeight = FontWeight.Medium,
+    fontSize = 12.sp
+)
+
+val BodyVerySmall = TextStyle(
+    fontFamily = IBMPlexSans,
+    fontWeight = FontWeight.Normal,
+    fontSize = 12.sp,
+    lineHeight = 14.sp,
     letterSpacing = 0.sp,
 )
 

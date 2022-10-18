@@ -16,3 +16,18 @@ fun rememberLazyListFirstPosition(state: LazyListState): State<Int> {
         }
     }
 }
+
+fun LazyListState.firstItemScrollProgress(): Float {
+    val itemsInfo = layoutInfo.visibleItemsInfo
+    if (itemsInfo.isEmpty()) {
+        return 0f
+    }
+    if (firstVisibleItemIndex >= itemsInfo.size) {
+        return 1f
+    }
+    val itemInfo = itemsInfo[firstVisibleItemIndex]
+    if (itemInfo.index == 0) {
+        return -itemInfo.offset / itemInfo.size.toFloat()
+    }
+    return 1f
+}

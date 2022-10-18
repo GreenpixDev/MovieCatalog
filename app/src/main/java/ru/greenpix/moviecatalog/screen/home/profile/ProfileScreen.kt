@@ -30,7 +30,8 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .statusBarsPadding(),
     ) {
         // Заголовок
         // TODO получать логин из ViewModel

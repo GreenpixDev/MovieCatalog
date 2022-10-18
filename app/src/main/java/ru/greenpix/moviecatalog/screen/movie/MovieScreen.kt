@@ -1,11 +1,13 @@
 package ru.greenpix.moviecatalog.screen.movie
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -18,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +30,7 @@ import com.google.accompanist.flowlayout.FlowRow
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.navigation.Router
 import ru.greenpix.moviecatalog.ui.theme.*
+import ru.greenpix.moviecatalog.util.compose.firstItemScrollProgress
 import ru.greenpix.moviecatalog.util.compose.roundedAtBottom
 
 private const val exampleDescription = "Бухгалтер Энди Дюфрейн обвинён в убийстве собственной жены и её любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решётки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, обладающий живым умом и доброй душой, находит подход как к заключённым, так и к охранникам, добиваясь их особого к себе расположения"
@@ -39,9 +43,16 @@ private const val weightColumn2 = 1 - weightColumn1
 fun MovieScreen(
     router: Router = Router()
 ) {
-    LazyColumn {
+    val name = "Побег из Шоушенка"
+    val lazyState = rememberLazyListState()
+    val scrollProgress = lazyState.firstItemScrollProgress()
+
+    // Контент
+    LazyColumn(state = lazyState) {
         // TODO интегрировать с ViewModel
-        item { BannerView("Побег из Шоушенка") }
+        item {
+            BannerView(name = name, scrollProgress = scrollProgress)
+        }
         item { Spacer(modifier = Modifier.height(16.dp)) }
         // TODO интегрировать с ViewModel
         item { DescriptionView(exampleDescription) }
@@ -76,16 +87,23 @@ fun MovieScreen(
         }
         item { Spacer(modifier = Modifier.height(8.dp)) }
     }
+
+    // Верхняя панель
+    HeaderView(
+        name = name,
+        scrollProgress = scrollProgress
+    )
 }
 
 @Composable
 private fun BannerView(
-    name: String
+    name: String,
+    scrollProgress: Float
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.7.dp)
+            .height(250.dp)
             .clip(RoundedCornerShape(16.dp).roundedAtBottom())
     ) {
         // Постер
@@ -103,7 +121,7 @@ private fun BannerView(
                 .background(
                     Brush.verticalGradient(
                         0f to Color.Black,
-                        1f to Color.Transparent,
+                        1f to Color(0f, 0f, 0f, (scrollProgress * 1.5f).coerceAtMost(1f)),
                         startY = Float.POSITIVE_INFINITY,
                         endY = 0f,
                     )
@@ -120,6 +138,74 @@ private fun BannerView(
             )
         }
     }
+}
+
+@Composable
+private fun HeaderView(
+    name: String,
+    scrollProgress: Float,
+    favorite: Boolean = false
+) {
+    val density = LocalDensity.current
+    // Код AnimatedVisibility взят с https://developer.android.com/jetpack/compose/animation
+    AnimatedVisibility(
+        visible = scrollProgress > .5f,
+        enter = slideInVertically {
+            // Slide in from 40 dp from the top.
+            with(density) { -40.dp.roundToPx() }
+        } + expandVertically(
+            // Expand from the top.
+            expandFrom = Alignment.Top
+        ) + fadeIn(
+            // Fade in with the initial alpha of 0.3f.
+            initialAlpha = 0.3f
+        ),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Background)
+                .statusBarsPadding()
+        ) {
+            Row(
+                modifier = Modifier
+                    .height(56.dp)
+                    .padding(horizontal = 16.dp)
+                    .padding(start = 32.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = name,
+                    style = H1,
+                    color = BrightWhite,
+                    modifier = Modifier.weight(1f)
+                )
+                Image(
+                    painter = if (favorite) {
+                        painterResource(R.drawable.ic_filled_heart)
+                    } else {
+                        painterResource(R.drawable.ic_empty_heart)
+                    },
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { /*TODO*/ }
+                )
+            }
+        }
+    }
+
+    Image(
+        painter = painterResource(R.drawable.ic_arrow_back),
+        contentDescription = null,
+        modifier = Modifier
+            .statusBarsPadding()
+            .padding(16.dp)
+            .clip(CircleShape)
+            .clickable { /*TODO*/ }
+    )
 }
 
 @Composable
@@ -193,7 +279,7 @@ private fun GenreView(name: String) {
     ) {
         Text(
             text = name,
-            style = BodySmall,
+            style = BodyMontserrat,
             color = BaseWhite,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
@@ -259,7 +345,7 @@ private fun ReviewView(
                     if (myReview) {
                         Text(
                             text = stringResource(R.string.my_review),
-                            style = BodySmall,
+                            style = BodyVerySmall,
                             color = Gray
                         )
                     }
@@ -295,7 +381,7 @@ private fun ReviewView(
             ) {
                 Text(
                     text = date,
-                    style = BodySmall,
+                    style = BodyVerySmall,
                     color = Gray
                 )
                 if (myReview) {
@@ -349,13 +435,13 @@ private fun TableRowView(
     Row {
         Text(
             text = key,
-            style = BodySmall,
+            style = BodyMontserrat,
             color = Gray,
             modifier = Modifier.weight(weightColumn1)
         )
         Text(
             text = value,
-            style = BodySmall,
+            style = BodyMontserrat,
             color = BrightWhite,
             modifier = Modifier.weight(weightColumn2)
         )

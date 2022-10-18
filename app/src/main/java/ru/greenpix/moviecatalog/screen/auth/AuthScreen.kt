@@ -30,6 +30,7 @@ fun AuthScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .statusBarsPadding()
     ) {
         Image(
             painter = painterResource(R.drawable.named_logo),

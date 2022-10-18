@@ -39,7 +39,6 @@ fun SignInScreen(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-
     ) {
         Spacer(modifier = Modifier.height(32.dp))
         // Поле ввода "Логин"
