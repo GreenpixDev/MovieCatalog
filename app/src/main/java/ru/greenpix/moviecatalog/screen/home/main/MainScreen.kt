@@ -218,7 +218,7 @@ private fun MovieView(
     genres: Iterable<String>, // TODO может подавать String во View, а список во ViewModel?
     rating: Float
 ) {
-    val hue = (rating - 1) / 9 * 120
+    val hue = (rating - 1) / 9 * 120 // TODO Может расчеты вынести в ViewModel?
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
