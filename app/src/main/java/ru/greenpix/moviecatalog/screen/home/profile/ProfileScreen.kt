@@ -129,7 +129,11 @@ private fun ColumnScope.ProfileFieldsView() {
                 StyledTextField(
                     value = name,
                     onValueChange = { name = it },
-                    placeholderText = stringResource(R.string.example_name)
+                    placeholderText = stringResource(R.string.example_name),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
                 )
             }
         }
