@@ -2,6 +2,7 @@ package ru.greenpix.moviecatalog.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,9 +26,12 @@ class Router {
 }
 
 @Composable
-fun RouterHost(router: Router, startDestination: Screen, screens: Map<Screen, @Composable (Router) -> Unit>) {
-    val navController = rememberNavController()
-
+fun RouterHost(
+    router: Router,
+    startDestination: Screen,
+    screens: Map<Screen, @Composable (Router) -> Unit>,
+    navController: NavHostController = rememberNavController(),
+) {
     screens.forEach { router.registerScreen(it.key, navController) }
 
     NavHost(navController = navController, startDestination = startDestination.route) {
