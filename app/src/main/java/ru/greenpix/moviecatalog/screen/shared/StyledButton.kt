@@ -32,7 +32,7 @@ fun StyledButton(
             disabledContentColor = Accent
         ),
         shape = Shapes.medium,
-        border = if (!enabled) BorderStroke(1.dp, Gray) else null
+        border = if (!enabled) BorderStroke(1.dp, GraySilver) else null
     ) {
         Text(
             text = text,

@@ -14,7 +14,7 @@ fun MovieCatalogTheme(
         colors = darkColors(
             primary = Accent,
             primaryVariant = AccentFaded,
-            secondary = Gray,
+            secondary = GraySilver,
             background = colorResource(id = R.color.background)
         ),
         typography = Typography,

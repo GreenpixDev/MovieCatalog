@@ -50,7 +50,7 @@ fun StyledTextField(
         modifier = Modifier
             .fillMaxWidth()
             .clip(Shapes.small)
-            .border(1.dp, Gray, Shapes.small),
+            .border(1.dp, GraySilver, Shapes.small),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         visualTransformation = visualTransformation,

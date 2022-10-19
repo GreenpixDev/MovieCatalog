@@ -42,7 +42,7 @@ fun StyledDateField(
             .fillMaxWidth()
             .height(44.dp)
             .clip(Shapes.small)
-            .border(1.dp, Gray, Shapes.small)
+            .border(1.dp, GraySilver, Shapes.small)
             .noRippleClickable { datePickerDialog.show() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,

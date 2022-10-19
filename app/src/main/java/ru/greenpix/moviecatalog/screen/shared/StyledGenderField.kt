@@ -43,7 +43,7 @@ fun StyledGenderField(
                 contentColor = if (value == true) BaseWhite else GrayFaded,
             ),
             shape = Shapes.small.roundedAtStart(),
-            border = BorderStroke(1.dp, Gray)
+            border = BorderStroke(1.dp, GraySilver)
         ) {
             Text(
                 text = stringResource(R.string.male),
@@ -61,7 +61,7 @@ fun StyledGenderField(
                 contentColor = if (value == false) BaseWhite else GrayFaded,
             ),
             shape = Shapes.small.roundedAtEnd(),
-            border = BorderStroke(1.dp, Gray)
+            border = BorderStroke(1.dp, GraySilver)
         ) {
             Text(
                 text = stringResource(R.string.female),

@@ -41,4 +41,9 @@
     <string name="genres">Жанры</string>
     <string name="reviews">Отзывы</string>
     <string name="my_review">мой отзыв</string>
+    <!-- Отзыв -->
+    <string name="post_review">Оставить отзыв</string>
+    <string name="review">Отзыв</string>
+    <string name="anonymous_review">Анонимный отзыв</string>
+    <string name="cancel">Отмена</string>
 </resources>

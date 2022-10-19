@@ -160,7 +160,7 @@ private fun FieldView(
         Text(
             text = text,
             style = Body,
-            color = Gray,
+            color = GraySilver,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         content.invoke(this)

@@ -138,7 +138,7 @@ private fun BannerView(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        0f to Background,
+                        0f to SealBrown,
                         .25f to Color.Transparent,
                         startY = Float.POSITIVE_INFINITY,
                         endY = 0f,
