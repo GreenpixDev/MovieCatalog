@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.navigation
+package ru.greenpix.moviecatalog.ui.navigation
 
 sealed class Screen(
     val route: String

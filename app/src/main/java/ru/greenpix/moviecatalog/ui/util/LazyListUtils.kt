@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.util.compose
+package ru.greenpix.moviecatalog.ui.util
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable

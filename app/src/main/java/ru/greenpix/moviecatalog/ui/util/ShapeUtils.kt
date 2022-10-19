@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.util.compose
+package ru.greenpix.moviecatalog.ui.util
 
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize

@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.auth
+package ru.greenpix.moviecatalog.ui.view.screen.auth
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
@@ -12,12 +12,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.navigation.Router
-import ru.greenpix.moviecatalog.navigation.RouterHost
-import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.auth.signin.SignInScreen
-import ru.greenpix.moviecatalog.screen.auth.signup.SignUpScreen
+import ru.greenpix.moviecatalog.ui.navigation.Router
+import ru.greenpix.moviecatalog.ui.navigation.RouterHost
+import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
+import ru.greenpix.moviecatalog.ui.view.screen.auth.signin.SignInScreen
+import ru.greenpix.moviecatalog.ui.view.screen.auth.signup.SignUpScreen
 
 @Composable
 fun AuthScreen(

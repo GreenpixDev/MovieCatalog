@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.home
+package ru.greenpix.moviecatalog.ui.view.screen.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -20,12 +20,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.navigation.Router
-import ru.greenpix.moviecatalog.navigation.RouterHost
-import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.home.main.MainScreen
-import ru.greenpix.moviecatalog.screen.home.profile.ProfileScreen
+import ru.greenpix.moviecatalog.ui.navigation.Router
+import ru.greenpix.moviecatalog.ui.navigation.RouterHost
+import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
+import ru.greenpix.moviecatalog.ui.view.screen.home.main.MainScreen
+import ru.greenpix.moviecatalog.ui.view.screen.home.profile.ProfileScreen
 
 @Composable
 fun HomeScreen(

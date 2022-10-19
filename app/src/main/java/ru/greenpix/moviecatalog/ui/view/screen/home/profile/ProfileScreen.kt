@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.home.profile
+package ru.greenpix.moviecatalog.ui.view.screen.home.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,10 +17,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.navigation.Router
-import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.shared.*
+import ru.greenpix.moviecatalog.ui.navigation.Router
+import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
+import ru.greenpix.moviecatalog.ui.view.shared.*
 import java.time.LocalDate
 
 @Composable

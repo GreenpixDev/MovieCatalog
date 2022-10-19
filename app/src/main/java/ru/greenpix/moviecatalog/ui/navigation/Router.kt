@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.navigation
+package ru.greenpix.moviecatalog.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

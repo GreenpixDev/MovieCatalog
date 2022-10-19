@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.auth.signin
+package ru.greenpix.moviecatalog.ui.view.screen.auth.signin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -15,12 +15,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.navigation.Router
-import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.shared.StyledButton
-import ru.greenpix.moviecatalog.screen.shared.StyledClickableText
-import ru.greenpix.moviecatalog.screen.shared.StyledTextField
+import ru.greenpix.moviecatalog.ui.navigation.Router
+import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
+import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
+import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
+import ru.greenpix.moviecatalog.ui.view.shared.StyledTextField
 
 @Composable
 fun SignInScreen(

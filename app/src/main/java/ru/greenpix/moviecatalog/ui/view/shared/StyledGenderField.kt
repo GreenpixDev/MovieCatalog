@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.shared
+package ru.greenpix.moviecatalog.ui.view.shared
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
-import ru.greenpix.moviecatalog.util.compose.roundedAtEnd
-import ru.greenpix.moviecatalog.util.compose.roundedAtStart
+import ru.greenpix.moviecatalog.ui.util.roundedAtEnd
+import ru.greenpix.moviecatalog.ui.util.roundedAtStart
 
 /**
  * Поля выбора пола.

@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.shared
+package ru.greenpix.moviecatalog.ui.view.shared
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.Body
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
-import ru.greenpix.moviecatalog.util.compose.noRippleClickable
+import ru.greenpix.moviecatalog.ui.util.noRippleClickable
 
 @Composable
 fun StyledClickableText(

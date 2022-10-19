@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.util.compose
+package ru.greenpix.moviecatalog.ui.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

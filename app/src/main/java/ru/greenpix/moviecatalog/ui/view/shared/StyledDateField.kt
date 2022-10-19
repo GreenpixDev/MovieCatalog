@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.shared
+package ru.greenpix.moviecatalog.ui.view.shared
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.Image
@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
-import ru.greenpix.moviecatalog.util.compose.noRippleClickable
+import ru.greenpix.moviecatalog.ui.util.noRippleClickable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

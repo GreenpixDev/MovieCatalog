@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.dialog.review
+package ru.greenpix.moviecatalog.ui.view.dialog.review
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.screen.shared.StyledButton
-import ru.greenpix.moviecatalog.screen.shared.StyledClickableText
 import ru.greenpix.moviecatalog.ui.theme.*
+import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
+import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
 
 @Composable
 fun ReviewDialog(

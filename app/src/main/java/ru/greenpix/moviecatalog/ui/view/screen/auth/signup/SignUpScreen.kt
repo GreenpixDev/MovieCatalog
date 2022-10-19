@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.auth.signup
+package ru.greenpix.moviecatalog.ui.view.screen.auth.signup
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,12 +17,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.navigation.Router
-import ru.greenpix.moviecatalog.navigation.Screen
-import ru.greenpix.moviecatalog.screen.shared.*
+import ru.greenpix.moviecatalog.ui.navigation.Router
+import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.H1
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
+import ru.greenpix.moviecatalog.ui.view.shared.*
 import java.time.LocalDate
 
 @Composable

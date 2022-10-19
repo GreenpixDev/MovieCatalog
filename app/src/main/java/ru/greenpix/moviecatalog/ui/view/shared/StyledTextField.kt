@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.screen.shared
+package ru.greenpix.moviecatalog.ui.view.shared
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
