@@ -2,14 +2,12 @@ package ru.greenpix.moviecatalog.ui.view.screen.auth.signup
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -66,8 +64,6 @@ fun SignUpScreen(
 
 @Composable
 private fun ColumnScope.SignUpFieldsView() {
-    val focusManager = LocalFocusManager.current
-
     // TODO интегрировать с ViewModel
     var login by remember { mutableStateOf("") }
     // TODO интегрировать с ViewModel
@@ -88,7 +84,11 @@ private fun ColumnScope.SignUpFieldsView() {
             StyledTextField(
                 value = login,
                 onValueChange = { login = it },
-                placeholderText = stringResource(R.string.login)
+                placeholderText = stringResource(R.string.login),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
             )
         }
         // Поле ввода "Email"
@@ -108,7 +108,11 @@ private fun ColumnScope.SignUpFieldsView() {
             StyledTextField(
                 value = name,
                 onValueChange = { name = it },
-                placeholderText = stringResource(R.string.name)
+                placeholderText = stringResource(R.string.name),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
             )
         }
         // Поле ввода "Пароль"
@@ -133,9 +137,6 @@ private fun ColumnScope.SignUpFieldsView() {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
                 ),
                 visualTransformation = PasswordVisualTransformation()
             )

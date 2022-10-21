@@ -1,13 +1,11 @@
 package ru.greenpix.moviecatalog.ui.view.screen.auth.signin
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,8 +24,6 @@ import ru.greenpix.moviecatalog.ui.view.shared.StyledTextField
 fun SignInScreen(
     router: Router = Router()
 ) {
-    val focusManager = LocalFocusManager.current
-
     // TODO интегрировать с ViewModel
     var login by remember { mutableStateOf("") }
     // TODO интегрировать с ViewModel
@@ -45,7 +41,11 @@ fun SignInScreen(
         StyledTextField(
             value = login,
             onValueChange = { login = it },
-            placeholderText = stringResource(R.string.login)
+            placeholderText = stringResource(R.string.login),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
         )
         Spacer(modifier = Modifier.height(16.dp))
         // Поле ввода "Пароль"
@@ -56,9 +56,6 @@ fun SignInScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { focusManager.clearFocus() }
             ),
             visualTransformation = PasswordVisualTransformation()
         )
