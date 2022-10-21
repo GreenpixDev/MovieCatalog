@@ -1,11 +1,12 @@
 package ru.greenpix.moviecatalog.ui.view.shared
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -30,7 +31,7 @@ fun StyledTextField(
     keyboardActions: KeyboardActions = KeyboardActions(),
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
-    TextField(
+    ExtendedTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
@@ -49,11 +50,13 @@ fun StyledTextField(
         ),
         modifier = Modifier
             .fillMaxWidth()
+            .height(44.dp)
             .clip(Shapes.small)
             .border(1.dp, GraySilver, Shapes.small),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         visualTransformation = visualTransformation,
+        contentPadding = PaddingValues(horizontal = 16.dp)
     )
 }
 
