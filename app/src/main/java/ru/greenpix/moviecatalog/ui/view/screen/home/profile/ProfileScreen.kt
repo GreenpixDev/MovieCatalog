@@ -24,6 +24,7 @@ import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.view.shared.*
 import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
+import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
 import java.time.LocalDate
 
 @Composable
@@ -31,19 +32,20 @@ fun ProfileScreen(
     router: Router = Router(),
     viewModel: ProfileViewModel = getViewModel()
 ) {
-    val loading by remember { viewModel.loadingState }
-    val login by remember { viewModel.loginState }
-    val email by remember { viewModel.emailState }
-    val avatarUrl by remember { viewModel.avatarUrlState }
-    val name by remember { viewModel.nameState }
-    val birthday by remember { viewModel.birthdayState }
-    val gender by remember { viewModel.genderState }
-    val canSave by remember { viewModel.canSaveState }
+    val loadState by remember { viewModel.loadState }
 
-    if (loading) {
+    if (loadState != LoadState.LOADED) {
         LoadingScreen()
     }
     else {
+        val login by remember { viewModel.loginState }
+        val email by remember { viewModel.emailState }
+        val avatarUrl by remember { viewModel.avatarUrlState }
+        val name by remember { viewModel.nameState }
+        val birthday by remember { viewModel.birthdayState }
+        val gender by remember { viewModel.genderState }
+        val canSave by remember { viewModel.canSaveState }
+
         ProfileContent(
             login = login,
             email = email,
@@ -66,7 +68,7 @@ fun ProfileScreen(
         )
     }
 
-    LaunchedEffect(key1 = loading, block = {
+    LaunchedEffect(key1 = loadState, block = {
         viewModel.load()
     })
 }

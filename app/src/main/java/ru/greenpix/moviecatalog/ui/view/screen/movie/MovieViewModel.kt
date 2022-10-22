@@ -1,14 +1,16 @@
 package ru.greenpix.moviecatalog.ui.view.screen.movie
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
+import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
 
 class MovieViewModel : ViewModel() {
 
-    private val _loadingState = mutableStateOf(true)
+    private val _loadState = mutableStateOf(LoadState.UNLOADED)
     private val _favoriteState = mutableStateOf(false)
     private val _nameState = mutableStateOf("")
     private val _movieImageUrlState = mutableStateOf("")
@@ -21,12 +23,14 @@ class MovieViewModel : ViewModel() {
     private val _budgetState = mutableStateOf("")
     private val _feesState = mutableStateOf("")
     private val _ageState = mutableStateOf(0)
-    private val _genresState = mutableStateOf(emptyList<String>())
+    private val _genresState = mutableStateListOf<String>()
     private val _myReviewState = mutableStateOf<MovieReview?>(null)
-    private val _otherReviewsState = mutableStateOf(emptyList<MovieReview>())
+    private val _otherReviewsState = mutableStateListOf<MovieReview>()
 
-    val loadingState: State<Boolean>
-        get() = _loadingState
+    private var movieId: Int = 0
+
+    val loadState: State<LoadState>
+        get() = _loadState
     val favoriteState: State<Boolean>
         get() = _favoriteState
     val nameState: State<String>
@@ -51,14 +55,21 @@ class MovieViewModel : ViewModel() {
         get() = _feesState
     val ageState: State<Int>
         get() = _ageState
-    val genresState: State<List<String>>
+    val genresState: List<String>
         get() = _genresState
     val myReviewState: State<MovieReview?>
         get() = _myReviewState
-    val otherReviewsState: State<List<MovieReview>>
+    val otherReviewsState: List<MovieReview>
         get() = _otherReviewsState
 
     suspend fun load(movieId: Int) {
+        if (this.loadState.value == LoadState.LOADED && this.movieId == movieId) {
+            return
+        }
+        _loadState.value = LoadState.LOADING
+        _genresState.clear()
+        _otherReviewsState.clear()
+        this.movieId = movieId
         // TODO получаем данные из репозитория (сейчас заглушка)
         delay(1000)
         _nameState.value = "Побег из Шоушенка"
@@ -72,7 +83,7 @@ class MovieViewModel : ViewModel() {
         _budgetState.value = "\$25 000 000"
         _feesState.value = "\$28 418 687"
         _ageState.value = 16
-        _genresState.value = listOf("драма", "боевик", "фантастика", "мелодрама")
+        _genresState.addAll(listOf("драма", "боевик", "фантастика", "мелодрама"))
         _myReviewState.value = MovieReview(
             author = "Роман",
             avatarUrl = "https://chudo-prirody.com/uploads/posts/2021-08/thumbs/1628944329_99-p-smeshnie-foto-kotikov-na-avu-102.jpg",
@@ -80,7 +91,7 @@ class MovieViewModel : ViewModel() {
             date = "07.10.2022",
             rating = 1
         )
-        _otherReviewsState.value = List(9) {
+        _otherReviewsState.addAll(List(9) {
             MovieReview(
                 author = "Test #$it",
                 avatarUrl = "",
@@ -88,8 +99,8 @@ class MovieViewModel : ViewModel() {
                 date = "07.10.2022",
                 rating = it + 2
             )
-        }
-        _loadingState.value = false
+        })
+        _loadState.value = LoadState.LOADED
     }
 
     fun onToggleFavorite() {

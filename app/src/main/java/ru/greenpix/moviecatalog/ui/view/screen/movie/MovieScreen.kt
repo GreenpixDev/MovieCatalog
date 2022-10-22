@@ -39,6 +39,7 @@ import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewDialog
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.shared.Avatar
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
+import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
 
 private const val WEIGHT_COLUMN_KEY = .3125f
 private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
@@ -50,27 +51,28 @@ fun MovieScreen(
     viewModel: MovieViewModel = getViewModel()
 ) {
     var openDialog by remember { mutableStateOf(false) }
-    val loading by remember { viewModel.loadingState }
-    val favorite by remember { viewModel.favoriteState }
-    val name by remember { viewModel.nameState }
-    val movieImageUrl by remember { viewModel.movieImageUrlState }
-    val description by remember { viewModel.descriptionState }
-    val year by remember { viewModel.yearState }
-    val country by remember { viewModel.countryState }
-    val duration by remember { viewModel.durationState }
-    val tagline by remember { viewModel.taglineState }
-    val producer by remember { viewModel.producerState }
-    val budget by remember { viewModel.budgetState }
-    val fees by remember { viewModel.feesState }
-    val age by remember { viewModel.ageState }
-    val genres by remember { viewModel.genresState }
-    val myReview by remember { viewModel.myReviewState }
-    val otherReviews by remember { viewModel.otherReviewsState }
+    val loadState by remember { viewModel.loadState }
 
-    if (loading) {
+    if (loadState != LoadState.LOADED) {
         LoadingScreen()
     }
     else {
+        val favorite by remember { viewModel.favoriteState }
+        val name by remember { viewModel.nameState }
+        val movieImageUrl by remember { viewModel.movieImageUrlState }
+        val description by remember { viewModel.descriptionState }
+        val year by remember { viewModel.yearState }
+        val country by remember { viewModel.countryState }
+        val duration by remember { viewModel.durationState }
+        val tagline by remember { viewModel.taglineState }
+        val producer by remember { viewModel.producerState }
+        val budget by remember { viewModel.budgetState }
+        val fees by remember { viewModel.feesState }
+        val age by remember { viewModel.ageState }
+        val genres = remember { viewModel.genresState }
+        val myReview by remember { viewModel.myReviewState }
+        val otherReviews = remember { viewModel.otherReviewsState }
+
         MovieContent(
             name = name,
             favorite = favorite,
@@ -99,7 +101,7 @@ fun MovieScreen(
         ReviewDialog(onDismissRequest = { openDialog = false }) // TODO вынести диалог в навигацию
     }
 
-    LaunchedEffect(key1 = loading, block = {
+    LaunchedEffect(key1 = loadState, block = {
         viewModel.load(movieId)
     })
 }

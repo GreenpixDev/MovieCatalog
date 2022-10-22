@@ -5,11 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
 import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
+import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
 import java.time.LocalDate
 
 class ProfileViewModel : ViewModel() {
 
-    private val _loadingState = mutableStateOf(true)
+    private val _loadState = mutableStateOf(LoadState.UNLOADED)
     private val _loginState = mutableStateOf("")
     private val _avatarUrlState = mutableStateOf("")
     private val _emailState = mutableStateOf("")
@@ -18,8 +19,8 @@ class ProfileViewModel : ViewModel() {
     private val _genderState = mutableStateOf(Gender.NONE)
     private val _canSaveState = mutableStateOf(false)
 
-    val loadingState: State<Boolean>
-        get() = _loadingState
+    val loadState: State<LoadState>
+        get() = _loadState
     val loginState: State<String>
         get() = _loginState
     val avatarUrlState: State<String>
@@ -36,6 +37,10 @@ class ProfileViewModel : ViewModel() {
         get() = _canSaveState
 
     suspend fun load() {
+        if (loadState.value == LoadState.LOADED) {
+            return
+        }
+        _loadState.value = LoadState.LOADING
         // TODO получаем данные из репозитория (сейчас заглушка)
         delay(1000)
         _loginState.value = "Test"
@@ -44,7 +49,7 @@ class ProfileViewModel : ViewModel() {
         _birthdayState.value = LocalDate.now()
         _genderState.value = Gender.MALE
         validate()
-        _loadingState.value = false
+        _loadState.value = LoadState.LOADED
     }
 
     fun onAvatarUrlChange(avatarUrl: String) {
