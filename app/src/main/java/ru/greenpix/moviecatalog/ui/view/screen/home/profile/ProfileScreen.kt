@@ -7,7 +7,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -16,6 +19,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.Screen
@@ -26,7 +31,65 @@ import java.time.LocalDate
 
 @Composable
 fun ProfileScreen(
-    router: Router = Router()
+    router: Router = Router(),
+    viewModel: ProfileViewModel = getViewModel()
+) {
+    val loading by remember { viewModel.loadingState }
+    val login by remember { viewModel.loginState }
+    val email by remember { viewModel.emailState }
+    val avatarUrl by remember { viewModel.avatarUrlState }
+    val name by remember { viewModel.nameState }
+    val birthday by remember { viewModel.birthdayState }
+    val gender by remember { viewModel.genderState }
+    val canSave by remember { viewModel.canSaveState }
+
+    if (loading) {
+        LoadingScreen()
+    }
+    else {
+        ProfileContent(
+            login = login,
+            email = email,
+            avatarUrl = avatarUrl,
+            name = name,
+            birthday = birthday,
+            gender = gender,
+            canSave = canSave,
+            onEmailChange = viewModel::onEmailChange,
+            onAvatarUrlChange = viewModel::onAvatarUrlChange,
+            onNameChange = viewModel::onNameChange,
+            onBirthdayChange = viewModel::onBirthdayChange,
+            onGenderChange = viewModel::onGenderChange,
+            onSave = {
+                viewModel.save { router.routeTo(Screen.Home) } // TODO изменить навигацию
+            },
+            onLogout = {
+                viewModel.logout { router.routeTo(Screen.Auth) } // TODO изменить навигацию
+            }
+        )
+    }
+
+    LaunchedEffect(key1 = loading, block = {
+        viewModel.load()
+    })
+}
+
+@Composable
+fun ProfileContent(
+    login: String,
+    email: String,
+    avatarUrl: String,
+    name: String,
+    birthday: LocalDate?,
+    gender: Gender,
+    canSave: Boolean,
+    onEmailChange: (String) -> Unit,
+    onAvatarUrlChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onBirthdayChange: (LocalDate) -> Unit,
+    onGenderChange: (Gender) -> Unit,
+    onSave: () -> Unit,
+    onLogout: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -34,26 +97,32 @@ fun ProfileScreen(
             .padding(16.dp)
             .statusBarsPadding(),
     ) {
-        // Заголовок
-        // TODO получать логин из ViewModel
-        ProfileHeaderView(login = "Тест")
-
-        // Поля для регистрации
+        ProfileHeaderView(
+            login = login,
+            avatarUrl = avatarUrl
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        ProfileFieldsView()
+        ProfileFieldsView(
+            email = email,
+            avatarUrl = avatarUrl,
+            name = name,
+            birthday = birthday,
+            gender = gender,
+            onEmailChange = onEmailChange,
+            onAvatarUrlChange = onAvatarUrlChange,
+            onNameChange = onNameChange,
+            onBirthdayChange = onBirthdayChange,
+            onGenderChange = onGenderChange
+        )
         Spacer(modifier = Modifier.height(32.dp))
-
-        // Кнопка "Сохранить"
         StyledButton(
-            // TODO интегрировать с ViewModel
-            onClick = { router.routeTo(Screen.Home.Main) },
+            onClick = onSave,
+            enabled = canSave,
             text = stringResource(R.string.save)
         )
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Кликабельный текст "Выйти из аккаунта"
         StyledClickableText(
-            onClick = { router.routeTo(Screen.Auth) },
+            onClick = onLogout,
             text = stringResource(R.string.logout)
         )
     }
@@ -61,18 +130,29 @@ fun ProfileScreen(
 
 @Composable
 private fun ProfileHeaderView(
-    login: String
+    login: String,
+    avatarUrl: String
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Image(
-            painter = painterResource(R.drawable.avatar),
-            contentDescription = null,
-            modifier = Modifier
-                .size(88.dp)
-        )
+        if (avatarUrl.isBlank()) {
+            Image(
+                painter = painterResource(R.drawable.avatar),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(88.dp)
+            )
+        }
+        else {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(88.dp)
+            )
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = login,
@@ -83,24 +163,27 @@ private fun ProfileHeaderView(
 }
 
 @Composable
-private fun ColumnScope.ProfileFieldsView() {
-    // TODO интегрировать с ViewModel
-    var email by remember { mutableStateOf("test@example.com") }
-    // TODO интегрировать с ViewModel
-    var avatarUrl by remember { mutableStateOf("https://vk.cc/chdMpX") }
-    // TODO интегрировать с ViewModel
-    var name by remember { mutableStateOf("Тест Тестович") }
-
+private fun ColumnScope.ProfileFieldsView(
+    email: String,
+    avatarUrl: String,
+    name: String,
+    birthday: LocalDate?,
+    gender: Gender,
+    onEmailChange: (String) -> Unit,
+    onAvatarUrlChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onBirthdayChange: (LocalDate) -> Unit,
+    onGenderChange: (Gender) -> Unit,
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.weight(1f)
     ) {
-        // Поле ввода "Email"
         item {
             FieldView(stringResource(R.string.email)) {
                 StyledTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = onEmailChange,
                     placeholderText = stringResource(R.string.example_email),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -109,13 +192,11 @@ private fun ColumnScope.ProfileFieldsView() {
                 )
             }
         }
-
-        // Поле ввода "Ссылка на аватарку"
         item {
             FieldView(stringResource(R.string.avatar_url)) {
                 StyledTextField(
                     value = avatarUrl,
-                    onValueChange = { avatarUrl = it },
+                    onValueChange = onAvatarUrlChange,
                     placeholderText = stringResource(R.string.example_avatar_url),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Uri,
@@ -124,13 +205,11 @@ private fun ColumnScope.ProfileFieldsView() {
                 )
             }
         }
-
-        // Поле ввода "Имя"
         item {
             FieldView(stringResource(R.string.name)) {
                 StyledTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = onNameChange,
                     placeholderText = stringResource(R.string.example_name),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -139,18 +218,20 @@ private fun ColumnScope.ProfileFieldsView() {
                 )
             }
         }
-
-        // Поле ввода "Дата рождения"
         item {
             FieldView(stringResource(R.string.birthday)) {
-                BirthdayFieldView()
+                StyledDateField(
+                    value = birthday,
+                    onValueChange = onBirthdayChange
+                )
             }
         }
-
-        // Поле ввода "Пол"
         item {
             FieldView(stringResource(R.string.gender)) {
-               GenderFieldView()
+                StyledGenderField(
+                    value = gender,
+                    onValueChange = onGenderChange
+                )
             }
         }
     }
@@ -172,28 +253,6 @@ private fun FieldView(
     }
 }
 
-@Composable
-private fun BirthdayFieldView() {
-    // TODO интегрировать с ViewModel
-    var date by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
-
-    StyledDateField(
-        value = date,
-        onValueChange = { date = it }
-    )
-}
-
-@Composable
-private fun GenderFieldView() {
-    // TODO интегрировать с ViewModel
-    var gender by remember { mutableStateOf(Gender.MALE) }
-
-    StyledGenderField(
-        value = gender,
-        onValueChange = { gender = it }
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
@@ -202,7 +261,22 @@ private fun ProfileScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            ProfileScreen()
+            ProfileContent(
+                login = "Test",
+                email = "",
+                avatarUrl = "",
+                name = "",
+                birthday = null,
+                gender = Gender.FEMALE,
+                canSave = false,
+                onEmailChange = {},
+                onAvatarUrlChange = {},
+                onNameChange = {},
+                onBirthdayChange = {},
+                onGenderChange = {},
+                onSave = {},
+                onLogout = {}
+            )
         }
     }
 }
