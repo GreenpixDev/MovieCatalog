@@ -17,6 +17,7 @@ import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.roundedAtEnd
 import ru.greenpix.moviecatalog.ui.util.roundedAtStart
+import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
 
 /**
  * Поля выбора пола.
@@ -24,8 +25,8 @@ import ru.greenpix.moviecatalog.ui.util.roundedAtStart
  */
 @Composable
 fun StyledGenderField(
-    value: Boolean?,
-    onValueChange: (Boolean) -> Unit,
+    value: Gender,
+    onValueChange: (Gender) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -34,13 +35,13 @@ fun StyledGenderField(
     ) {
         // Мужской
         Button(
-            onClick = { onValueChange.invoke(true) },
+            onClick = { onValueChange.invoke(Gender.MALE) },
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (value == true) Accent else Color.Transparent,
-                contentColor = if (value == true) BaseWhite else GrayFaded,
+                backgroundColor = if (value == Gender.MALE) Accent else Color.Transparent,
+                contentColor = if (value == Gender.MALE) BaseWhite else GrayFaded,
             ),
             shape = Shapes.small.roundedAtStart(),
             border = BorderStroke(1.dp, GraySilver)
@@ -52,13 +53,13 @@ fun StyledGenderField(
         }
         // Женский
         Button(
-            onClick = { onValueChange.invoke(false) },
+            onClick = { onValueChange.invoke(Gender.FEMALE) },
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (value == false) Accent else Color.Transparent,
-                contentColor = if (value == false) BaseWhite else GrayFaded,
+                backgroundColor = if (value == Gender.FEMALE) Accent else Color.Transparent,
+                contentColor = if (value == Gender.FEMALE) BaseWhite else GrayFaded,
             ),
             shape = Shapes.small.roundedAtEnd(),
             border = BorderStroke(1.dp, GraySilver)

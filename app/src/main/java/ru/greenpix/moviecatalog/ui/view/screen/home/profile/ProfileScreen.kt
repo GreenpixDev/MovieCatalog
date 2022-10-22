@@ -21,6 +21,7 @@ import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.view.shared.*
+import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
 import java.time.LocalDate
 
 @Composable
@@ -185,11 +186,11 @@ private fun BirthdayFieldView() {
 @Composable
 private fun GenderFieldView() {
     // TODO интегрировать с ViewModel
-    var isMale by remember { mutableStateOf<Boolean?>(true) }
+    var gender by remember { mutableStateOf(Gender.MALE) }
 
     StyledGenderField(
-        value = isMale,
-        onValueChange = { isMale = it }
+        value = gender,
+        onValueChange = { gender = it }
     )
 }
 

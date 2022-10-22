@@ -6,7 +6,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -14,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.Screen
@@ -21,69 +24,135 @@ import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.H1
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 import ru.greenpix.moviecatalog.ui.view.shared.*
+import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
 import java.time.LocalDate
 
 @Composable
 fun SignUpScreen(
-    router: Router = Router()
+    router: Router = Router(),
+    viewModel: SignUpViewModel = getViewModel()
 ) {
+    val login by remember { viewModel.loginState }
+    val email by remember { viewModel.emailState }
+    val name by remember { viewModel.nameState }
+    val password by remember { viewModel.passwordState }
+    val repeatPassword by remember { viewModel.repeatPasswordState }
+    val birthday by remember { viewModel.birthdayState }
+    val gender by remember { viewModel.genderState }
+    val canSignUp by remember { viewModel.canSignUpState }
 
-    // TODO интегрировать с ViewModel
-    val canSignIn = true
+    SignUpContent(
+        login = login,
+        email = email,
+        name = name,
+        password = password,
+        repeatPassword = repeatPassword,
+        birthday = birthday,
+        gender = gender,
+        canSignUp = canSignUp,
+        onLoginChange = viewModel::onLoginChange,
+        onEmailChange = viewModel::onEmailChange,
+        onNameChange = viewModel::onNameChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onRepeatPasswordChange = viewModel::onRepeatPasswordChange,
+        onBirthdayChange = viewModel::onBirthdayChange,
+        onGenderChange = viewModel::onGenderChange,
+        onSignUpClick = {
+            viewModel.trySignUp(
+                onSuccess = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
+                onError = { /*TODO*/ }
+            )
+        },
+        onGoToSignInClick = { router.routeTo(Screen.Auth.SignIn) } // TODO изменить навигацию
+    )
+}
 
+@Composable
+private fun SignUpContent(
+    login: String,
+    email: String,
+    name: String,
+    password: String,
+    repeatPassword: String,
+    birthday: LocalDate?,
+    gender: Gender,
+    canSignUp: Boolean,
+    onLoginChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onRepeatPasswordChange: (String) -> Unit,
+    onBirthdayChange: (LocalDate) -> Unit,
+    onGenderChange: (Gender) -> Unit,
+    onSignUpClick: () -> Unit,
+    onGoToSignInClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
     ) {
-        // Заголовок
         Text(
             text = stringResource(R.string.registration),
             style = H1,
             color = Accent
         )
-        // Поля для регистрации
         Spacer(modifier = Modifier.height(16.dp))
-        SignUpFieldsView()
+        SignUpFieldsView(
+            login = login,
+            email = email,
+            name = name,
+            password = password,
+            repeatPassword = repeatPassword,
+            birthday = birthday,
+            gender = gender,
+            onLoginChange = onLoginChange,
+            onEmailChange = onEmailChange,
+            onNameChange = onNameChange,
+            onPasswordChange = onPasswordChange,
+            onRepeatPasswordChange = onRepeatPasswordChange,
+            onBirthdayChange = onBirthdayChange,
+            onGenderChange = onGenderChange
+        )
         Spacer(modifier = Modifier.height(32.dp))
-        // Кнопка "Зарегистрироваться"
         StyledButton(
-            // TODO интегрировать с ViewModel
-            onClick = { router.routeTo(Screen.Home) },
-            enabled = canSignIn,
+            onClick = onSignUpClick,
+            enabled = canSignUp,
             text = stringResource(R.string.sign_up)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        // Кликабельный текст "У меня уже есть аккаунт"
         StyledClickableText(
-            onClick = { router.routeTo(Screen.Auth.SignIn) },
+            onClick = onGoToSignInClick,
             text = stringResource(R.string.have_account)
         )
     }
 }
 
 @Composable
-private fun ColumnScope.SignUpFieldsView() {
-    // TODO интегрировать с ViewModel
-    var login by remember { mutableStateOf("") }
-    // TODO интегрировать с ViewModel
-    var email by remember { mutableStateOf("") }
-    // TODO интегрировать с ViewModel
-    var name by remember { mutableStateOf("") }
-    // TODO интегрировать с ViewModel
-    var password by remember { mutableStateOf("") }
-    // TODO интегрировать с ViewModel
-    var repeatPassword by remember { mutableStateOf("") }
-
+private fun ColumnScope.SignUpFieldsView(
+    login: String,
+    email: String,
+    name: String,
+    password: String,
+    repeatPassword: String,
+    birthday: LocalDate?,
+    gender: Gender,
+    onLoginChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onRepeatPasswordChange: (String) -> Unit,
+    onBirthdayChange: (LocalDate) -> Unit,
+    onGenderChange: (Gender) -> Unit,
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.weight(1f)
     ) {
-        // Поле ввода "Логин"
         item {
             StyledTextField(
                 value = login,
-                onValueChange = { login = it },
+                onValueChange = onLoginChange,
                 placeholderText = stringResource(R.string.login),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -91,11 +160,10 @@ private fun ColumnScope.SignUpFieldsView() {
                 )
             )
         }
-        // Поле ввода "Email"
         item {
             StyledTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = onEmailChange,
                 placeholderText = stringResource(R.string.email),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
@@ -103,11 +171,10 @@ private fun ColumnScope.SignUpFieldsView() {
                 ),
             )
         }
-        // Поле ввода "Имя"
         item {
             StyledTextField(
                 value = name,
-                onValueChange = { name = it },
+                onValueChange = onNameChange,
                 placeholderText = stringResource(R.string.name),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -115,11 +182,10 @@ private fun ColumnScope.SignUpFieldsView() {
                 )
             )
         }
-        // Поле ввода "Пароль"
         item {
             StyledTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = onPasswordChange,
                 placeholderText = stringResource(R.string.password),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -128,11 +194,10 @@ private fun ColumnScope.SignUpFieldsView() {
                 visualTransformation = PasswordVisualTransformation()
             )
         }
-        // Поле ввода "Повтор пароля"
         item {
             StyledTextField(
                 value = repeatPassword,
-                onValueChange = { repeatPassword = it },
+                onValueChange = onRepeatPasswordChange,
                 placeholderText = stringResource(R.string.repeat_password),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -141,37 +206,19 @@ private fun ColumnScope.SignUpFieldsView() {
                 visualTransformation = PasswordVisualTransformation()
             )
         }
-        // Поле ввода "Дата рождения"
         item {
-            BirthdayFieldView()
+            StyledDateField(
+                value = birthday,
+                onValueChange = onBirthdayChange
+            )
         }
-        // Поле ввода "Пол"
         item {
-            GenderFieldView()
+            StyledGenderField(
+                value = gender,
+                onValueChange = onGenderChange
+            )
         }
     }
-}
-
-@Composable
-private fun BirthdayFieldView() {
-    // TODO интегрировать с ViewModel
-    var date by remember { mutableStateOf<LocalDate?>(null) }
-
-    StyledDateField(
-        value = date,
-        onValueChange = { date = it }
-    )
-}
-
-@Composable
-private fun GenderFieldView() {
-    // TODO интегрировать с ViewModel
-    var isMale by remember { mutableStateOf<Boolean?>(null) }
-
-    StyledGenderField(
-        value = isMale,
-        onValueChange = { isMale = it }
-    )
 }
 
 @Preview(showBackground = true)
@@ -182,7 +229,25 @@ private fun SignUpScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            SignUpScreen()
+            SignUpContent(
+                login = "",
+                email = "",
+                name = "",
+                password = "",
+                repeatPassword = "",
+                birthday = null,
+                gender = Gender.NONE,
+                canSignUp = false,
+                onLoginChange = {},
+                onEmailChange = {},
+                onNameChange = {},
+                onPasswordChange = {},
+                onRepeatPasswordChange = {},
+                onBirthdayChange = {},
+                onGenderChange = {},
+                onSignUpClick = {},
+                onGoToSignInClick = {}
+            )
         }
     }
 }

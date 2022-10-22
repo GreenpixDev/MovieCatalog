@@ -39,8 +39,8 @@ fun SignInScreen(
         onLoginChange = viewModel::onLoginChange,
         onPasswordChange = viewModel::onPasswordChange,
         onSignInClick = {
-            viewModel.onTrySignIn(
-                onSuccessful = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
+            viewModel.trySignIn(
+                onSuccess = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
                 onError = { /*TODO*/ }
             )
         },

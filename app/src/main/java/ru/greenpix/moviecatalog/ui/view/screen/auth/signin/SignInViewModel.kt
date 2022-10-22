@@ -27,16 +27,17 @@ class SignInViewModel : ViewModel() {
         validate()
     }
 
-    fun onTrySignIn(
-        onSuccessful: () -> Unit,
+    fun trySignIn(
+        onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
         // TODO входим с помощью репозитория
-        onSuccessful.invoke()
+        onSuccess.invoke()
     }
 
     // TODO валидация в usecase
     private fun validate() {
-        _canSignInState.value = loginState.value.isNotBlank() && passwordState.value.isNotBlank()
+        _canSignInState.value = loginState.value.isNotBlank()
+                && passwordState.value.isNotBlank()
     }
 }
