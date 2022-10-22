@@ -1,6 +1,5 @@
 package ru.greenpix.moviecatalog.ui.view.screen.home.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,13 +12,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Router
@@ -137,22 +134,10 @@ private fun ProfileHeaderView(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        if (avatarUrl.isBlank()) {
-            Image(
-                painter = painterResource(R.drawable.avatar),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(88.dp)
-            )
-        }
-        else {
-            AsyncImage(
-                model = avatarUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(88.dp)
-            )
-        }
+        Avatar(
+            url = avatarUrl,
+            modifier = Modifier.size(88.dp)
+        )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = login,

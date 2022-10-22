@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,89 +28,200 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.accompanist.flowlayout.FlowRow
+import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Router
+import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.firstItemScrollProgress
 import ru.greenpix.moviecatalog.ui.util.roundedAtBottom
 import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewDialog
-
-private const val EXAMPLE_DESCRIPTION = "Бухгалтер Энди Дюфрейн обвинён в убийстве собственной жены и её любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решётки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, обладающий живым умом и доброй душой, находит подход как к заключённым, так и к охранникам, добиваясь их особого к себе расположения"
-private const val EXAMPLE_IMAGE_URL = "https://kinopoisk-ru.clstorage.net/15D2S2r30/33deda7SK/7htRvK7qLcqB7zW47Pf5ERgu4sxJy-F4M37R8H0rzARd-esRa2vgXRtB0HIEO4I3Exzc257O-lDcQ0AMPsqM098SBI3_lmmv4LpMkcm72FBpLpOhGMOEWWpupb0IRrC4nVkjtKPzHP2b8FVrBTv3QmZ93Ir-__pt7BpNxNaawXp6CxEMfhagTpHbcKgw1ykRpG_2nH2W_Ug7c03ozQeoeEkFPxhLj-TdV2w1jw32S_ZKUbASRvv2kJjWHYQvjoUC1kf58MqGrL75X3w8ALPFtRxbTiBhonHsa-PRTOEbxIDt5YMYE4f4_RvoyfPp6hc6ki0ATpL37lQwksGIa7Ih6qoTscie5tBG_ft0zOxPUbGYS7qohdJJgJMHyUBVT2DY_eUvAAfnbEWf0MkTYXrX4mah9FpelyLctB7dIBPGYfJyb0HYOhog7tUvxDTMl32FuO-GJEGCRVyvDwE4UaMwzDVN5_QHgzRd3wTZ-zFqV2Ki8UAW4m_-DADqyQif0rXyRqMN5MJG3F6Nv_QYpOcVIYhz8ihJ3kVgt5exyIGrdCBFvffgixfEMVf0PRPJWste4pFwEsbnhqjg3ik8GwZh5uLrSfT6bsg-XTO4tNDn9aU0R7JUeb7F6Df3YTRVg7hc2c2PAL_fwO2rWMn7CUqLZvoR2Koi855UkBohZKeG0R6O7x0MjiqwKqlTZBxYQwUFvG_WMEm-aeBnO6lY0SfgBIWRk2j3cwjJkxDdqwmyw8pmCdSqWnMSKEDisXw3IhHmyl9x_JYCoKJ5w3DQ3Nfdabyf5mT5PuXMK3PpiOE3rOTFZffsU_uweS9IPasFDlf6jhn4ohqzglzQ6r1w9wKV1tbH-VB2tuTKcTMQSGxTjcGUC5KUQaY9KB_7dbhde_jUpTk3FAcDmJlTbOX7cdp3Cup5bEbmlxLkXGKl-L9OgYomf5kIuuIkxgE_2NCkF_mVtEceqH3eDcyHq6HM8T-gwC15G-w3ZxiNo-BRdwk6n65aeSh-fley4GQCeQh78r2S_lfpyPIGgHZVv6isMOsFUcxnHjjZNn1ULxcN5MG_-NBVibscV_dIYTcU2YcZMke6IlWERtqfYiAUFgFc6y4p8q5vEYw6bqSaCR_IQBwTeWHYH2rwtcYR4Ld3uXj1p2Ts5QWD-DcviOEDXN0X3arXDk5ZPOpaw2p8wJaNfIe6qW6---38wua4_vHb4MC81229XC_KxPmCjcy_a4F8SbP4cGXpxxADq5yJk0wpMzGOa2Z66QDeznPmHGTCTZSLhsly7lNlRMIq8M6h73Qo3H_lxQhXkixptpX85x8tCN0HLAwp5X_sOxs8_dcQoVcxTlfO_uFoel7HhiRIAgEQ75Il9u6jRbSCAjBiveuoXAQX9VEUj45QEbqBcI8LxZxFq6gERcmzgJ9bjME7NNmjhepDtk6VuOJad3qclOrVlMOSoda-C3FAhsbk1t3nEDAgI3HVRNsSSJm-WfAHf7kEZfNAzCERz4hTX3QdI9x5L3FyC76OXcQK8svy0NwKxZSzgklWLp81MLaW1N71e_BIDLOVCcjnDuAVQvGgC_u1fJmDlEz12bNkQw9IRTv4cWv5VgeyYvUwolrTHujoXh2wPxbJnsYf-czODsB6jd_YmASrbZlEd96owTadsBNPIdRFM0TIteXPVHN7zElbcNlf3X6TXlLdaB4aY5KI-IqFcMMGoV56X_XIOh6k6pU3HATUq3G9VF_KZDVejcwjh_20eYvUfCVJ__hvw2Rxy-zZC4nuY6ZGAfR6Uh-uIJROFYiX_iG6YtNJYLqGfNqZp6DEAE8hidiHOviJSr1Yt3sNUI0r6HTRPWt8z9vMhSvk3fcVSneKCoEojkpTphTkDhFsr7YFYnrPBWhCRqBaHUugyAz_eQXkf860ZdJxpPPrKWgJt0B0iYkDsAfr5HEv0HlnfT4bMvqJRMbiO2LcmMKFfH9OSer6383cHubszgnLcLzoq3WNzG9uFG02PaRn441UZfPoYAlllwhHe9wJW3hJ84HScz7SXSBWGr-KFOgeHRhPMjGGeiNJ1DICdCKVM9BUyDt9zZT_stC5-oXolxvB_A0rxFSthXusA8fsQSfIqS_lyofKEgFoiuJ7pphYOpVcuzJdujJvbagublzmvatQhEj7TQ0IkxowVRbJvOufXcgZUzRs7bWfcAt7WOUv0C33TXbHenpd9KJy86bMBP5ZWJOSmf5WW2XQuqpkyv0rzByMt9FFZP-CoJme6XQDY0nYfa_IBMEd_zRvQ_hNl8jlD5lSmzp-XYBOcvvyXAAODfznImEa2teJ6IrqXK6dPyiErF9NUTwf-kSRMnXUn3fJcP2LrFwtwaP8O9_oBTtQ8RcZQo--zpWABh7fHuw0-hUYG04hBsJfdXj6CvS24U8cBCBXEcnYj74wkR6FMOsXqcABR7iMLbWLLB__8H0DyFlzEabTPmb9sNoqA_LE_HLxMDsq4SYqFxms_mboEtUvWAyo-4lVaIu-RDmKQXT7GyW0fZ-YDGW9j-Sb14B9F0xhY3XOE672ASQO0keCGESaiZwL0iEqflNtKAYySFaFM1yQNOultRQHQmxJ-nVoIwupcJlDECx9GQfwVwNAZZfkiXdtJgfeAi2w8vpf3lQw6lW0N6pdnu4f6dRqlvxSpTsYkKj7TaUIUx60uQ4JxJePsYwZh_h0KdGjLM9rmEET4EHnEXYTBsZR8FbqHzogXE7xrAu-7ZbCS_X0tjrQYjG3JMiwv-VRvI_6NAWqRcQ382GMOZuQwGVNB6zLn5z1G9zde0Ved9py3bBG9s_SmATmXWQ_CrmW2tf5xPoCqP6N62yEUD9ZEagXCsgRjpU0dzNdvE1D6FzB8ZeUe8vYQS90VfPNNmM-8lE4qsoLamTcOqHgzx6RhuarRfSOaohOFTfowIAj6Q0QG-5g5boRqDsLWUj912BAdWk7hNP7QH1DTLFzZTov2oYdfHZij4L87MK8#DSD"
+import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
+import ru.greenpix.moviecatalog.ui.view.shared.Avatar
+import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
 
 private const val WEIGHT_COLUMN_KEY = .3125f
 private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
 
 @Composable
 fun MovieScreen(
-    router: Router = Router()
+    router: Router = Router(),
+    movieId: Int = 0,
+    viewModel: MovieViewModel = getViewModel()
 ) {
     var openDialog by remember { mutableStateOf(false) }
+    val loading by remember { viewModel.loadingState }
+    val favorite by remember { viewModel.favoriteState }
+    val name by remember { viewModel.nameState }
+    val movieImageUrl by remember { viewModel.movieImageUrlState }
+    val description by remember { viewModel.descriptionState }
+    val year by remember { viewModel.yearState }
+    val country by remember { viewModel.countryState }
+    val duration by remember { viewModel.durationState }
+    val tagline by remember { viewModel.taglineState }
+    val producer by remember { viewModel.producerState }
+    val budget by remember { viewModel.budgetState }
+    val fees by remember { viewModel.feesState }
+    val age by remember { viewModel.ageState }
+    val genres by remember { viewModel.genresState }
+    val myReview by remember { viewModel.myReviewState }
+    val otherReviews by remember { viewModel.otherReviewsState }
 
-    val name = "Побег из Шоушенка"
-    val lazyState = rememberLazyListState()
-    val scrollProgress = lazyState.firstItemScrollProgress()
-
-    // Контент
-    LazyColumn(state = lazyState) {
-        // TODO интегрировать с ViewModel
-        item {
-            BannerView(name = name, scrollProgress = scrollProgress)
-        }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-        // TODO интегрировать с ViewModel
-        item { DescriptionView(EXAMPLE_DESCRIPTION) }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-        // TODO интегрировать с ViewModel
-        item {
-            AboutMovieView(
-                year = 1994,
-                country = "США",
-                duration = "142 мин.",
-                tagline = "«Страх - это кандалы. Надежда - это свобода»",
-                producer = "Фрэнк Дарабонт",
-                budget = "\$25 000 000",
-                fees = "\$28 418 687",
-                age = 16
-            )
-        }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-        // TODO интегрировать с ViewModel
-        item { GenresView(listOf("драма", "боевик", "фантастика", "мелодрама")) }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-        item {
-            ReviewsSubtitleView(
-                onAddComment = { openDialog = true }
-            )
-        }
-        // TODO интегрировать с ViewModel
-        items(10) {
-            ReviewView(
-                userName = "Test",
-                comment = "Сразу скажу, что фильм мне понравился. Люблю Фримэна, уважаю Роббинса. Читаю Кинга. Но рецензия красненькая.",
-                date = "07.10.2022",
-                rating = it + 1,
-                myReview = it == 0
-            )
-        }
-        item { Spacer(modifier = Modifier.height(8.dp)) }
+    if (loading) {
+        LoadingScreen()
+    }
+    else {
+        MovieContent(
+            name = name,
+            favorite = favorite,
+            movieImageUrl = movieImageUrl,
+            description = description,
+            year = year,
+            country = country,
+            duration = duration,
+            tagline = tagline,
+            producer = producer,
+            budget = budget,
+            fees = fees,
+            age = age,
+            genres = genres,
+            myReview = myReview,
+            otherReviews = otherReviews,
+            onBack = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
+            onToggleFavorite = viewModel::onToggleFavorite,
+            onAddReview = { openDialog = true },
+            onEditReview = { openDialog = true },
+            onDeleteReview = viewModel::onDeleteReview
+        )
     }
 
-    // Верхняя панель
-    HeaderView(
-        name = name,
-        scrollProgress = scrollProgress
-    )
-
-    // Диалог
     if (openDialog) {
-        ReviewDialog(onDismissRequest = { openDialog = false })
+        ReviewDialog(onDismissRequest = { openDialog = false }) // TODO вынести диалог в навигацию
     }
+
+    LaunchedEffect(key1 = loading, block = {
+        viewModel.load(movieId)
+    })
 }
 
 @Composable
+private fun MovieContent(
+    name: String,
+    favorite: Boolean,
+    movieImageUrl: String,
+    description: String,
+    year: Int,
+    country: String,
+    duration: String,
+    tagline: String,
+    producer: String,
+    budget: String,
+    fees: String,
+    age: Int,
+    genres: List<String>,
+    myReview: MovieReview?,
+    otherReviews: List<MovieReview>,
+    onBack: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    onAddReview: () -> Unit,
+    onEditReview: () -> Unit,
+    onDeleteReview: () -> Unit
+) {
+    val lazyState = rememberLazyListState()
+    val scrollProgress = lazyState.firstItemScrollProgress()
+
+    LazyColumn(state = lazyState) {
+        item {
+            BannerView(
+                name = name,
+                movieImageUrl = movieImageUrl,
+                scrollProgress = scrollProgress
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(
+                text = description,
+                style = BodySmall,
+                color = BrightWhite,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            AboutMovieView(
+                year = year,
+                country = country,
+                duration = duration,
+                tagline = tagline,
+                producer = producer,
+                budget = budget,
+                fees = fees,
+                age = age
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            GenresView(genres = genres)
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            ReviewsSubtitleView(
+                hiddenAddReview = myReview != null,
+                onAddReview = onAddReview
+            )
+        }
+        if (myReview != null) {
+            item {
+                ReviewView(
+                    author = myReview.author,
+                    avatarUrl = myReview.avatarUrl,
+                    comment = myReview.comment,
+                    date = myReview.date,
+                    rating = myReview.rating,
+                    hue = myReview.hue,
+                    isMine = true,
+                    onEdit = onEditReview,
+                    onDelete = onDeleteReview
+                )
+            }
+        }
+        items(otherReviews) {
+            ReviewView(
+                author = it.author,
+                avatarUrl = it.avatarUrl,
+                comment = it.comment,
+                date = it.date,
+                rating = it.rating,
+                hue = it.hue
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+    HeaderView(
+        name = name,
+        scrollProgress = scrollProgress,
+        favorite = favorite,
+        onBack = onBack,
+        onToggleFavorite = onToggleFavorite
+    )
+}
+
+// TODO это КАРТОЧКА фильма (Card), а не Box! По семантике это важно! Это указано в ТЗ
+@Composable
 private fun BannerView(
     name: String,
+    movieImageUrl: String,
     scrollProgress: Float
 ) {
     Box(
@@ -120,7 +232,7 @@ private fun BannerView(
     ) {
         // Постер
         AsyncImage(
-            model = EXAMPLE_IMAGE_URL,
+            model = movieImageUrl,
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
@@ -156,20 +268,19 @@ private fun BannerView(
 private fun HeaderView(
     name: String,
     scrollProgress: Float,
-    favorite: Boolean = false
+    favorite: Boolean,
+    onBack: () -> Unit,
+    onToggleFavorite: () -> Unit
 ) {
     val density = LocalDensity.current
     // Код AnimatedVisibility взят с https://developer.android.com/jetpack/compose/animation
     AnimatedVisibility(
         visible = scrollProgress > .5f,
         enter = slideInVertically {
-            // Slide in from 40 dp from the top.
             with(density) { -40.dp.roundToPx() }
         } + expandVertically(
-            // Expand from the top.
             expandFrom = Alignment.Top
         ) + fadeIn(
-            // Fade in with the initial alpha of 0.3f.
             initialAlpha = 0.3f
         ),
         exit = slideOutVertically() + shrinkVertically() + fadeOut()
@@ -203,7 +314,7 @@ private fun HeaderView(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .clickable { /*TODO*/ }
+                        .clickable(onClick = onToggleFavorite)
                 )
             }
         }
@@ -216,19 +327,7 @@ private fun HeaderView(
             .statusBarsPadding()
             .padding(16.dp)
             .clip(CircleShape)
-            .clickable { /*TODO*/ }
-    )
-}
-
-@Composable
-private fun DescriptionView(
-    description: String
-) {
-    Text(
-        text = description,
-        style = BodySmall,
-        color = BrightWhite,
-        modifier = Modifier.padding(horizontal = 16.dp)
+            .clickable(onClick = onBack)
     )
 }
 
@@ -263,7 +362,7 @@ private fun AboutMovieView(
 
 @Composable
 private fun GenresView(
-    genres: Iterable<String>
+    genres: List<String>
 ) {
     Column(
         modifier = Modifier
@@ -281,7 +380,9 @@ private fun GenresView(
 }
 
 @Composable
-private fun GenreView(name: String) {
+private fun GenreView(
+    name: String
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -300,7 +401,8 @@ private fun GenreView(name: String) {
 
 @Composable
 private fun ReviewsSubtitleView(
-    onAddComment: () -> Unit
+    hiddenAddReview: Boolean,
+    onAddReview: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -309,27 +411,30 @@ private fun ReviewsSubtitleView(
     ) {
         Subtitle(text = stringResource(R.string.reviews))
         Spacer(modifier = Modifier.weight(1f))
-        Image(
-            painter = painterResource(R.drawable.ic_plus),
-            contentDescription = null,
-            modifier = Modifier
-                .clip(CircleShape)
-                .clickable(onClick = onAddComment)
-        )
+        if (!hiddenAddReview) {
+            Image(
+                painter = painterResource(R.drawable.ic_plus),
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(onClick = onAddReview)
+            )
+        }
     }
 }
 
 @Composable
 private fun ReviewView(
-    userName: String,
+    author: String,
+    avatarUrl: String,
     comment: String,
     date: String,
     rating: Int,
-    avatarUrl: String? = null,
-    myReview: Boolean = false
+    hue: Float,
+    isMine: Boolean = false,
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {}
 ) {
-    val hue = (rating - 1) / 9f * 120 // TODO Может расчеты вынести в ViewModel?
-
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -346,17 +451,17 @@ private fun ReviewView(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AvatarView(
-                    avatarUrl = avatarUrl,
+                Avatar(
+                    url = avatarUrl,
                     modifier = Modifier.size(40.dp)
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = userName,
+                        text = author,
                         style = Body,
                         color = BrightWhite
                     )
-                    if (myReview) {
+                    if (isMine) {
                         Text(
                             text = stringResource(R.string.my_review),
                             style = BodyVerySmall,
@@ -380,14 +485,12 @@ private fun ReviewView(
                     )
                 }
             }
-
             // Описание
             Text(
                 text = comment,
                 style = BodySmall,
                 color = BrightWhite
             )
-
             // Дата и кнопочки редактирования и удаления
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -398,46 +501,25 @@ private fun ReviewView(
                     style = BodyVerySmall,
                     color = GraySilver
                 )
-                if (myReview) {
+                if (isMine) {
                     Spacer(modifier = Modifier.weight(1f))
                     Image(
                         painter = painterResource(R.drawable.ic_edit),
                         contentDescription = null,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .clickable { /*TODO*/ }
+                            .clickable(onClick = onEdit)
                     )
                     Image(
                         painter = painterResource(R.drawable.ic_delete),
                         contentDescription = null,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .clickable { /*TODO*/ }
+                            .clickable(onClick = onDelete)
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun AvatarView(
-    avatarUrl: String?,
-    modifier: Modifier = Modifier
-) {
-    if (avatarUrl == null) {
-        Image(
-            painter = painterResource(R.drawable.avatar),
-            contentDescription = null,
-            modifier = modifier
-        )
-    }
-    else {
-        AsyncImage(
-            model = avatarUrl,
-            contentDescription = null,
-            modifier = modifier
-        )
     }
 }
 
@@ -483,7 +565,28 @@ private fun MovieScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            MovieScreen()
+            MovieContent(
+                name = "Побег из Шоушенка",
+                favorite = false,
+                movieImageUrl = "",
+                description = "Бухгалтер Энди Дюфрейн обвинён в убийстве собственной жены и её любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решётки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, обладающий живым умом и доброй душой, находит подход как к заключённым, так и к охранникам, добиваясь их особого к себе расположения",
+                year = 1994,
+                country = "США",
+                duration = "142 мин.",
+                tagline = "«Страх - это кандалы. Надежда - это свобода»",
+                producer = "Фрэнк Дарабонт",
+                budget = "\$25 000 000",
+                fees = "\$28 418 687",
+                age = 16,
+                genres = listOf("драма", "боевик", "фантастика", "мелодрама"),
+                myReview = null,
+                otherReviews = emptyList(),
+                onBack = {},
+                onToggleFavorite = {},
+                onAddReview = {},
+                onEditReview = {},
+                onDeleteReview = {}
+            )
         }
     }
 }
@@ -496,11 +599,13 @@ private fun ReviewViewPreview() {
             color = MaterialTheme.colors.background
         ) {
             ReviewView(
-                userName = "Test",
+                author = "Роман",
+                avatarUrl = "",
                 comment = "Сразу скажу, что фильм мне понравился. Люблю Фримэна, уважаю Роббинса. Читаю Кинга. Но рецензия красненькая.",
                 date = "07.10.2022",
-                rating = 3,
-                myReview = true
+                rating = 1,
+                hue = 0f,
+                isMine = true
             )
         }
     }
