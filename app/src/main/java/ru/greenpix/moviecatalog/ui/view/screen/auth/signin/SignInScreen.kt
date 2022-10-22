@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -12,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.Screen
@@ -22,25 +25,48 @@ import ru.greenpix.moviecatalog.ui.view.shared.StyledTextField
 
 @Composable
 fun SignInScreen(
-    router: Router = Router()
+    router: Router = Router(),
+    viewModel: SignInViewModel = getViewModel()
 ) {
-    // TODO интегрировать с ViewModel
-    var login by remember { mutableStateOf("") }
-    // TODO интегрировать с ViewModel
-    var password by remember { mutableStateOf("") }
-    // TODO интегрировать с ViewModel
-    val canSignIn = login.isNotBlank() && password.isNotBlank()
+    val login by remember { viewModel.loginState }
+    val password by remember { viewModel.passwordState }
+    val canSignIn by remember { viewModel.canSignInState }
 
+    SignInContent(
+        login = login,
+        password = password,
+        canSignIn = canSignIn,
+        onLoginChange = viewModel::onLoginChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onSignInClick = {
+            viewModel.onTrySignIn(
+                onSuccessful = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
+                onError = { /*TODO*/ }
+            )
+        },
+        onGoToSignUpClick = { router.routeTo(Screen.Auth.SignUp) } // TODO изменить навигацию
+    )
+}
+
+@Composable
+private fun SignInContent(
+    login: String,
+    password: String,
+    canSignIn: Boolean,
+    onLoginChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSignInClick: () -> Unit,
+    onGoToSignUpClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
     ) {
         Spacer(modifier = Modifier.height(32.dp))
-        // Поле ввода "Логин"
         StyledTextField(
             value = login,
-            onValueChange = { login = it },
+            onValueChange = onLoginChange,
             placeholderText = stringResource(R.string.login),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -48,10 +74,9 @@ fun SignInScreen(
             )
         )
         Spacer(modifier = Modifier.height(16.dp))
-        // Поле ввода "Пароль"
         StyledTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = onPasswordChange,
             placeholderText = stringResource(R.string.password),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
@@ -60,17 +85,14 @@ fun SignInScreen(
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.weight(1f))
-        // Кнопка "Войти"
         StyledButton(
-            // TODO интегрировать с ViewModel
-            onClick = { router.routeTo(Screen.Home) },
+            onClick = onSignInClick,
             enabled = canSignIn,
             text = stringResource(R.string.sign_in)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        // Кликабельный текст "Регистрация"
         StyledClickableText(
-            onClick = { router.routeTo(Screen.Auth.SignUp) },
+            onClick = onGoToSignUpClick,
             text = stringResource(R.string.registration)
         )
     }
@@ -84,7 +106,15 @@ private fun SignInScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            SignInScreen()
+            SignInContent(
+                login = "",
+                password = "",
+                canSignIn = true,
+                onLoginChange = {},
+                onPasswordChange = {},
+                onSignInClick = {},
+                onGoToSignUpClick = {}
+            )
         }
     }
 }
