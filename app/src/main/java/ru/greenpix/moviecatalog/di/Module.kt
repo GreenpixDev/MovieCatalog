@@ -2,6 +2,7 @@ package ru.greenpix.moviecatalog.di
 
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
+import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signin.SignInViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signup.SignUpViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.home.main.MainViewModel
@@ -14,4 +15,5 @@ val appModule = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::MovieViewModel)
+    viewModelOf(::ReviewViewModel)
 }

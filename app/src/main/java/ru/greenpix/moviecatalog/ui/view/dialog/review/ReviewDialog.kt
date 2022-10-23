@@ -11,7 +11,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
@@ -32,31 +36,57 @@ import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
 @Composable
 fun ReviewDialog(
     onDismissRequest: () -> Unit,
-    properties: DialogProperties = DialogProperties()
+    initComment: String,
+    initRating: Int,
+    initAnonymous: Boolean,
+    properties: DialogProperties = DialogProperties(),
+    viewModel: ReviewViewModel = getViewModel()
 ) {
+    val anonymous by remember { viewModel.anonymousState }
+    val comment by remember { viewModel.commentState }
+    val rating by remember { viewModel.ratingState }
+
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = properties
     ) {
         ReviewDialogContent(
-            onSave = { /*TODO*/ },
+            anonymous = anonymous,
+            comment = comment,
+            rating = rating,
+            onAnonymousChange = viewModel::onAnonymousChange,
+            onCommentChange = viewModel::onCommentChange,
+            onRatingChange = viewModel::onRatingChange,
+            onSave = {
+                viewModel.onSave(
+                    onSuccess = onDismissRequest,
+                    onError = { /*TODO*/ }
+                )
+            },
             onCancel = onDismissRequest
         )
     }
+
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.load(
+            comment = initComment,
+            rating = initRating,
+            anonymous = initAnonymous
+        )
+    })
 }
 
 @Composable
 private fun ReviewDialogContent(
+    anonymous: Boolean,
+    comment: String,
+    rating: Int,
+    onAnonymousChange: (Boolean) -> Unit,
+    onCommentChange: (String) -> Unit,
+    onRatingChange: (Int) -> Unit,
     onSave: () -> Unit,
     onCancel: () -> Unit
 ) {
-    // TODO заглушка, вынести во ViewModel
-    var anonymous by remember { mutableStateOf(true) }
-    // TODO заглушка, вынести во ViewModel
-    var comment by remember { mutableStateOf("") }
-    // TODO заглушка, вынести во ViewModel
-    var rating by remember { mutableStateOf(0) }
-
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = GrayNero,
@@ -72,15 +102,15 @@ private fun ReviewDialogContent(
             )
             RatingField(
                 value = rating,
-                onValueChange = { rating = it }
+                onValueChange = onRatingChange
             )
             CommentField(
                 value = comment,
-                onValueChange = { comment = it }
+                onValueChange = onCommentChange
             )
             AnonymousField(
                 value = anonymous,
-                onValueChange = { anonymous = it }
+                onValueChange = onAnonymousChange
             )
             Buttons(
                 onSave = onSave,
@@ -222,6 +252,15 @@ private fun StarImage(
 @Composable
 private fun ReviewDialogPreview() {
     MovieCatalogTheme {
-        ReviewDialog(onDismissRequest = {})
+        ReviewDialogContent(
+            anonymous = true,
+            comment = "",
+            rating = 5,
+            onAnonymousChange = {},
+            onCommentChange = {},
+            onRatingChange = {},
+            onSave = {},
+            onCancel = {}
+        )
     }
 }

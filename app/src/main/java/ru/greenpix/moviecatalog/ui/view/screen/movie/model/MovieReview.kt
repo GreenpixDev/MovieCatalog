@@ -6,6 +6,7 @@ data class MovieReview(
     val author: String,
     val avatarUrl: String,
     val comment: String,
+    val anonymous: Boolean,
     val date: String,
     val rating: Int,
     val hue: Float = calcHueByRating(rating.toFloat())

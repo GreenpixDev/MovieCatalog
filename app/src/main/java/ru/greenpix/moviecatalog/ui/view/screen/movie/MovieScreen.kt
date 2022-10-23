@@ -52,6 +52,7 @@ fun MovieScreen(
 ) {
     var openDialog by remember { mutableStateOf(false) }
     val loadState by remember { viewModel.loadState }
+    val myReview by remember { viewModel.myReviewState }
 
     if (loadState != ViewState.LOADED) {
         LoadingScreen()
@@ -70,7 +71,6 @@ fun MovieScreen(
         val fees by remember { viewModel.feesState }
         val age by remember { viewModel.ageState }
         val genres = remember { viewModel.genresState }
-        val myReview by remember { viewModel.myReviewState }
         val otherReviews = remember { viewModel.otherReviewsState }
 
         MovieContent(
@@ -97,8 +97,14 @@ fun MovieScreen(
         )
     }
 
+    // TODO вынести диалог в навигацию
     if (openDialog) {
-        ReviewDialog(onDismissRequest = { openDialog = false }) // TODO вынести диалог в навигацию
+        ReviewDialog(
+            onDismissRequest = { openDialog = false },
+            initAnonymous = myReview?.anonymous ?: false,
+            initComment = myReview?.comment ?: "",
+            initRating = myReview?.rating ?: 0
+        )
     }
 
     LaunchedEffect(key1 = Unit, block = {
@@ -198,8 +204,8 @@ private fun MovieContent(
         }
         items(otherReviews) {
             ReviewView(
-                author = it.author,
-                avatarUrl = it.avatarUrl,
+                author = if (it.anonymous) stringResource(id = R.string.anonymous_review) else it.author,
+                avatarUrl = if (it.anonymous) "" else it.avatarUrl,
                 comment = it.comment,
                 date = it.date,
                 rating = it.rating,

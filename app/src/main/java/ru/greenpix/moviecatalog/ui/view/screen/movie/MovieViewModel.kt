@@ -86,6 +86,7 @@ class MovieViewModel : ViewModel() {
         _genresState.addAll(listOf("драма", "боевик", "фантастика", "мелодрама"))
         _myReviewState.value = MovieReview(
             author = "Роман",
+            anonymous = false,
             avatarUrl = "https://chudo-prirody.com/uploads/posts/2021-08/thumbs/1628944329_99-p-smeshnie-foto-kotikov-na-avu-102.jpg",
             comment = "Сразу скажу, что фильм мне понравился. Люблю Фримэна, уважаю Роббинса. Читаю Кинга. Но рецензия красненькая.",
             date = "07.10.2022",
@@ -95,6 +96,7 @@ class MovieViewModel : ViewModel() {
             MovieReview(
                 author = "Test #$it",
                 avatarUrl = "",
+                anonymous = true,
                 comment = "Сразу скажу, что фильм мне понравился. Люблю Фримэна, уважаю Роббинса. Читаю Кинга. Но рецензия красненькая.",
                 date = "07.10.2022",
                 rating = it + 2
