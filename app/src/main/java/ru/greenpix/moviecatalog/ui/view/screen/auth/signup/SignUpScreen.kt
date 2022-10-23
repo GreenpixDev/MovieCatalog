@@ -18,13 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
+import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.H1
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 import ru.greenpix.moviecatalog.ui.view.shared.*
-import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
 import java.time.LocalDate
 
 @Composable

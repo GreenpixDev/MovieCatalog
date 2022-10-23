@@ -3,10 +3,15 @@ package ru.greenpix.moviecatalog.ui.view.screen.auth.signup
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import ru.greenpix.moviecatalog.domain.Gender
+import ru.greenpix.moviecatalog.repository.AuthenticateRepository
 import java.time.LocalDate
 
-class SignUpViewModel : ViewModel() {
+class SignUpViewModel(
+    private val authenticateRepository: AuthenticateRepository
+) : ViewModel() {
 
     private val _loginState = mutableStateOf("")
     private val _emailState = mutableStateOf("")
@@ -73,8 +78,30 @@ class SignUpViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
-        // TODO регистрируемся с помощью репозитория
-        onSuccess.invoke()
+        val login = loginState.value
+        val email = emailState.value
+        val name = nameState.value
+        val password = passwordState.value
+        val birthday = birthdayState.value
+        val gender = genderState.value
+
+        checkNotNull(birthday) { "birthday cannot be null" }
+
+        viewModelScope.launch {
+            try {
+                authenticateRepository.register(
+                    login = login,
+                    email = email,
+                    name = name,
+                    password = password,
+                    birthday = birthday,
+                    gender = gender
+                )
+                onSuccess.invoke()
+            } catch (_: Exception) { // TODO возможно сделать более широкую обработку ошибок
+                onError.invoke()
+            }
+        }
     }
 
     // TODO валидация в usecase

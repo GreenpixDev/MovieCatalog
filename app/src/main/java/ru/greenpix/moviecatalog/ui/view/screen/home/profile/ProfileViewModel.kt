@@ -3,12 +3,17 @@ package ru.greenpix.moviecatalog.ui.view.screen.home.profile
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
-import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
+import kotlinx.coroutines.launch
+import ru.greenpix.moviecatalog.domain.Gender
+import ru.greenpix.moviecatalog.repository.AuthenticateRepository
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import java.time.LocalDate
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(
+    private val authenticateRepository: AuthenticateRepository
+) : ViewModel() {
 
     private val _loadState = mutableStateOf(ViewState.UNLOADED)
     private val _loginState = mutableStateOf("")
@@ -87,8 +92,14 @@ class ProfileViewModel : ViewModel() {
     fun logout(
         onSuccess: () -> Unit,
     ) {
-        // TODO разлогиниваемся с помощью репозитория
-        onSuccess.invoke()
+        viewModelScope.launch {
+            try {
+                authenticateRepository.logout()
+                onSuccess.invoke()
+            } catch (_: Exception) { // TODO возможно сделать более широкую обработку ошибок
+                onSuccess.invoke() // TODO пока заглушка
+            }
+        }
     }
 
     // TODO валидация в usecase

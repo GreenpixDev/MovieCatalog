@@ -14,10 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
+import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.roundedAtEnd
 import ru.greenpix.moviecatalog.ui.util.roundedAtStart
-import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
 
 /**
  * Поля выбора пола.

@@ -10,10 +10,12 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import ru.greenpix.moviecatalog.di.appModule
+import ru.greenpix.moviecatalog.repository.AuthenticateRepository
 import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.RouterHost
 import ru.greenpix.moviecatalog.ui.navigation.Screen
@@ -35,16 +37,22 @@ class MainActivity : ComponentActivity() {
         // TODO переделать без deprecated
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
+        val authenticated = get<AuthenticateRepository>().isAuthenticated()
+
         setContent {
             MovieCatalogTheme {
-                ActivityScreen()
+                ActivityScreen(
+                    authenticated = authenticated
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ActivityScreen() {
+private fun ActivityScreen(
+    authenticated: Boolean
+) {
     val router = Router()
 
     Surface(
@@ -53,7 +61,7 @@ private fun ActivityScreen() {
     ) {
         RouterHost(
             router = router,
-            startDestination = Screen.Auth,
+            startDestination = if (authenticated) Screen.Home else Screen.Auth,
             screens = mapOf(
                 Screen.Auth to { AuthScreen(it) },
                 Screen.Home to { HomeScreen(it) },
@@ -71,7 +79,9 @@ private fun ActivityScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            ActivityScreen()
+            ActivityScreen(
+                authenticated = false
+            )
         }
     }
 }
