@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MovieCatalog</string>
+    <string name="preference_jwt">jwt</string>
+    <string name="key_token">token</string>
     <!-- Авторизация -->
     <string name="login">Логин</string>
     <string name="password">Пароль</string>
