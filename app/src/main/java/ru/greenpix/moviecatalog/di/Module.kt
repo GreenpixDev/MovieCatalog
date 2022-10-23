@@ -1,5 +1,6 @@
 package ru.greenpix.moviecatalog.di
 
+import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.KoinDefinition
@@ -23,10 +24,11 @@ import ru.greenpix.moviecatalog.ui.view.screen.home.profile.ProfileViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.movie.MovieViewModel
 
 val appModule = module {
+    single { Gson() }
     single {
         Retrofit.Builder()
             .baseUrl(androidContext().getString(R.string.server_url))
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(get()))
             .build()
     }
 

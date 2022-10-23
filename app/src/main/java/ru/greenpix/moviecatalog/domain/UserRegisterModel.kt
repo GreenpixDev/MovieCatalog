@@ -19,5 +19,5 @@ data class UserRegisterModel(
     val birthday: String,
 
     @SerializedName("gender")
-    val gender: Gender
+    val gender: Int
 )

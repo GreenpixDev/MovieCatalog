@@ -86,9 +86,6 @@ private fun MainContent(
     onGoToMovie: (Int) -> Unit,
     onDeleteFavorite: (Int) -> Unit
 ) {
-    println("refresh ${gallery.loadState.refresh}")
-    println("prepend ${gallery.loadState.prepend}")
-    println("append ${gallery.loadState.append}")
     LazyColumn {
         item {
             BannerView(

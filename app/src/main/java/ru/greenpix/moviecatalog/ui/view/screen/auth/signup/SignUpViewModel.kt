@@ -5,14 +5,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
+import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
 import ru.greenpix.moviecatalog.repository.AuthenticateRepository
+import java.net.SocketException
+import java.net.UnknownHostException
 import java.time.LocalDate
 
 class SignUpViewModel(
     private val authenticateRepository: AuthenticateRepository
 ) : ViewModel() {
 
+    private companion object {
+        const val MIN_PASSWORD_LENGTH = 6
+    }
+
+    private val _viewState = mutableStateOf<SignUpViewState>(SignUpViewState.Default)
     private val _loginState = mutableStateOf("")
     private val _emailState = mutableStateOf("")
     private val _nameState = mutableStateOf("")
@@ -22,6 +31,8 @@ class SignUpViewModel(
     private val _genderState = mutableStateOf(Gender.NONE)
     private val _canSignUpState = mutableStateOf(false)
 
+    val viewState: State<SignUpViewState>
+        get() = _viewState
     val loginState: State<String>
         get() = _loginState
     val emailState: State<String>
@@ -74,9 +85,8 @@ class SignUpViewModel(
         validate()
     }
 
-    fun trySignUp(
-        onSuccess: () -> Unit,
-        onError: () -> Unit
+    fun onSignUp(
+        onSuccess: () -> Unit
     ) {
         val login = loginState.value
         val email = emailState.value
@@ -97,15 +107,25 @@ class SignUpViewModel(
                     birthday = birthday,
                     gender = gender
                 )
+                _viewState.value = SignUpViewState.SignUpSuccessful
                 onSuccess.invoke()
-            } catch (_: Exception) { // TODO возможно сделать более широкую обработку ошибок
-                onError.invoke()
+            } catch (e: Exception) {
+                _viewState.value = when(e) {
+                    is DuplicateUserNameException -> SignUpViewState.DuplicateUserName
+                    is HttpException -> SignUpViewState.HttpError
+                    is UnknownHostException, is SocketException -> SignUpViewState.NetworkError
+                    else -> SignUpViewState.UnknownError
+                }
             }
         }
     }
 
     // TODO валидация в usecase
     private fun validate() {
+        if (viewState.value is SignUpViewState.ValidateError) {
+            _viewState.value = SignUpViewState.Default
+        }
+
         _canSignUpState.value = loginState.value.isNotBlank()
                 && emailState.value.isNotBlank()
                 && nameState.value.isNotBlank()
@@ -113,5 +133,30 @@ class SignUpViewModel(
                 && repeatPasswordState.value.isNotBlank()
                 && birthdayState.value != null
                 && genderState.value != Gender.NONE
+        if (!_canSignUpState.value) return
+
+        if (!emailState.value.contains("@")) { // TODO норм валидация email
+            _canSignUpState.value = false
+            _viewState.value = SignUpViewState.InvalidEmail
+            return
+        }
+
+        if (passwordState.value.length < MIN_PASSWORD_LENGTH) {
+            _canSignUpState.value = false
+            _viewState.value = SignUpViewState.PasswordLengthLimit
+            return
+        }
+
+        if (passwordState.value != repeatPasswordState.value) {
+            _canSignUpState.value = false
+            _viewState.value = SignUpViewState.PasswordsNotMatch
+            return
+        }
+
+        if (birthdayState.value?.isAfter(LocalDate.now()) == true) {
+            _canSignUpState.value = false
+            _viewState.value = SignUpViewState.InvalidBirthday
+            return
+        }
     }
 }

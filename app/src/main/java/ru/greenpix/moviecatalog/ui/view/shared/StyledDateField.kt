@@ -30,10 +30,10 @@ fun StyledDateField(
     val datePickerDialog = DatePickerDialog(
         LocalContext.current,
         { _, year, month, dayOfMonth ->
-            onValueChange.invoke(LocalDate.of(year, month, dayOfMonth))
+            onValueChange.invoke(LocalDate.of(year, month + 1, dayOfMonth))
         },
         defaultPickerDate.year,
-        defaultPickerDate.monthValue,
+        defaultPickerDate.monthValue - 1,
         defaultPickerDate.dayOfMonth
     )
 

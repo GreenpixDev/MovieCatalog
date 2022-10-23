@@ -21,6 +21,7 @@ import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
 import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
+import ru.greenpix.moviecatalog.ui.view.shared.StyledErrorText
 import ru.greenpix.moviecatalog.ui.view.shared.StyledTextField
 
 @Composable
@@ -28,20 +29,21 @@ fun SignInScreen(
     router: Router = Router(),
     viewModel: SignInViewModel = getViewModel()
 ) {
+    val viewState by remember { viewModel.viewState }
     val login by remember { viewModel.loginState }
     val password by remember { viewModel.passwordState }
     val canSignIn by remember { viewModel.canSignInState }
 
     SignInContent(
+        viewState = viewState,
         login = login,
         password = password,
         canSignIn = canSignIn,
         onLoginChange = viewModel::onLoginChange,
         onPasswordChange = viewModel::onPasswordChange,
         onSignInClick = {
-            viewModel.trySignIn(
+            viewModel.onSignIn(
                 onSuccess = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
-                onError = { /*TODO*/ }
             )
         },
         onGoToSignUpClick = { router.routeTo(Screen.Auth.SignUp) } // TODO изменить навигацию
@@ -50,6 +52,7 @@ fun SignInScreen(
 
 @Composable
 private fun SignInContent(
+    viewState: SignInViewState,
     login: String,
     password: String,
     canSignIn: Boolean,
@@ -85,6 +88,15 @@ private fun SignInContent(
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.weight(1f))
+        StyledErrorText(
+            visible = viewState is SignInViewState.Error,
+            text = if (viewState is SignInViewState.Error) {
+                stringResource(id = viewState.id)
+            } else {
+                ""
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         StyledButton(
             onClick = onSignInClick,
             enabled = canSignIn,
@@ -107,6 +119,7 @@ private fun SignInScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             SignInContent(
+                viewState = SignInViewState.Default,
                 login = "",
                 password = "",
                 canSignIn = true,

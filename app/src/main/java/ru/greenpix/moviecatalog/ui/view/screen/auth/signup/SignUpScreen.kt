@@ -32,6 +32,7 @@ fun SignUpScreen(
     router: Router = Router(),
     viewModel: SignUpViewModel = getViewModel()
 ) {
+    val viewState by remember { viewModel.viewState }
     val login by remember { viewModel.loginState }
     val email by remember { viewModel.emailState }
     val name by remember { viewModel.nameState }
@@ -42,6 +43,7 @@ fun SignUpScreen(
     val canSignUp by remember { viewModel.canSignUpState }
 
     SignUpContent(
+        viewState = viewState,
         login = login,
         email = email,
         name = name,
@@ -58,9 +60,8 @@ fun SignUpScreen(
         onBirthdayChange = viewModel::onBirthdayChange,
         onGenderChange = viewModel::onGenderChange,
         onSignUpClick = {
-            viewModel.trySignUp(
-                onSuccess = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
-                onError = { /*TODO*/ }
+            viewModel.onSignUp(
+                onSuccess = { router.routeTo(Screen.Home) } // TODO изменить навигацию
             )
         },
         onGoToSignInClick = { router.routeTo(Screen.Auth.SignIn) } // TODO изменить навигацию
@@ -69,6 +70,7 @@ fun SignUpScreen(
 
 @Composable
 private fun SignUpContent(
+    viewState: SignUpViewState,
     login: String,
     email: String,
     name: String,
@@ -115,6 +117,15 @@ private fun SignUpContent(
             onGenderChange = onGenderChange
         )
         Spacer(modifier = Modifier.height(32.dp))
+        StyledErrorText(
+            visible = viewState is SignUpViewState.Error,
+            text = if (viewState is SignUpViewState.Error) {
+                stringResource(id = viewState.id)
+            } else {
+                ""
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         StyledButton(
             onClick = onSignUpClick,
             enabled = canSignUp,
@@ -230,6 +241,7 @@ private fun SignUpScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             SignUpContent(
+                viewState = SignUpViewState.Default,
                 login = "",
                 email = "",
                 name = "",
