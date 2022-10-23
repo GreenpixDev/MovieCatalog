@@ -39,7 +39,7 @@ import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewDialog
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.shared.Avatar
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
-import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
+import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 
 private const val WEIGHT_COLUMN_KEY = .3125f
 private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
@@ -53,7 +53,7 @@ fun MovieScreen(
     var openDialog by remember { mutableStateOf(false) }
     val loadState by remember { viewModel.loadState }
 
-    if (loadState != LoadState.LOADED) {
+    if (loadState != ViewState.LOADED) {
         LoadingScreen()
     }
     else {
@@ -101,7 +101,7 @@ fun MovieScreen(
         ReviewDialog(onDismissRequest = { openDialog = false }) // TODO вынести диалог в навигацию
     }
 
-    LaunchedEffect(key1 = loadState, block = {
+    LaunchedEffect(key1 = Unit, block = {
         viewModel.load(movieId)
     })
 }

@@ -24,7 +24,7 @@ import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.view.shared.*
 import ru.greenpix.moviecatalog.ui.view.shared.model.Gender
-import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
+import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import java.time.LocalDate
 
 @Composable
@@ -34,7 +34,7 @@ fun ProfileScreen(
 ) {
     val loadState by remember { viewModel.loadState }
 
-    if (loadState != LoadState.LOADED) {
+    if (loadState != ViewState.LOADED) {
         LoadingScreen()
     }
     else {
@@ -68,7 +68,7 @@ fun ProfileScreen(
         )
     }
 
-    LaunchedEffect(key1 = loadState, block = {
+    LaunchedEffect(key1 = Unit, block = {
         viewModel.load()
     })
 }

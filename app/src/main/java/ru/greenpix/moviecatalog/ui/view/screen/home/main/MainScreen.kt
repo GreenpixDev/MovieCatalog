@@ -6,9 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -27,20 +29,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.flow
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Router
 import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
-import ru.greenpix.moviecatalog.ui.util.items
-import ru.greenpix.moviecatalog.ui.util.itemsIndexed
-import ru.greenpix.moviecatalog.ui.util.rememberLazyListFirstPosition
+import ru.greenpix.moviecatalog.ui.util.*
 import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainFavorite
 import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainMovie
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
-import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
+import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import ru.greenpix.moviecatalog.util.format
 
 @Composable
@@ -49,18 +54,18 @@ fun MainScreen(
     viewModel: MainViewModel = getViewModel()
 ) {
     val loadState by remember { viewModel.loadState }
+    val gallery = viewModel.galleryFlow.collectAsLazyPagingItems()
 
-    if (loadState != LoadState.LOADED) {
+    if (loadState != ViewState.LOADED || gallery.isFirstLoading()) {
         LoadingScreen()
     }
     else {
-        val favorites = remember { viewModel.favoritesState }
-        val gallery = remember { viewModel.galleryState }
-
         if (gallery.isEmpty()) {
-            // TODO отсутствие контента
+            // TODO ничего
         }
         else {
+            val favorites = remember { viewModel.favoritesState }
+
             MainContent(
                 favorites = favorites,
                 gallery = gallery,
@@ -70,7 +75,7 @@ fun MainScreen(
         }
     }
 
-    LaunchedEffect(key1 = loadState, block = {
+    LaunchedEffect(key1 = Unit, block = {
         viewModel.load()
     })
 }
@@ -78,80 +83,35 @@ fun MainScreen(
 @Composable
 private fun MainContent(
     favorites: Map<Int, MainFavorite>,
-    gallery: Map<Int, MainMovie>,
+    gallery: LazyPagingItems<MainMovie>,
     onGoToMovie: (Int) -> Unit,
     onDeleteFavorite: (Int) -> Unit
 ) {
+    println("refresh ${gallery.loadState.refresh}")
+    println("prepend ${gallery.loadState.prepend}")
+    println("append ${gallery.loadState.append}")
     LazyColumn {
         item {
             BannerView(
-                // TODO а если список пустой? Будет ошибка. Нужно отработать эту ситуацию.
-                imageUrl = gallery.firstNotNullOf { it.value.imageUrl },
-                onClick = { onDeleteFavorite.invoke(gallery.firstNotNullOf { it.key } ) }
+                imageUrl = gallery.firstOrNull()?.imageUrl ?: "",
+                onClick = { gallery.firstOrNull()?.let { onGoToMovie.invoke(it.id) } }
             )
         }
         item {
             Spacer(modifier = Modifier.height(32.dp))
         }
-        if (favorites.isNotEmpty()) {
-            item {
-                Text(
-                    text = stringResource(R.string.favorites),
-                    style = H1,
-                    color = Accent,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 8.dp)
-                )
-            }
-            item {
-                // Поиск центрального элемента
-                // https://stackoverflow.com/questions/71832396/jetpack-compose-lazylist-possible-to-zoom-the-center-item
-                val lazyState = rememberLazyListState()
-                val centerPosition by rememberLazyListFirstPosition(state = lazyState)
-
-                LazyRow(
-                    modifier = Modifier
-                        .height(172.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    state = lazyState
-                ) {
-                    itemsIndexed(favorites) { index, id, item ->
-                        FavoriteView(
-                            imageUrl = item.imageUrl,
-                            selected = index == centerPosition,
-                            onClick = { onGoToMovie.invoke(id) },
-                            onDelete = { onDeleteFavorite.invoke(id) }
-                        )
-                    }
-                    item { Spacer(modifier = Modifier.width(16.dp)) }
-                }
-            }
-        }
+        itemsFavorites(
+            favorites = favorites,
+            onDeleteFavorite = onDeleteFavorite,
+            onGoToMovie = onGoToMovie
+        )
         item {
             Spacer(modifier = Modifier.height(32.dp))
         }
-        item {
-            Text(
-                text = stringResource(R.string.gallery),
-                style = H1,
-                color = Accent,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            )
-        }
-        items(gallery) { id, item ->
-            MovieView(
-                name = item.name,
-                imageUrl = item.imageUrl,
-                year = item.year,
-                country = item.country,
-                genres = item.genres,
-                rating = item.rating,
-                hue = item.hue,
-                onClick = { onGoToMovie.invoke(id) }
-            )
-        }
+        itemsGallery(
+            gallery = gallery,
+            onGoToMovie = onGoToMovie
+        )
     }
 }
 
@@ -204,6 +164,90 @@ private fun BannerView(
                 )
             }
         }
+    }
+}
+
+private fun LazyListScope.itemsFavorites(
+    favorites: Map<Int, MainFavorite>,
+    onGoToMovie: (Int) -> Unit,
+    onDeleteFavorite: (Int) -> Unit
+) {
+    if (favorites.isNotEmpty()) {
+        item {
+            Text(
+                text = stringResource(R.string.favorites),
+                style = H1,
+                color = Accent,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp)
+            )
+        }
+        item {
+            // Поиск центрального элемента
+            // https://stackoverflow.com/questions/71832396/jetpack-compose-lazylist-possible-to-zoom-the-center-item
+            val lazyRowState = rememberLazyListState()
+            val centerPosition by rememberLazyListFirstPosition(state = lazyRowState)
+
+            LazyRow(
+                modifier = Modifier
+                    .height(172.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                state = lazyRowState
+            ) {
+                itemsIndexed(favorites) { index, id, item ->
+                    FavoriteView(
+                        imageUrl = item.imageUrl,
+                        selected = index == centerPosition,
+                        onClick = { onGoToMovie.invoke(id) },
+                        onDelete = { onDeleteFavorite.invoke(id) }
+                    )
+                }
+                item { Spacer(modifier = Modifier.width(16.dp)) }
+            }
+        }
+    }
+}
+
+private fun LazyListScope.itemsGallery(
+    gallery: LazyPagingItems<MainMovie>,
+    onGoToMovie: (Int) -> Unit
+) {
+    item {
+        Text(
+            text = stringResource(R.string.gallery),
+            style = H1,
+            color = Accent,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+        )
+    }
+    items(gallery) { item ->
+        MovieView(
+            name = item.name,
+            imageUrl = item.imageUrl,
+            year = item.year,
+            country = item.country,
+            genres = item.genres,
+            rating = item.rating,
+            hue = item.hue,
+            onClick = { onGoToMovie.invoke(item.id) }
+        )
+    }
+    if (gallery.loadState.append == LoadState.Loading) {
+        item {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
+    item {
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -340,16 +384,7 @@ private fun MainScreenPreview() {
                 favorites = mapOf(
                     1 to MainFavorite(imageUrl = "")
                 ),
-                gallery = mapOf(
-                    1 to MainMovie(
-                        name = "Пираты карибского моря. Проклятие черной жемчужины",
-                        imageUrl = "",
-                        year = 2003,
-                        country = "США",
-                        genres = "драма, романтика, фантастика, приключение",
-                        rating = 5.5f
-                    )
-                ),
+                gallery = flow<PagingData<MainMovie>> {}.collectAsLazyPagingItems(),
                 onGoToMovie = {},
                 onDeleteFavorite = {}
             )

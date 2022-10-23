@@ -67,6 +67,9 @@ dependencies {
     // Accompanist Compose
     implementation "com.google.accompanist:accompanist-flowlayout:0.23.1"
 
+    // Paging Compose
+    implementation "androidx.paging:paging-compose:1.0.0-alpha15"
+
     // Kotlin Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 

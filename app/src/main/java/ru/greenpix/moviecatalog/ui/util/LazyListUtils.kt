@@ -17,6 +17,9 @@ fun rememberLazyListFirstPosition(state: LazyListState): State<Int> {
     }
 }
 
+val LazyListState.lastVisibleItemIndex: Int
+    get() = this.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+
 fun LazyListState.firstItemScrollProgress(): Float {
     val itemsInfo = layoutInfo.visibleItemsInfo
     if (itemsInfo.isEmpty()) {

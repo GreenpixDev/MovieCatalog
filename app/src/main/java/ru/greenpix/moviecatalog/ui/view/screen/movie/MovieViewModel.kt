@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
-import ru.greenpix.moviecatalog.ui.view.shared.model.LoadState
+import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 
 class MovieViewModel : ViewModel() {
 
-    private val _loadState = mutableStateOf(LoadState.UNLOADED)
+    private val _loadState = mutableStateOf(ViewState.UNLOADED)
     private val _favoriteState = mutableStateOf(false)
     private val _nameState = mutableStateOf("")
     private val _movieImageUrlState = mutableStateOf("")
@@ -29,7 +29,7 @@ class MovieViewModel : ViewModel() {
 
     private var movieId: Int = 0
 
-    val loadState: State<LoadState>
+    val loadState: State<ViewState>
         get() = _loadState
     val favoriteState: State<Boolean>
         get() = _favoriteState
@@ -63,10 +63,10 @@ class MovieViewModel : ViewModel() {
         get() = _otherReviewsState
 
     suspend fun load(movieId: Int) {
-        if (this.loadState.value == LoadState.LOADED && this.movieId == movieId) {
+        if (this.loadState.value == ViewState.LOADED && this.movieId == movieId) {
             return
         }
-        _loadState.value = LoadState.LOADING
+        _loadState.value = ViewState.LOADING
         _genresState.clear()
         _otherReviewsState.clear()
         this.movieId = movieId
@@ -100,7 +100,7 @@ class MovieViewModel : ViewModel() {
                 rating = it + 2
             )
         })
-        _loadState.value = LoadState.LOADED
+        _loadState.value = ViewState.LOADED
     }
 
     fun onToggleFavorite() {

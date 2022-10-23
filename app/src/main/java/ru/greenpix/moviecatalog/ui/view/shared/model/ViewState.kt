@@ -1,6 +1,6 @@
 package ru.greenpix.moviecatalog.ui.view.shared.model
 
-enum class LoadState {
+enum class ViewState {
     UNLOADED,
     LOADING,
     LOADED
