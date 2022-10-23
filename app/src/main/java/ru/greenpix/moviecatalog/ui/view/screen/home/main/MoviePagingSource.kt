@@ -22,12 +22,16 @@ class MoviePagingSource : PagingSource<Int, MainMovie>() {
         for (i in pageSize * page + 1..(pageSize * (page + 1)).coerceAtMost(124)) {
             movies.add(MainMovie(
                 id = i,
-                name = "Пираты карибского моря. Проклятие черной жемчужины",
+                name = if ((Math.random() * 2).toInt() == 0) {
+                    "Пираты карибского моря. Проклятие черной жемчужины"
+                } else {
+                    "Просто пираты."
+                },
                 imageUrl = exampleImageUrl,
                 year = 2003,
                 country = "США",
-                genres = "драма, драма, драма, драма, драма, драма, драма, драма, драма, драма, драма, драма, драма",
-                rating = Math.random().toFloat() * 9f + 1
+                genres = List((Math.random() * 20).toInt()) { "драма" }.joinToString(),
+                rating = Math.random().toFloat() * 10f
             ))
         }
         delay(1000)

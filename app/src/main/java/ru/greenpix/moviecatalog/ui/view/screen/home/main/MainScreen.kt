@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -312,7 +311,6 @@ private fun MovieView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(144.dp)
                 .clickable(onClick = onClick)
         ) {
             // Постер
@@ -324,45 +322,51 @@ private fun MovieView(
                     .size(100.dp, 144.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            Column(
+                modifier = Modifier.defaultMinSize(minHeight = 144.dp)
+            ) {
                 // Название
                 Text(
                     text = name,
                     style = H2,
-                    color = BrightWhite,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    color = BrightWhite
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // Год и страна производства
                 Text(
                     text = "$year • $country",
                     style = BodySmall,
-                    color = BrightWhite,
-                    maxLines = 1
+                    color = BrightWhite
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // Жанры
                 Text(
                     text = genres,
                     style = BodySmall,
-                    color = BrightWhite,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    color = BrightWhite
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 // Средняя оценка
                 Box(
                     modifier = Modifier
                         .size(56.dp, 28.dp)
                         .background(
-                            color = Color.hsv(hue, .99f, .67f),
+                            color = if (rating < 1) {
+                                Gray
+                            } else {
+                                Color.hsv(hue, .99f, .67f)
+                            },
                             shape = RoundedCornerShape(16.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = rating.format(1),
+                        text = if (rating < 1) {
+                            "—"
+                        } else {
+                            rating.format(1)
+                        },
                         style = Body,
                         color = BrightWhite
                     )
