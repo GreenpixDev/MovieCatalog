@@ -103,6 +103,8 @@ fun MovieScreen(
     if (openDialog) {
         ReviewDialog(
             onDismissRequest = { openDialog = false },
+            reviewId = myReview?.id,
+            movieId = movieId,
             initAnonymous = myReview?.anonymous ?: false,
             initComment = myReview?.comment ?: "",
             initRating = myReview?.rating ?: 0

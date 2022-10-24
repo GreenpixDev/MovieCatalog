@@ -74,7 +74,7 @@ class ProfileViewModel(
     }
 
     fun onAvatarUrlChange(avatarUrl: String) {
-        _loginState.value = avatarUrl
+        _avatarUrlState.value = avatarUrl
         validate()
     }
 

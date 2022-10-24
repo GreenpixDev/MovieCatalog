@@ -38,9 +38,9 @@
     <string name="save">Сохранить</string>
     <string name="logout">Выйти из аккаунта</string>
     <string name="gender">Пол</string>
-    <string name="example_email">test@example.com</string>
-    <string name="example_avatar_url">https://vk.cc/example</string>
-    <string name="example_name">Иван Иванович</string>
+    <string name="example_email">Напишите свой E-mail</string>
+    <string name="example_avatar_url">Вставьте ссылку на аватарку</string>
+    <string name="example_name">Напишите своё имя</string>
     <!-- Фильм -->
     <string name="about_movie">О фильме</string>
     <string name="year">Год</string>
