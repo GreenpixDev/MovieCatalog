@@ -81,10 +81,10 @@ fun MainScreen(
 
 @Composable
 private fun MainContent(
-    favorites: Map<Int, MainFavorite>,
+    favorites: Map<String, MainFavorite>,
     gallery: LazyPagingItems<MainMovie>,
-    onGoToMovie: (Int) -> Unit,
-    onDeleteFavorite: (Int) -> Unit
+    onGoToMovie: (String) -> Unit,
+    onDeleteFavorite: (String) -> Unit
 ) {
     LazyColumn {
         item {
@@ -164,9 +164,9 @@ private fun BannerView(
 }
 
 private fun LazyListScope.itemsFavorites(
-    favorites: Map<Int, MainFavorite>,
-    onGoToMovie: (Int) -> Unit,
-    onDeleteFavorite: (Int) -> Unit
+    favorites: Map<String, MainFavorite>,
+    onGoToMovie: (String) -> Unit,
+    onDeleteFavorite: (String) -> Unit
 ) {
     if (favorites.isNotEmpty()) {
         item {
@@ -207,7 +207,7 @@ private fun LazyListScope.itemsFavorites(
 
 private fun LazyListScope.itemsGallery(
     gallery: LazyPagingItems<MainMovie>,
-    onGoToMovie: (Int) -> Unit
+    onGoToMovie: (String) -> Unit
 ) {
     item {
         Text(
@@ -383,7 +383,7 @@ private fun MainScreenPreview() {
         ) {
             MainContent(
                 favorites = mapOf(
-                    1 to MainFavorite(imageUrl = "")
+                    "1" to MainFavorite(imageUrl = "")
                 ),
                 gallery = flow<PagingData<MainMovie>> {}.collectAsLazyPagingItems(),
                 onGoToMovie = {},

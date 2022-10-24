@@ -40,6 +40,7 @@ import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.shared.Avatar
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
+import ru.greenpix.moviecatalog.util.formatGrouped
 
 private const val WEIGHT_COLUMN_KEY = .3125f
 private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
@@ -47,7 +48,7 @@ private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
 @Composable
 fun MovieScreen(
     router: Router = Router(),
-    movieId: Int = 0,
+    movieId: String = "b6c5228b-91fb-43a1-a2ac-08d9b9f3d2a2", // TODO убрать значение по умолчанию
     viewModel: MovieViewModel = getViewModel()
 ) {
     var openDialog by remember { mutableStateOf(false) }
@@ -120,11 +121,11 @@ private fun MovieContent(
     description: String,
     year: Int,
     country: String,
-    duration: String,
+    duration: Int,
     tagline: String,
     producer: String,
-    budget: String,
-    fees: String,
+    budget: Int,
+    fees: Int,
     age: Int,
     genres: List<String>,
     myReview: MovieReview?,
@@ -343,11 +344,11 @@ private fun HeaderView(
 private fun AboutMovieView(
     year: Int,
     country: String,
-    duration: String,
+    duration: Int,
     tagline: String,
     producer: String,
-    budget: String,
-    fees: String,
+    budget: Int,
+    fees: Int,
     age: Int
 ) {
     Column(
@@ -358,12 +359,22 @@ private fun AboutMovieView(
     ) {
         Subtitle(text = stringResource(R.string.about_movie))
         TableRowView(key = stringResource(R.string.year), value = year.toString())
-        TableRowView(key = stringResource(R.string.country), value = country)
-        TableRowView(key = stringResource(R.string.duration), value = duration)
-        TableRowView(key = stringResource(R.string.tagline), value = tagline)
-        TableRowView(key = stringResource(R.string.producer), value = producer)
-        TableRowView(key = stringResource(R.string.budget), value = budget)
-        TableRowView(key = stringResource(R.string.fees_in_the_world), value = fees)
+        if (country.isNotBlank()) {
+            TableRowView(key = stringResource(R.string.country), value = country)
+        }
+        TableRowView(key = stringResource(R.string.duration), value = "$duration мин.")
+        if (tagline.isNotBlank()) {
+            TableRowView(key = stringResource(R.string.tagline), value = "«$tagline»")
+        }
+        if (producer.isNotBlank()) {
+            TableRowView(key = stringResource(R.string.producer), value = producer)
+        }
+        if (budget >= 0) {
+            TableRowView(key = stringResource(R.string.budget), value = "\$${budget.formatGrouped()}")
+        }
+        if (fees >= 0) {
+            TableRowView(key = stringResource(R.string.fees_in_the_world), value = "\$${fees.formatGrouped()}")
+        }
         TableRowView(key = stringResource(R.string.age), value = "$age+")
     }
 }
@@ -580,11 +591,11 @@ private fun MovieScreenPreview() {
                 description = "Бухгалтер Энди Дюфрейн обвинён в убийстве собственной жены и её любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решётки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, обладающий живым умом и доброй душой, находит подход как к заключённым, так и к охранникам, добиваясь их особого к себе расположения",
                 year = 1994,
                 country = "США",
-                duration = "142 мин.",
+                duration = 142,
                 tagline = "«Страх - это кандалы. Надежда - это свобода»",
                 producer = "Фрэнк Дарабонт",
-                budget = "\$25 000 000",
-                fees = "\$28 418 687",
+                budget = 25_000_000,
+                fees = 28_418_687,
                 age = 16,
                 genres = listOf("драма", "боевик", "фантастика", "мелодрама"),
                 myReview = null,

@@ -13,9 +13,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.repository.AuthenticateRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
+import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.repository.impl.AuthenticateRepositoryImpl
 import ru.greenpix.moviecatalog.repository.impl.JwtRepositoryImpl
+import ru.greenpix.moviecatalog.repository.impl.MovieRepositoryImpl
 import ru.greenpix.moviecatalog.retrofit.AuthenticateApi
+import ru.greenpix.moviecatalog.retrofit.MovieApi
 import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signin.SignInViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signup.SignUpViewModel
@@ -33,9 +36,11 @@ val appModule = module {
     }
 
     retrofitOf<AuthenticateApi>()
+    retrofitOf<MovieApi>()
 
     singleOf(::JwtRepositoryImpl) { bind<JwtRepository>() }
     singleOf(::AuthenticateRepositoryImpl) { bind<AuthenticateRepository>() }
+    singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
 
     viewModelOf(::SignInViewModel)
     viewModelOf(::SignUpViewModel)
