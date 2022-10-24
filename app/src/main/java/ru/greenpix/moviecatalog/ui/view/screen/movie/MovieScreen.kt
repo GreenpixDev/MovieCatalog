@@ -49,6 +49,7 @@ private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
 fun MovieScreen(
     router: Router = Router(),
     movieId: String = "b6c5228b-91fb-43a1-a2ac-08d9b9f3d2a2", // TODO убрать значение по умолчанию
+    isFavorite: Boolean = false, // TODO убрать значение по умолчанию
     viewModel: MovieViewModel = getViewModel()
 ) {
     var openDialog by remember { mutableStateOf(false) }
@@ -109,7 +110,7 @@ fun MovieScreen(
     }
 
     LaunchedEffect(key1 = Unit, block = {
-        viewModel.load(movieId)
+        viewModel.load(movieId, isFavorite)
     })
 }
 

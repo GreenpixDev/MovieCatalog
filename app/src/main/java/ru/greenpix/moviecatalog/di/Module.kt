@@ -11,13 +11,16 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.repository.AuthenticateRepository
+import ru.greenpix.moviecatalog.repository.AuthenticationRepository
+import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
-import ru.greenpix.moviecatalog.repository.impl.AuthenticateRepositoryImpl
+import ru.greenpix.moviecatalog.repository.impl.AuthenticationRepositoryImpl
+import ru.greenpix.moviecatalog.repository.impl.FavoriteRepositoryImpl
 import ru.greenpix.moviecatalog.repository.impl.JwtRepositoryImpl
 import ru.greenpix.moviecatalog.repository.impl.MovieRepositoryImpl
-import ru.greenpix.moviecatalog.retrofit.AuthenticateApi
+import ru.greenpix.moviecatalog.retrofit.AuthenticationApi
+import ru.greenpix.moviecatalog.retrofit.FavoriteApi
 import ru.greenpix.moviecatalog.retrofit.MovieApi
 import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signin.SignInViewModel
@@ -25,6 +28,8 @@ import ru.greenpix.moviecatalog.ui.view.screen.auth.signup.SignUpViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.home.main.MainViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.home.profile.ProfileViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.movie.MovieViewModel
+import ru.greenpix.moviecatalog.usecase.AuthorizationUseCase
+import ru.greenpix.moviecatalog.usecase.impl.AuthorizeUseCaseImpl
 
 val appModule = module {
     single { Gson() }
@@ -35,12 +40,16 @@ val appModule = module {
             .build()
     }
 
-    retrofitOf<AuthenticateApi>()
+    retrofitOf<AuthenticationApi>()
     retrofitOf<MovieApi>()
+    retrofitOf<FavoriteApi>()
 
     singleOf(::JwtRepositoryImpl) { bind<JwtRepository>() }
-    singleOf(::AuthenticateRepositoryImpl) { bind<AuthenticateRepository>() }
+    singleOf(::AuthenticationRepositoryImpl) { bind<AuthenticationRepository>() }
     singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
+    singleOf(::FavoriteRepositoryImpl) { bind<FavoriteRepository>() }
+
+    singleOf(::AuthorizeUseCaseImpl) { bind<AuthorizationUseCase>() }
 
     viewModelOf(::SignInViewModel)
     viewModelOf(::SignUpViewModel)

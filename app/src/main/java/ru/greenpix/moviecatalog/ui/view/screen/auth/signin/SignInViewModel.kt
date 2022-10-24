@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import ru.greenpix.moviecatalog.exception.AuthenticateException
-import ru.greenpix.moviecatalog.repository.AuthenticateRepository
+import ru.greenpix.moviecatalog.exception.AuthenticationException
+import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import java.net.SocketException
 import java.net.UnknownHostException
 
 class SignInViewModel(
-    private val authenticateRepository: AuthenticateRepository
+    private val authenticationRepository: AuthenticationRepository
 ) : ViewModel() {
 
     private val _viewState = mutableStateOf<SignInViewState>(SignInViewState.Default)
@@ -30,7 +30,7 @@ class SignInViewModel(
         get() = _canSignInState
 
     fun ifAuthenticated(onAuthenticated: () -> Unit) {
-        if (authenticateRepository.isAuthenticated()) {
+        if (authenticationRepository.isAuthenticated()) {
             onAuthenticated.invoke()
         }
     }
@@ -53,7 +53,7 @@ class SignInViewModel(
 
         viewModelScope.launch {
             try {
-                authenticateRepository.login(
+                authenticationRepository.login(
                     login = login,
                     password = password
                 )
@@ -61,7 +61,7 @@ class SignInViewModel(
                 onSuccess.invoke()
             } catch (e: Exception) {
                 _viewState.value = when(e) {
-                    is AuthenticateException -> SignInViewState.SignInFailed
+                    is AuthenticationException -> SignInViewState.SignInFailed
                     is HttpException -> SignInViewState.HttpError
                     is UnknownHostException, is SocketException -> SignInViewState.NetworkError
                     else -> SignInViewState.UnknownError

@@ -4,6 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
@@ -11,7 +14,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class MovieViewModel(
-    private val movieRepository: MovieRepository
+    private val movieRepository: MovieRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
 
     // TODO ОДНОЗНАЧНО ПЕРЕДЕЛАТЬ! СДЕЛАТЬ ОТДЕЛЬНЫЕ МОДЕЛИ ДЛЯ РЕТРОФИТА, РЕПОЗИТОРИЯ И ВЬЮШЕК!
@@ -71,7 +75,7 @@ class MovieViewModel(
     val otherReviewsState: List<MovieReview>
         get() = _otherReviewsState
 
-    suspend fun load(movieId: String) {
+    suspend fun load(movieId: String, isFavorite: Boolean) {
         if (this.loadState.value == ViewState.LOADED && this.movieId == movieId) {
             return
         }
@@ -81,6 +85,7 @@ class MovieViewModel(
         this.movieId = movieId
 
         val movie = movieRepository.getDetails(movieId)
+        _favoriteState.value = isFavorite
         _nameState.value = movie.name ?: ""
         _movieImageUrlState.value = movie.poster ?: ""
         _descriptionState.value = movie.description ?: ""
@@ -119,9 +124,21 @@ class MovieViewModel(
         _loadState.value = ViewState.LOADED
     }
 
-    fun onToggleFavorite() {
-        // TODO запрос к репозиторию
-        _favoriteState.value = !_favoriteState.value
+    fun onToggleFavorite() = viewModelScope.launch {
+        val newStatus = !_favoriteState.value
+        try {
+            if (newStatus) {
+                favoriteRepository.addFavoriteMovie(movieId)
+            }
+            else {
+                favoriteRepository.deleteFavoriteMovie(movieId)
+            }
+            _favoriteState.value = newStatus
+        }
+        catch (e: Exception) {
+            e.printStackTrace()
+            // TODO надо бы сделать обработку ошибок
+        }
     }
 
     fun onDeleteReview() {

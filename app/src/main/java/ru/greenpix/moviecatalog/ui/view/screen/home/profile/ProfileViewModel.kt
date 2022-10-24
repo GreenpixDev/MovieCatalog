@@ -7,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.repository.AuthenticateRepository
+import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import java.time.LocalDate
 
 class ProfileViewModel(
-    private val authenticateRepository: AuthenticateRepository
+    private val authenticationRepository: AuthenticationRepository
 ) : ViewModel() {
 
     private val _loadState = mutableStateOf(ViewState.UNLOADED)
@@ -94,7 +94,7 @@ class ProfileViewModel(
     ) {
         viewModelScope.launch {
             try {
-                authenticateRepository.logout()
+                authenticationRepository.logout()
                 onSuccess.invoke()
             } catch (_: Exception) { // TODO возможно сделать более широкую обработку ошибок
                 onSuccess.invoke() // TODO пока заглушка

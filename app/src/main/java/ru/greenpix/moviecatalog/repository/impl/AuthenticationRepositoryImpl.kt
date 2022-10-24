@@ -5,21 +5,21 @@ import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.domain.LoginCredentials
 import ru.greenpix.moviecatalog.domain.UserRegisterModel
-import ru.greenpix.moviecatalog.exception.AuthenticateException
+import ru.greenpix.moviecatalog.exception.AuthenticationException
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
-import ru.greenpix.moviecatalog.repository.AuthenticateRepository
+import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
-import ru.greenpix.moviecatalog.retrofit.AuthenticateApi
+import ru.greenpix.moviecatalog.retrofit.AuthenticationApi
 import ru.greenpix.moviecatalog.util.HttpCode
 import ru.greenpix.moviecatalog.util.fromErrorBody
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AuthenticateRepositoryImpl(
+class AuthenticationRepositoryImpl(
     private val jwtRepository: JwtRepository,
-    private val authenticateApi: AuthenticateApi,
+    private val authenticationApi: AuthenticationApi,
     private val gson: Gson
-) : AuthenticateRepository {
+) : AuthenticationRepository {
 
     private companion object {
         val FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -39,7 +39,7 @@ class AuthenticateRepositoryImpl(
         gender: Gender
     ) {
         try {
-            val jwt = authenticateApi.register(UserRegisterModel(
+            val jwt = authenticationApi.register(UserRegisterModel(
                 username = login,
                 email = email,
                 name = name,
@@ -68,7 +68,7 @@ class AuthenticateRepositoryImpl(
         password: String
     ) {
         try {
-            val jwt = authenticateApi.login(LoginCredentials(
+            val jwt = authenticationApi.login(LoginCredentials(
                 username = login,
                 password = password
             ))
@@ -78,7 +78,7 @@ class AuthenticateRepositoryImpl(
             if (e.code() == HttpCode.BAD_REQUEST) {
                 val response = e.response()
                 if (response != null) {
-                    throw AuthenticateException(response)
+                    throw AuthenticationException(response)
                 }
             }
             throw e
@@ -87,6 +87,6 @@ class AuthenticateRepositoryImpl(
 
     override suspend fun logout() {
         jwtRepository.deleteToken()
-        authenticateApi.logout()
+        authenticationApi.logout()
     }
 }

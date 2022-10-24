@@ -6,7 +6,7 @@ import ru.greenpix.moviecatalog.domain.JwtToken
 import ru.greenpix.moviecatalog.domain.LoginCredentials
 import ru.greenpix.moviecatalog.domain.UserRegisterModel
 
-interface AuthenticateApi {
+interface AuthenticationApi {
 
     @POST("/api/account/register")
     suspend fun register(@Body userRegisterModel: UserRegisterModel): JwtToken

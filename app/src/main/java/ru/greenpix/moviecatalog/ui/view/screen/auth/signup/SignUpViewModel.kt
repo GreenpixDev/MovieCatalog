@@ -8,13 +8,13 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
-import ru.greenpix.moviecatalog.repository.AuthenticateRepository
+import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import java.net.SocketException
 import java.net.UnknownHostException
 import java.time.LocalDate
 
 class SignUpViewModel(
-    private val authenticateRepository: AuthenticateRepository
+    private val authenticationRepository: AuthenticationRepository
 ) : ViewModel() {
 
     private companion object {
@@ -99,7 +99,7 @@ class SignUpViewModel(
 
         viewModelScope.launch {
             try {
-                authenticateRepository.register(
+                authenticationRepository.register(
                     login = login,
                     email = email,
                     name = name,

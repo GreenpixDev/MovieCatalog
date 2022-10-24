@@ -3,7 +3,7 @@ package ru.greenpix.moviecatalog.repository
 import ru.greenpix.moviecatalog.domain.Gender
 import java.time.LocalDate
 
-interface AuthenticateRepository {
+interface AuthenticationRepository {
 
     fun isAuthenticated(): Boolean
 
