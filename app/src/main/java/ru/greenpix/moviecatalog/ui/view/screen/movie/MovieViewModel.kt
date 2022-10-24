@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
@@ -134,6 +135,9 @@ class MovieViewModel(
                 favoriteRepository.deleteFavoriteMovie(movieId)
             }
             _favoriteState.value = newStatus
+        }
+        catch (e: AuthorizationException) {
+            // TODO перенаправляем на экран авторизации
         }
         catch (e: Exception) {
             e.printStackTrace()

@@ -109,7 +109,8 @@ class SignUpViewModel(
                 )
                 _viewState.value = SignUpViewState.SignUpSuccessful
                 onSuccess.invoke()
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 _viewState.value = when(e) {
                     is DuplicateUserNameException -> SignUpViewState.DuplicateUserName
                     is HttpException -> SignUpViewState.HttpError

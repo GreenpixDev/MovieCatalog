@@ -59,7 +59,8 @@ class SignInViewModel(
                 )
                 _viewState.value = SignInViewState.SignInSuccessful
                 onSuccess.invoke()
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 _viewState.value = when(e) {
                     is AuthenticationException -> SignInViewState.SignInFailed
                     is HttpException -> SignInViewState.HttpError

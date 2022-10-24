@@ -4,25 +4,37 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.greenpix.moviecatalog.domain.Gender
+import ru.greenpix.moviecatalog.domain.ProfileModel
+import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
+import ru.greenpix.moviecatalog.repository.UserRepository
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ProfileViewModel(
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
+
+    // TODO ОБЯЗАТЕЛЬНО УБРАТЬ И ВЫНЕСТИ
+    private companion object {
+        val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+    }
 
     private val _loadState = mutableStateOf(ViewState.UNLOADED)
     private val _loginState = mutableStateOf("")
     private val _avatarUrlState = mutableStateOf("")
     private val _emailState = mutableStateOf("")
     private val _nameState = mutableStateOf("")
-    private val _birthdayState = mutableStateOf<LocalDate?>(null)
+    private val _birthdayState = mutableStateOf<LocalDate>(LocalDate.MIN)
     private val _genderState = mutableStateOf(Gender.NONE)
     private val _canSaveState = mutableStateOf(false)
+
+    private var userId: String = ""
 
     val loadState: State<ViewState>
         get() = _loadState
@@ -34,7 +46,7 @@ class ProfileViewModel(
         get() = _emailState
     val nameState: State<String>
         get() = _nameState
-    val birthdayState: State<LocalDate?>
+    val birthdayState: State<LocalDate>
         get() = _birthdayState
     val genderState: State<Gender>
         get() = _genderState
@@ -46,13 +58,17 @@ class ProfileViewModel(
             return
         }
         _loadState.value = ViewState.LOADING
-        // TODO получаем данные из репозитория (сейчас заглушка)
-        delay(1000)
-        _loginState.value = "Test"
-        _emailState.value = "example@gmail.com"
-        _nameState.value = "Роман"
-        _birthdayState.value = LocalDate.now()
-        _genderState.value = Gender.MALE
+
+        val profile = userRepository.getProfile()
+        userId = profile.id
+        _loginState.value = profile.username
+        _emailState.value = profile.email
+        _nameState.value = profile.name
+        _birthdayState.value = LocalDateTime
+            .parse(profile.birthday)
+            .toLocalDate()
+        _genderState.value = Gender.values()[profile.gender + 1]
+
         validate()
         _loadState.value = ViewState.LOADED
     }
@@ -72,7 +88,7 @@ class ProfileViewModel(
         validate()
     }
 
-    fun onBirthdayChange(birthday: LocalDate?) {
+    fun onBirthdayChange(birthday: LocalDate) {
         _birthdayState.value = birthday
         validate()
     }
@@ -82,22 +98,50 @@ class ProfileViewModel(
         validate()
     }
 
-    fun save(
+    fun onSave(
         onSuccess: () -> Unit,
     ) {
-        // TODO сохраняем с помощью репозитория
-        onSuccess.invoke()
+        val login = loginState.value
+        val email = emailState.value
+        val avatarUrl = avatarUrlState.value
+        val name = nameState.value
+        val birthday = birthdayState.value
+        val gender = genderState.value
+
+        viewModelScope.launch {
+            try {
+                userRepository.updateProfile(ProfileModel(
+                    id = userId,
+                    username = login,
+                    avatarLink = avatarUrl,
+                    email = email,
+                    name = name,
+                    birthday = birthday.atStartOfDay().format(FORMATTER),
+                    gender = gender.ordinal - 1
+                ))
+                onSuccess.invoke()
+            }
+            catch (e: AuthorizationException) {
+                // TODO перенаправлять на авторизацию
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                // TODO возможно сделать более широкую обработку ошибок
+            }
+        }
     }
 
-    fun logout(
+    fun onLogout(
         onSuccess: () -> Unit,
     ) {
         viewModelScope.launch {
             try {
                 authenticationRepository.logout()
                 onSuccess.invoke()
-            } catch (_: Exception) { // TODO возможно сделать более широкую обработку ошибок
-                onSuccess.invoke() // TODO пока заглушка
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                // TODO возможно сделать более широкую обработку ошибок
             }
         }
     }
@@ -107,7 +151,6 @@ class ProfileViewModel(
         _canSaveState.value = loginState.value.isNotBlank()
                 && emailState.value.isNotBlank()
                 && nameState.value.isNotBlank()
-                && birthdayState.value != null
                 && genderState.value != Gender.NONE
     }
 }

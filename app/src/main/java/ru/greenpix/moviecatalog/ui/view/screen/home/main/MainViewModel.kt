@@ -10,6 +10,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
+import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainFavorite
@@ -35,18 +36,27 @@ class MainViewModel(
     }.flow.cachedIn(viewModelScope)
 
     suspend fun load() {
-        if (loadState.value == ViewState.LOADED) {
-            return
-        }
-        _loadState.value = ViewState.LOADING
-        _favoritesState.clear()
+        try {
+            if (loadState.value == ViewState.LOADED) {
+                return
+            }
+            _loadState.value = ViewState.LOADING
+            _favoritesState.clear()
 
-        _favoritesState.putAll(
-            favoriteRepository.getAllFavoriteMovies()
-                .associateBy { it.id }
-                .mapValues { MainFavorite(imageUrl = it.value.poster ?: "") }
-        )
-        _loadState.value = ViewState.LOADED
+            _favoritesState.putAll(
+                favoriteRepository.getAllFavoriteMovies()
+                    .associateBy { it.id }
+                    .mapValues { MainFavorite(imageUrl = it.value.poster ?: "") }
+            )
+            _loadState.value = ViewState.LOADED
+        }
+        catch (e: AuthorizationException) {
+            // TODO перенаправляем на экран авторизации
+        }
+        catch (e: Exception) {
+            e.printStackTrace()
+            // TODO надо бы сделать обработку ошибок
+        }
     }
 
     fun onDeleteFavorite(movieId: String) {

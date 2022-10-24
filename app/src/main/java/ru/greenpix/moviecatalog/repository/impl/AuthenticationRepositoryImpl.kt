@@ -22,7 +22,7 @@ class AuthenticationRepositoryImpl(
 ) : AuthenticationRepository {
 
     private companion object {
-        val FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         const val DUPLICATE_USER_NAME = "DuplicateUserName"
     }
 
@@ -45,7 +45,7 @@ class AuthenticationRepositoryImpl(
                 name = name,
                 password = password,
                 birthday = birthday.atStartOfDay().format(FORMATTER),
-                gender = gender.ordinal
+                gender = gender.ordinal - 1
             ))
             jwtRepository.saveToken(jwt.token)
         }

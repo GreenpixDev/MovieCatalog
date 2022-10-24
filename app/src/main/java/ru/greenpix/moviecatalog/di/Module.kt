@@ -11,17 +11,12 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.repository.AuthenticationRepository
-import ru.greenpix.moviecatalog.repository.FavoriteRepository
-import ru.greenpix.moviecatalog.repository.JwtRepository
-import ru.greenpix.moviecatalog.repository.MovieRepository
-import ru.greenpix.moviecatalog.repository.impl.AuthenticationRepositoryImpl
-import ru.greenpix.moviecatalog.repository.impl.FavoriteRepositoryImpl
-import ru.greenpix.moviecatalog.repository.impl.JwtRepositoryImpl
-import ru.greenpix.moviecatalog.repository.impl.MovieRepositoryImpl
+import ru.greenpix.moviecatalog.repository.*
+import ru.greenpix.moviecatalog.repository.impl.*
 import ru.greenpix.moviecatalog.retrofit.AuthenticationApi
 import ru.greenpix.moviecatalog.retrofit.FavoriteApi
 import ru.greenpix.moviecatalog.retrofit.MovieApi
+import ru.greenpix.moviecatalog.retrofit.UserApi
 import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signin.SignInViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.auth.signup.SignUpViewModel
@@ -43,11 +38,13 @@ val appModule = module {
     retrofitOf<AuthenticationApi>()
     retrofitOf<MovieApi>()
     retrofitOf<FavoriteApi>()
+    retrofitOf<UserApi>()
 
     singleOf(::JwtRepositoryImpl) { bind<JwtRepository>() }
     singleOf(::AuthenticationRepositoryImpl) { bind<AuthenticationRepository>() }
     singleOf(::MovieRepositoryImpl) { bind<MovieRepository>() }
     singleOf(::FavoriteRepositoryImpl) { bind<FavoriteRepository>() }
+    singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
 
     singleOf(::AuthorizeUseCaseImpl) { bind<AuthorizationUseCase>() }
 

@@ -60,10 +60,10 @@ fun ProfileScreen(
             onBirthdayChange = viewModel::onBirthdayChange,
             onGenderChange = viewModel::onGenderChange,
             onSave = {
-                viewModel.save { router.routeTo(Screen.Home) } // TODO изменить навигацию
+                viewModel.onSave { router.routeTo(Screen.Home) } // TODO изменить навигацию
             },
             onLogout = {
-                viewModel.logout { router.routeTo(Screen.Auth) } // TODO изменить навигацию
+                viewModel.onLogout { router.routeTo(Screen.Auth) } // TODO изменить навигацию
             }
         )
     }
@@ -79,7 +79,7 @@ fun ProfileContent(
     email: String,
     avatarUrl: String,
     name: String,
-    birthday: LocalDate?,
+    birthday: LocalDate,
     gender: Gender,
     canSave: Boolean,
     onEmailChange: (String) -> Unit,
@@ -154,7 +154,7 @@ private fun ColumnScope.ProfileFieldsView(
     email: String,
     avatarUrl: String,
     name: String,
-    birthday: LocalDate?,
+    birthday: LocalDate,
     gender: Gender,
     onEmailChange: (String) -> Unit,
     onAvatarUrlChange: (String) -> Unit,
@@ -253,7 +253,7 @@ private fun ProfileScreenPreview() {
                 email = "",
                 avatarUrl = "",
                 name = "",
-                birthday = null,
+                birthday = LocalDate.MIN,
                 gender = Gender.FEMALE,
                 canSave = false,
                 onEmailChange = {},
