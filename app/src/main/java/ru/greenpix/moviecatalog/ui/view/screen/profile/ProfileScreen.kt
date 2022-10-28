@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.home.profile
+package ru.greenpix.moviecatalog.ui.view.screen.profile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.view.shared.*
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
@@ -29,7 +27,8 @@ import java.time.LocalDate
 
 @Composable
 fun ProfileScreen(
-    router: Router = Router(),
+    onBack: () -> Unit,
+    onDirectToSignIn: () -> Unit,
     viewModel: ProfileViewModel = getViewModel()
 ) {
     val loadState by remember { viewModel.loadState }
@@ -60,10 +59,10 @@ fun ProfileScreen(
             onBirthdayChange = viewModel::onBirthdayChange,
             onGenderChange = viewModel::onGenderChange,
             onSave = {
-                viewModel.onSave { router.routeTo(Screen.Home) } // TODO изменить навигацию
+                viewModel.onSave(onSuccess = onBack)
             },
             onLogout = {
-                viewModel.onLogout { router.routeTo(Screen.Auth) } // TODO изменить навигацию
+                viewModel.onLogout(onSuccess = onDirectToSignIn)
             }
         )
     }

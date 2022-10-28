@@ -30,8 +30,6 @@ import coil.compose.AsyncImage
 import com.google.accompanist.flowlayout.FlowRow
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.firstItemScrollProgress
 import ru.greenpix.moviecatalog.ui.util.roundedAtBottom
@@ -47,7 +45,7 @@ private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
 
 @Composable
 fun MovieScreen(
-    router: Router = Router(),
+    onBack: () -> Unit,
     movieId: String = "b6c5228b-91fb-43a1-a2ac-08d9b9f3d2a2", // TODO убрать значение по умолчанию
     isFavorite: Boolean = false, // TODO убрать значение по умолчанию
     viewModel: MovieViewModel = getViewModel()
@@ -91,7 +89,7 @@ fun MovieScreen(
             genres = genres,
             myReview = myReview,
             otherReviews = otherReviews,
-            onBack = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
+            onBack = onBack,
             onToggleFavorite = viewModel::onToggleFavorite,
             onAddReview = { openDialog = true },
             onEditReview = { openDialog = true },

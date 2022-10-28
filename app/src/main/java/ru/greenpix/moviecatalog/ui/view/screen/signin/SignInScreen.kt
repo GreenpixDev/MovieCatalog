@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.auth.signin
+package ru.greenpix.moviecatalog.ui.view.screen.signin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,6 +7,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -16,17 +17,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
-import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
-import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
-import ru.greenpix.moviecatalog.ui.view.shared.StyledErrorText
-import ru.greenpix.moviecatalog.ui.view.shared.StyledTextField
+import ru.greenpix.moviecatalog.ui.view.shared.*
 
 @Composable
 fun SignInScreen(
-    router: Router = Router(),
+    onSuccessSignIn: () -> Unit,
+    onDirectToSignUp: () -> Unit,
     viewModel: SignInViewModel = getViewModel()
 ) {
     val viewState by remember { viewModel.viewState }
@@ -42,11 +39,9 @@ fun SignInScreen(
         onLoginChange = viewModel::onLoginChange,
         onPasswordChange = viewModel::onPasswordChange,
         onSignInClick = {
-            viewModel.onSignIn(
-                onSuccess = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
-            )
+            viewModel.onSignIn(onSuccess = onSuccessSignIn)
         },
-        onGoToSignUpClick = { router.routeTo(Screen.Auth.SignUp) } // TODO изменить навигацию
+        onGoToSignUpClick = onDirectToSignUp
     )
 }
 
@@ -64,8 +59,15 @@ private fun SignInContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .statusBarsPadding(),
     ) {
+        MovieCatalogLogo(
+            scaled = true,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 16.dp)
+        )
         Spacer(modifier = Modifier.height(32.dp))
         StyledTextField(
             value = login,

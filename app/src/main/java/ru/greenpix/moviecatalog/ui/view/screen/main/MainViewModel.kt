@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.home.main
+package ru.greenpix.moviecatalog.ui.view.screen.main
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainFavorite
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainMovie
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.paging.MoviePagingSource
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainFavorite
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.view.screen.main.paging.MoviePagingSource
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 
 class MainViewModel(

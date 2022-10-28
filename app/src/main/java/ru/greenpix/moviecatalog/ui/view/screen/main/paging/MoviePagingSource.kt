@@ -1,9 +1,9 @@
-package ru.greenpix.moviecatalog.ui.view.screen.home.main.paging
+package ru.greenpix.moviecatalog.ui.view.screen.main.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import ru.greenpix.moviecatalog.repository.MovieRepository
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainMovie
 
 class MoviePagingSource(
     private val movieRepository: MovieRepository

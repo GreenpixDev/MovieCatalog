@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.auth.signup
+package ru.greenpix.moviecatalog.ui.view.screen.signup
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -19,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.H1
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
@@ -29,7 +28,8 @@ import java.time.LocalDate
 
 @Composable
 fun SignUpScreen(
-    router: Router = Router(),
+    onSuccessSignUp: () -> Unit,
+    onDirectToSignIn: () -> Unit,
     viewModel: SignUpViewModel = getViewModel()
 ) {
     val viewState by remember { viewModel.viewState }
@@ -60,11 +60,9 @@ fun SignUpScreen(
         onBirthdayChange = viewModel::onBirthdayChange,
         onGenderChange = viewModel::onGenderChange,
         onSignUpClick = {
-            viewModel.onSignUp(
-                onSuccess = { router.routeTo(Screen.Home) } // TODO изменить навигацию
-            )
+            viewModel.onSignUp(onSuccess = onSuccessSignUp)
         },
-        onGoToSignInClick = { router.routeTo(Screen.Auth.SignIn) } // TODO изменить навигацию
+        onGoToSignInClick = onDirectToSignIn
     )
 }
 
@@ -92,8 +90,15 @@ private fun SignUpContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .statusBarsPadding(),
     ) {
+        MovieCatalogLogo(
+            scaled = false,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 16.dp)
+        )
         Text(
             text = stringResource(R.string.registration),
             style = H1,

@@ -10,19 +10,16 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import ru.greenpix.moviecatalog.di.appModule
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.RouterHost
-import ru.greenpix.moviecatalog.ui.navigation.Screen
+import ru.greenpix.moviecatalog.ui.navigation.Destination
+import ru.greenpix.moviecatalog.ui.navigation.view.RootNavHost
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
-import ru.greenpix.moviecatalog.ui.view.screen.auth.AuthScreen
-import ru.greenpix.moviecatalog.ui.view.screen.home.HomeScreen
-import ru.greenpix.moviecatalog.ui.view.screen.movie.MovieScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,20 +50,19 @@ class MainActivity : ComponentActivity() {
 private fun ActivityScreen(
     authenticated: Boolean
 ) {
-    val router = Router()
+    val navController = rememberNavController()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
-        RouterHost(
-            router = router,
-            startDestination = if (authenticated) Screen.Home else Screen.Auth,
-            screens = mapOf(
-                Screen.Auth to { AuthScreen(it) },
-                Screen.Home to { HomeScreen(it) },
-                Screen.Movie to { MovieScreen(it) }
-            )
+        RootNavHost(
+            navController = navController,
+            startDestination = if (authenticated) {
+                Destination.Main.route
+            } else {
+                Destination.SignIn.route
+            }
         )
     }
 }

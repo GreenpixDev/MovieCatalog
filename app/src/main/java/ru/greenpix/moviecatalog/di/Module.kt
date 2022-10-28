@@ -18,11 +18,11 @@ import ru.greenpix.moviecatalog.retrofit.FavoriteApi
 import ru.greenpix.moviecatalog.retrofit.MovieApi
 import ru.greenpix.moviecatalog.retrofit.UserApi
 import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewViewModel
-import ru.greenpix.moviecatalog.ui.view.screen.auth.signin.SignInViewModel
-import ru.greenpix.moviecatalog.ui.view.screen.auth.signup.SignUpViewModel
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.MainViewModel
-import ru.greenpix.moviecatalog.ui.view.screen.home.profile.ProfileViewModel
+import ru.greenpix.moviecatalog.ui.view.screen.main.MainViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.movie.MovieViewModel
+import ru.greenpix.moviecatalog.ui.view.screen.profile.ProfileViewModel
+import ru.greenpix.moviecatalog.ui.view.screen.signin.SignInViewModel
+import ru.greenpix.moviecatalog.ui.view.screen.signup.SignUpViewModel
 import ru.greenpix.moviecatalog.usecase.AuthorizationUseCase
 import ru.greenpix.moviecatalog.usecase.impl.AuthorizeUseCaseImpl
 
