@@ -304,8 +304,7 @@ private fun HeaderView(
             Row(
                 modifier = Modifier
                     .height(56.dp)
-                    .padding(horizontal = 16.dp)
-                    .padding(start = 32.dp),
+                    .padding(start = 52.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -315,30 +314,37 @@ private fun HeaderView(
                     color = BrightWhite,
                     modifier = Modifier.weight(1f)
                 )
-                Image(
-                    painter = if (favorite) {
-                        painterResource(R.drawable.ic_filled_heart)
-                    } else {
-                        painterResource(R.drawable.ic_empty_heart)
-                    },
-                    contentDescription = null,
+                Box(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .clickable(onClick = onToggleFavorite)
-                )
+                        .clickable(onClick = onBack)
+                ) {
+                    Image(
+                        painter = if (favorite) {
+                            painterResource(R.drawable.ic_filled_heart)
+                        } else {
+                            painterResource(R.drawable.ic_empty_heart)
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
         }
     }
 
-    Image(
-        painter = painterResource(R.drawable.ic_arrow_back),
-        contentDescription = null,
+    Box(
         modifier = Modifier
             .statusBarsPadding()
-            .padding(16.dp)
             .clip(CircleShape)
             .clickable(onClick = onBack)
-    )
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_back),
+            contentDescription = null,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Composable

@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -278,13 +279,22 @@ private fun FavoriteView(
             // Крестик
             Row {
                 Spacer(modifier = Modifier.weight(1f))
-                Image(
-                    painter = painterResource(R.drawable.ic_cross),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clickable(onClick = onDelete)
-                )
+                Box(modifier = Modifier
+                    .clickable(onClick = onDelete)
+                    .clip(CircleShape)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_cross),
+                        contentDescription = null,
+                        modifier = Modifier.padding(
+                            // Такие падинги для того, чтобы пользователю легко было кликать по крестику
+                            top = 4.dp,
+                            bottom = 16.dp,
+                            end = 4.dp,
+                            start = 16.dp
+                        )
+                    )
+                }
             }
         }
     }
