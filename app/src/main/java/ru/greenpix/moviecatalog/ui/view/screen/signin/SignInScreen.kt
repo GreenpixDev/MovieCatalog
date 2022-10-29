@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.auth.signin
+package ru.greenpix.moviecatalog.ui.view.screen.signin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,17 +16,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
-import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
-import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
-import ru.greenpix.moviecatalog.ui.view.shared.StyledErrorText
-import ru.greenpix.moviecatalog.ui.view.shared.StyledTextField
+import ru.greenpix.moviecatalog.ui.view.shared.*
 
 @Composable
 fun SignInScreen(
-    router: Router = Router(),
+    animateLogo: Boolean = true,
+    onSuccessSignIn: () -> Unit,
+    onDirectToSignUp: () -> Unit,
     viewModel: SignInViewModel = getViewModel()
 ) {
     val viewState by remember { viewModel.viewState }
@@ -35,6 +32,7 @@ fun SignInScreen(
     val canSignIn by remember { viewModel.canSignInState }
 
     SignInContent(
+        animateLogo = animateLogo,
         viewState = viewState,
         login = login,
         password = password,
@@ -42,16 +40,15 @@ fun SignInScreen(
         onLoginChange = viewModel::onLoginChange,
         onPasswordChange = viewModel::onPasswordChange,
         onSignInClick = {
-            viewModel.onSignIn(
-                onSuccess = { router.routeTo(Screen.Home) }, // TODO изменить навигацию
-            )
+            viewModel.onSignIn(onSuccess = onSuccessSignIn)
         },
-        onGoToSignUpClick = { router.routeTo(Screen.Auth.SignUp) } // TODO изменить навигацию
+        onGoToSignUpClick = onDirectToSignUp
     )
 }
 
 @Composable
 private fun SignInContent(
+    animateLogo: Boolean,
     viewState: SignInViewState,
     login: String,
     password: String,
@@ -61,12 +58,21 @@ private fun SignInContent(
     onSignInClick: () -> Unit,
     onGoToSignUpClick: () -> Unit
 ) {
+    MovieCatalogLogo(
+        animate = animateLogo,
+        scaled = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(top = 32.dp)
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .padding(top = 250.dp)
+            .statusBarsPadding(),
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
         StyledTextField(
             value = login,
             onValueChange = onLoginChange,
@@ -119,6 +125,7 @@ private fun SignInScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             SignInContent(
+                animateLogo = true,
                 viewState = SignInViewState.Default,
                 login = "",
                 password = "",

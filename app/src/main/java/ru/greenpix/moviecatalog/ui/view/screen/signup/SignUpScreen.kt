@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.auth.signup
+package ru.greenpix.moviecatalog.ui.view.screen.signup
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.H1
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
@@ -29,7 +27,8 @@ import java.time.LocalDate
 
 @Composable
 fun SignUpScreen(
-    router: Router = Router(),
+    onSuccessSignUp: () -> Unit,
+    onDirectToSignIn: () -> Unit,
     viewModel: SignUpViewModel = getViewModel()
 ) {
     val viewState by remember { viewModel.viewState }
@@ -60,11 +59,9 @@ fun SignUpScreen(
         onBirthdayChange = viewModel::onBirthdayChange,
         onGenderChange = viewModel::onGenderChange,
         onSignUpClick = {
-            viewModel.onSignUp(
-                onSuccess = { router.routeTo(Screen.Home) } // TODO изменить навигацию
-            )
+            viewModel.onSignUp(onSuccess = onSuccessSignUp)
         },
-        onGoToSignInClick = { router.routeTo(Screen.Auth.SignIn) } // TODO изменить навигацию
+        onGoToSignInClick = onDirectToSignIn
     )
 }
 
@@ -89,10 +86,19 @@ private fun SignUpContent(
     onSignUpClick: () -> Unit,
     onGoToSignInClick: () -> Unit
 ) {
+    MovieCatalogLogo(
+        scaled = false,
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(top = 32.dp)
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .padding(top = 148.dp)
+            .statusBarsPadding(),
     ) {
         Text(
             text = stringResource(R.string.registration),

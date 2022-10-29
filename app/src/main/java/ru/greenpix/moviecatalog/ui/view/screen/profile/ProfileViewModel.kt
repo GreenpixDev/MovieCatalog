@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.home.profile
+package ru.greenpix.moviecatalog.ui.view.screen.profile
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

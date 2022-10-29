@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.home.main.model
+package ru.greenpix.moviecatalog.ui.view.screen.main.model
 
 import ru.greenpix.moviecatalog.util.calcHueByRating
 

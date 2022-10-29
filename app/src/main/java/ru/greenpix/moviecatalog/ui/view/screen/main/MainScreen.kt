@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.home.main
+package ru.greenpix.moviecatalog.ui.view.screen.main
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
@@ -37,12 +37,10 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.flow
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
-import ru.greenpix.moviecatalog.ui.navigation.Router
-import ru.greenpix.moviecatalog.ui.navigation.Screen
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.*
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainFavorite
-import ru.greenpix.moviecatalog.ui.view.screen.home.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainFavorite
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainMovie
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
@@ -50,7 +48,7 @@ import ru.greenpix.moviecatalog.util.format
 
 @Composable
 fun MainScreen(
-    router: Router = Router(),
+    onDirectToMovie: (String) -> Unit,
     viewModel: MainViewModel = getViewModel()
 ) {
     val loadState by remember { viewModel.loadState }
@@ -69,7 +67,7 @@ fun MainScreen(
             MainContent(
                 favorites = favorites,
                 gallery = gallery,
-                onGoToMovie = { router.routeTo(Screen.Movie) }, // TODO изменить навигацию
+                onGoToMovie = onDirectToMovie,
                 onDeleteFavorite = viewModel::onDeleteFavorite
             )
         }

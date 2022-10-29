@@ -35,10 +35,10 @@ import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
 
 @Composable
 fun ReviewDialog(
+    initComment: String = "",
+    initRating: Int = 0,
+    initAnonymous: Boolean = false,
     onDismissRequest: () -> Unit,
-    initComment: String,
-    initRating: Int,
-    initAnonymous: Boolean,
     properties: DialogProperties = DialogProperties(),
     viewModel: ReviewViewModel = getViewModel()
 ) {
