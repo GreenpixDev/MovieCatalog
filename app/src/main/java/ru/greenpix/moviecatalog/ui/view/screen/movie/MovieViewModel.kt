@@ -5,18 +5,26 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import ru.greenpix.moviecatalog.domain.ReviewModel
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
+import ru.greenpix.moviecatalog.repository.JwtRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
+import ru.greenpix.moviecatalog.repository.ReviewRepository
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
+import ru.greenpix.moviecatalog.util.decodeJwt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class MovieViewModel(
     private val movieRepository: MovieRepository,
-    private val favoriteRepository: FavoriteRepository
+    private val favoriteRepository: FavoriteRepository,
+    private val reviewRepository: ReviewRepository,
+    private val jwtRepository: JwtRepository,
+    private val gson: Gson
 ) : ViewModel() {
 
     // TODO ОДНОЗНАЧНО ПЕРЕДЕЛАТЬ! СДЕЛАТЬ ОТДЕЛЬНЫЕ МОДЕЛИ ДЛЯ РЕТРОФИТА, РЕПОЗИТОРИЯ И ВЬЮШЕК!
@@ -86,6 +94,10 @@ class MovieViewModel(
         this.movieId = movieId
 
         val movie = movieRepository.getDetails(movieId)
+        val rawToken = jwtRepository.getToken()
+        checkNotNull(rawToken) {"jwt token cannot be null"}
+        val uniqueName = gson.decodeJwt(rawToken).uniqueName
+
         _favoriteState.value = isFavorite
         _nameState.value = movie.name ?: ""
         _movieImageUrlState.value = movie.poster ?: ""
@@ -99,34 +111,18 @@ class MovieViewModel(
         _feesState.value = movie.fees ?: -1
         _ageState.value = movie.ageLimit
         _genresState.addAll(movie.genres.mapNotNull { it.name })
-        _myReviewState.value = MovieReview(
-            author = "Роман",
-            anonymous = false,
-            avatarUrl = "https://chudo-prirody.com/uploads/posts/2021-08/thumbs/1628944329_99-p-smeshnie-foto-kotikov-na-avu-102.jpg",
-            comment = "Сразу скажу, что фильм мне понравился. Люблю Фримэна, уважаю Роббинса. Читаю Кинга. Но рецензия красненькая.",
-            date = "07.10.2022",
-            rating = 1
-        )
-        _otherReviewsState.addAll(
-            movie.reviews.map { review ->
-                MovieReview(
-                    author = review.author?.nickName ?: "",
-                    avatarUrl = review.author?.avatar ?: "",
-                    comment = review.reviewText ?: "",
-                    anonymous = review.isAnonymous,
-                    date = LocalDateTime
-                        .parse(review.createDateTime)
-                        .toLocalDate()
-                        .format(VIEW_FORMATTER),
-                    rating = review.rating
-                )
-            }
+        _myReviewState.value = movie.reviews
+            .find { it.author.nickName == uniqueName }
+            ?.let { parseModel(it) }
+        _otherReviewsState.addAll(movie.reviews
+            .filter { it.author.nickName != uniqueName }
+            .map { parseModel(it) }
         )
         _loadState.value = ViewState.LOADED
     }
 
     fun onToggleFavorite() = viewModelScope.launch {
-        val newStatus = !_favoriteState.value
+        val newStatus = !favoriteState.value
         try {
             if (newStatus) {
                 favoriteRepository.addFavoriteMovie(movieId)
@@ -146,7 +142,36 @@ class MovieViewModel(
     }
 
     fun onDeleteReview() {
-        // TODO запрос к репозиторию
-        _myReviewState.value = null
+        val reviewId = myReviewState.value?.id ?: return
+
+        viewModelScope.launch {
+            try {
+                reviewRepository.deleteReview(movieId, reviewId)
+                _myReviewState.value = null
+            }
+            catch (e: AuthorizationException) {
+                // TODO перенаправляем на экран авторизации
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                // TODO надо бы сделать обработку ошибок
+            }
+        }
+    }
+
+    // TODO думаю viewmodel не лучшое место для парсинга
+    private fun parseModel(review: ReviewModel): MovieReview {
+        return MovieReview(
+            id = review.id,
+            author = review.author.nickName ?: "",
+            avatarUrl = review.author.avatar ?: "",
+            comment = review.reviewText ?: "",
+            anonymous = review.isAnonymous,
+            date = LocalDateTime
+                .parse(review.createDateTime)
+                .toLocalDate()
+                .format(VIEW_FORMATTER),
+            rating = review.rating
+        )
     }
 }

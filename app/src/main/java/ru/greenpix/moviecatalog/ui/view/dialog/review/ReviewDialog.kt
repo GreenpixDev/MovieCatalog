@@ -35,9 +35,11 @@ import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
 
 @Composable
 fun ReviewDialog(
-    initComment: String = "",
-    initRating: Int = 0,
-    initAnonymous: Boolean = false,
+    movieId: String,
+    reviewId: String?,
+    initComment: String,
+    initRating: Int,
+    initAnonymous: Boolean,
     onDismissRequest: () -> Unit,
     properties: DialogProperties = DialogProperties(),
     viewModel: ReviewViewModel = getViewModel()
@@ -59,8 +61,7 @@ fun ReviewDialog(
             onRatingChange = viewModel::onRatingChange,
             onSave = {
                 viewModel.onSave(
-                    onSuccess = onDismissRequest,
-                    onError = { /*TODO*/ }
+                    onSuccess = onDismissRequest
                 )
             },
             onCancel = onDismissRequest
@@ -69,6 +70,8 @@ fun ReviewDialog(
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.load(
+            movieId = movieId,
+            reviewId = reviewId,
             comment = initComment,
             rating = initRating,
             anonymous = initAnonymous
