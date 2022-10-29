@@ -19,5 +19,5 @@ data class ReviewModel(
     val createDateTime: String,
 
     @SerializedName("author")
-    val author: UserShortModel
+    val author: UserShortModel?
 )

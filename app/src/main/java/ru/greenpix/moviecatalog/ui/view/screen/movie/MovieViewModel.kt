@@ -110,8 +110,8 @@ class MovieViewModel(
         _otherReviewsState.addAll(
             movie.reviews.map { review ->
                 MovieReview(
-                    author = review.author.nickName ?: "",
-                    avatarUrl = review.author.avatar ?: "",
+                    author = review.author?.nickName ?: "",
+                    avatarUrl = review.author?.avatar ?: "",
                     comment = review.reviewText ?: "",
                     anonymous = review.isAnonymous,
                     date = LocalDateTime

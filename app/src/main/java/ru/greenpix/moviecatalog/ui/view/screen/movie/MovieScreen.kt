@@ -14,7 +14,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +36,6 @@ import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.firstItemScrollProgress
 import ru.greenpix.moviecatalog.ui.util.roundedAtBottom
-import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewDialog
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.shared.Avatar
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
@@ -46,11 +48,12 @@ private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
 @Composable
 fun MovieScreen(
     onBack: () -> Unit,
+    onAddReview: () -> Unit,
+    onEditReview: (comment: String, rating: Int, isAnonymous: Boolean) -> Unit,
     movieId: String = "b6c5228b-91fb-43a1-a2ac-08d9b9f3d2a2", // TODO убрать значение по умолчанию
     isFavorite: Boolean = false, // TODO убрать значение по умолчанию
     viewModel: MovieViewModel = getViewModel()
 ) {
-    var openDialog by remember { mutableStateOf(false) }
     val loadState by remember { viewModel.loadState }
     val myReview by remember { viewModel.myReviewState }
 
@@ -91,19 +94,15 @@ fun MovieScreen(
             otherReviews = otherReviews,
             onBack = onBack,
             onToggleFavorite = viewModel::onToggleFavorite,
-            onAddReview = { openDialog = true },
-            onEditReview = { openDialog = true },
+            onAddReview = onAddReview,
+            onEditReview = {
+                onEditReview(
+                    myReview?.comment ?: "",
+                    myReview?.rating ?: 0,
+                    myReview?.anonymous ?: false
+                )
+            },
             onDeleteReview = viewModel::onDeleteReview
-        )
-    }
-
-    // TODO вынести диалог в навигацию
-    if (openDialog) {
-        ReviewDialog(
-            onDismissRequest = { openDialog = false },
-            initAnonymous = myReview?.anonymous ?: false,
-            initComment = myReview?.comment ?: "",
-            initRating = myReview?.rating ?: 0
         )
     }
 

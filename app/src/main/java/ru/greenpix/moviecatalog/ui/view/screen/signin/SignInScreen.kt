@@ -7,7 +7,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -22,6 +21,7 @@ import ru.greenpix.moviecatalog.ui.view.shared.*
 
 @Composable
 fun SignInScreen(
+    animateLogo: Boolean = true,
     onSuccessSignIn: () -> Unit,
     onDirectToSignUp: () -> Unit,
     viewModel: SignInViewModel = getViewModel()
@@ -32,6 +32,7 @@ fun SignInScreen(
     val canSignIn by remember { viewModel.canSignInState }
 
     SignInContent(
+        animateLogo = animateLogo,
         viewState = viewState,
         login = login,
         password = password,
@@ -47,6 +48,7 @@ fun SignInScreen(
 
 @Composable
 private fun SignInContent(
+    animateLogo: Boolean,
     viewState: SignInViewState,
     login: String,
     password: String,
@@ -56,19 +58,21 @@ private fun SignInContent(
     onSignInClick: () -> Unit,
     onGoToSignUpClick: () -> Unit
 ) {
+    MovieCatalogLogo(
+        animate = animateLogo,
+        scaled = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(top = 32.dp)
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .padding(top = 250.dp)
             .statusBarsPadding(),
     ) {
-        MovieCatalogLogo(
-            scaled = true,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(32.dp))
         StyledTextField(
             value = login,
             onValueChange = onLoginChange,
@@ -121,6 +125,7 @@ private fun SignInScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             SignInContent(
+                animateLogo = true,
                 viewState = SignInViewState.Default,
                 login = "",
                 password = "",

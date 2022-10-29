@@ -1,108 +1,172 @@
 package ru.greenpix.moviecatalog.ui.navigation.view
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
-import androidx.navigation.navArgument
 import ru.greenpix.moviecatalog.ui.navigation.Destination
+import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewDialog
 import ru.greenpix.moviecatalog.ui.view.screen.main.MainScreen
 import ru.greenpix.moviecatalog.ui.view.screen.movie.MovieScreen
 import ru.greenpix.moviecatalog.ui.view.screen.profile.ProfileScreen
 import ru.greenpix.moviecatalog.ui.view.screen.signin.SignInScreen
 import ru.greenpix.moviecatalog.ui.view.screen.signup.SignUpScreen
-import ru.greenpix.moviecatalog.ui.view.shared.MainNavigationBar
 
 @Composable
 fun RootNavHost(
     navController: NavHostController,
     startDestination: String
 ) {
-    Scaffold(
-        bottomBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            val isMainNavBarActive = currentDestination?.hierarchy?.any {
-                it.route == Destination.Main.route || it.route == Destination.Profile.route
-            } == true
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        navigationAuth(navController)
+        navigationMain(navController)
+        navigationMovie(navController)
+        navigationReview(navController)
+    }
+}
 
-            if (isMainNavBarActive) {
-                MainNavigationBar(navController = navController)
+private fun NavGraphBuilder.navigationAuth(navController: NavController) {
+    navigation(
+        route = Destination.Auth.route,
+        startDestination = Destination.Auth.SignIn.route
+    ) {
+        composable(route = Destination.Auth.SignIn.route) {
+            SignInScreen(
+                onSuccessSignIn = {
+                    navController.navigate(Destination.Main.buildRoute()) {
+                        popUpTo(Destination.Auth.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onDirectToSignUp = {
+                    navController.navigate(Destination.Auth.SignUp.buildRoute()) {
+                        popUpTo(Destination.Auth.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+        composable(route = Destination.Auth.SignUp.route) {
+            SignUpScreen(
+                onSuccessSignUp = {
+                    navController.navigate(Destination.Main.buildRoute()) {
+                        popUpTo(Destination.Auth.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onDirectToSignIn = {
+                    navController.navigate(Destination.Auth.SignIn.buildRoute()) {
+                        popUpTo(Destination.Auth.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
+}
+
+private fun NavGraphBuilder.navigationMain(navController: NavController) {
+    navigation(
+        route = Destination.Main.route,
+        startDestination = Destination.Main.Gallery.route
+    ) {
+        composable(route = Destination.Main.Gallery.route) {
+            MainNavigationScaffold(navController = navController) {
+                MainScreen(
+                    onDirectToMovie = { movieId ->
+                        navController.navigate(Destination.Movie.buildRoute(movieId, false))
+                    }
+                )
             }
         }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = startDestination
-            ) {
-                composable(route = Destination.SignIn.route) {
-                    SignInScreen(
-                        onSuccessSignIn = {
-                            navController.navigate(Destination.Main.route) // TODO popUp
-                        },
-                        onDirectToSignUp = {
-                            navController.navigate(Destination.SignUp.route)
+        composable(route = Destination.Main.Profile.route) {
+            MainNavigationScaffold(navController = navController) {
+                ProfileScreen(
+                    onBack = { navController.navigateUp() },
+                    onDirectToSignIn = {
+                        navController.navigate(Destination.Auth.buildRoute()) {
+                            popUpTo(Destination.Main.route) {
+                                inclusive = true
+                            }
                         }
-                    )
-                }
-                composable(route = Destination.SignUp.route) {
-                    SignUpScreen(
-                        onSuccessSignUp = {
-                            navController.navigate(Destination.Main.route) // TODO popUp
-                        },
-                        onDirectToSignIn = {
-                            navController.navigate(Destination.SignIn.route)
-                        }
-                    )
-                }
-                composable(route = Destination.Main.route) {
-                    MainScreen(
-                        onDirectToMovie = { movieId ->
-                            navController.navigate(Destination.Movie.buildRoute(movieId))
-                        }
-                    )
-                }
-                composable(route = Destination.Profile.route) {
-                    ProfileScreen(
-                        onBack = { navController.navigateUp() },
-                        onDirectToSignIn = { navController.navigate(Destination.SignIn.route) } // TODO popUp
-                    )
-                }
-                composable(
-                    route = Destination.Movie.route,
-                    arguments = listOf(
-                        navArgument(Destination.Movie.MOVIE_ID) {
-                            type = NavType.StringType
-                        },
-                        navArgument(Destination.Movie.IS_FAVORITE) {
-                            type = NavType.BoolType
-                        }
-                    )
-                ) {
-                    val movieId = it.arguments?.getString(Destination.Movie.MOVIE_ID)
-                    val isFavorite = it.arguments?.getBoolean(Destination.Movie.IS_FAVORITE)
-                    MovieScreen(
-                        movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
-                        isFavorite = checkNotNull(isFavorite) { "Required value 'isFavorite' was null." },
-                        onBack = { navController.navigateUp() }
-                    )
-                }
-                dialog(route = Destination.Review.route) {
-                    // TODO
-                }
+                    }
+                )
             }
+        }
+    }
+}
+
+private fun NavGraphBuilder.navigationMovie(navController: NavController) {
+    composable(
+        route = Destination.Movie.route,
+        arguments = listOf(
+            navArgument(Destination.Movie.MOVIE_ID) {
+                type = NavType.StringType
+            },
+            navArgument(Destination.Movie.IS_FAVORITE) {
+                type = NavType.BoolType
+            }
+        )
+    ) {
+        val movieId = it.arguments?.getString(Destination.Movie.MOVIE_ID)
+        val isFavorite = it.arguments?.getBoolean(Destination.Movie.IS_FAVORITE)
+        MovieScreen(
+            movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
+            isFavorite = checkNotNull(isFavorite) { "Required value 'isFavorite' was null." },
+            onBack = { navController.navigateUp() },
+            onAddReview = { navController.navigate(Destination.Review.Add.buildRoute()) },
+            onEditReview = { comment, rating, isAnonymous ->
+                navController.navigate(Destination.Review.Edit.buildRoute(comment, rating, isAnonymous))
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.navigationReview(navController: NavController) {
+    navigation(
+        route = Destination.Review.route,
+        startDestination = Destination.Review.Add.route
+    ) {
+        dialog(route = Destination.Review.Add.route) {
+            ReviewDialog(
+                onDismissRequest = { navController.navigateUp() }
+            )
+        }
+        dialog(
+            route = Destination.Review.Edit.route,
+            arguments = listOf(
+                navArgument(Destination.Review.Edit.COMMENT) {
+                    type = NavType.StringType
+                },
+                navArgument(Destination.Review.Edit.RATING) {
+                    type = NavType.IntType
+                },
+                navArgument(Destination.Review.Edit.IS_ANONYMOUS) {
+                    type = NavType.BoolType
+                }
+            )
+        ) {
+            val comment = it.arguments?.getString(Destination.Review.Edit.COMMENT)
+            val rating = it.arguments?.getInt(Destination.Review.Edit.RATING)
+            val isAnonymous = it.arguments?.getBoolean(Destination.Review.Edit.IS_ANONYMOUS)
+            ReviewDialog(
+                initComment = checkNotNull(comment) { "Required value 'comment' was null." },
+                initRating = checkNotNull(rating) { "Required value 'rating' was null." },
+                initAnonymous = checkNotNull(isAnonymous) { "Required value 'isAnonymous' was null." },
+                onDismissRequest = { navController.navigateUp() }
+            )
         }
     }
 }

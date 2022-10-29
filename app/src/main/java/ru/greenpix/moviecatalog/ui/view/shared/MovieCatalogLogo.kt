@@ -3,6 +3,7 @@ package ru.greenpix.moviecatalog.ui.view.shared
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,15 +14,16 @@ import ru.greenpix.moviecatalog.R
 
 @Composable
 fun MovieCatalogLogo(
-    visibleState: MutableState<Boolean> = remember { mutableStateOf(false) },
+    animate: Boolean = true,
     scaled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val logoWidth by animateDpAsState(if (visibleState.value == scaled) 250.dp else 147.41.dp)
-    val logoHeight by animateDpAsState(if (visibleState.value == scaled) 170.dp else 100.dp)
+    var visible by remember { mutableStateOf(false) }
+    val logoWidth by animateDpAsState(if (visible == scaled) 250.dp else 147.41.dp)
+    val logoHeight by animateDpAsState(if (visible == scaled) 170.dp else 100.dp)
 
     Box(
-        modifier = modifier.size(250.dp, 170.dp),
+        modifier = modifier.height(170.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         Image(
@@ -31,7 +33,9 @@ fun MovieCatalogLogo(
         )
     }
 
-    LaunchedEffect(key1 = Unit, block = {
-        visibleState.value = true
-    })
+    if (animate) {
+        LaunchedEffect(key1 = Unit, block = {
+            visible = true
+        })
+    }
 }

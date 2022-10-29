@@ -9,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -87,18 +86,20 @@ private fun SignUpContent(
     onSignUpClick: () -> Unit,
     onGoToSignInClick: () -> Unit
 ) {
+    MovieCatalogLogo(
+        scaled = false,
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(top = 32.dp)
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .padding(top = 148.dp)
             .statusBarsPadding(),
     ) {
-        MovieCatalogLogo(
-            scaled = false,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 16.dp)
-        )
         Text(
             text = stringResource(R.string.registration),
             style = H1,

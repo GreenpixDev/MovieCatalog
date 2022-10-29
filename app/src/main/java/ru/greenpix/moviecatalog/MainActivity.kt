@@ -61,7 +61,7 @@ private fun ActivityScreen(
             startDestination = if (authenticated) {
                 Destination.Main.route
             } else {
-                Destination.SignIn.route
+                Destination.Auth.route
             }
         )
     }

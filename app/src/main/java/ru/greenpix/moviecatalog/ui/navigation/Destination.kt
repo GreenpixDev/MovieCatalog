@@ -12,7 +12,7 @@ sealed class Destination(
         buildString {
             append(dest)
             args().forEach {
-                append("/$it")
+                append("/{$it}")
             }
         }
     }
@@ -26,15 +26,27 @@ sealed class Destination(
         }
     }
 
-    object SignIn: Destination("sign-in")
-    object SignUp: Destination("sign-up")
-    object Main: Destination()
-    object Profile: Destination()
+    object Auth : Destination() {
+        object SignIn: Destination("sign-in")
+        object SignUp: Destination("sign-up")
+    }
+    object Main : Destination() {
+        object Gallery: Destination()
+        object Profile: Destination()
+    }
     object Movie: Destination() {
         const val MOVIE_ID = "movieId"
         const val IS_FAVORITE = "isFavorite"
         override fun args(): List<String> = listOf(MOVIE_ID, IS_FAVORITE)
     }
-    object Review: Destination()
+    object Review : Destination() {
+        object Add : Destination()
+        object Edit : Destination() {
+            const val COMMENT = "comment"
+            const val RATING = "rating"
+            const val IS_ANONYMOUS = "isAnonymous"
+            override fun args(): List<String> = listOf(COMMENT, RATING, IS_ANONYMOUS)
+        }
+    }
 
 }

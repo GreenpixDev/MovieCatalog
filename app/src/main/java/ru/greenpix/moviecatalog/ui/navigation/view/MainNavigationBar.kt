@@ -1,12 +1,10 @@
-package ru.greenpix.moviecatalog.ui.view.shared
+package ru.greenpix.moviecatalog.ui.navigation.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -17,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.navigation.Destination
@@ -25,6 +22,22 @@ import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.Footnote
 import ru.greenpix.moviecatalog.ui.theme.GrayBokara
 import ru.greenpix.moviecatalog.ui.theme.GraySilver
+
+@Composable
+fun MainNavigationScaffold(
+    navController: NavController,
+    content: @Composable () -> Unit
+) {
+    Scaffold(
+        bottomBar = {
+            MainNavigationBar(navController = navController)
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            content.invoke()
+        }
+    }
+}
 
 @Composable
 fun MainNavigationBar(
@@ -35,13 +48,13 @@ fun MainNavigationBar(
     ) {
         MainNavigationItem(
             navController = navController,
-            route = Destination.Main.route,
+            route = Destination.Main.Gallery.route,
             painter = painterResource(id = R.drawable.ic_movie_gallery),
             text = stringResource(id = R.string.main),
         )
         MainNavigationItem(
             navController = navController,
-            route = Destination.Profile.route,
+            route = Destination.Main.Profile.route,
             painter = painterResource(id = R.drawable.ic_profile),
             text = stringResource(id = R.string.profile),
         )
@@ -81,7 +94,7 @@ private fun RowScope.MainNavigationItem(
         unselectedContentColor = GraySilver,
         onClick = {
             navController.navigate(route) {
-                popUpTo(navController.graph.findStartDestination().id) {
+                popUpTo(Destination.Main.route) {
                     saveState = true
                 }
                 launchSingleTop = true
