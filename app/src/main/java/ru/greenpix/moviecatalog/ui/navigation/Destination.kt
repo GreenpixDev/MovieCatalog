@@ -40,12 +40,17 @@ sealed class Destination(
         override fun args(): List<String> = listOf(MOVIE_ID, IS_FAVORITE)
     }
     object Review : Destination() {
-        object Add : Destination()
+        object Add : Destination() {
+            const val MOVIE_ID = "movieId"
+            override fun args(): List<String> = listOf(MOVIE_ID)
+        }
         object Edit : Destination() {
+            const val MOVIE_ID = "movieId"
+            const val REVIEW_ID = "reviewId"
             const val COMMENT = "comment"
             const val RATING = "rating"
             const val IS_ANONYMOUS = "isAnonymous"
-            override fun args(): List<String> = listOf(COMMENT, RATING, IS_ANONYMOUS)
+            override fun args(): List<String> = listOf(MOVIE_ID, REVIEW_ID, COMMENT, RATING, IS_ANONYMOUS)
         }
     }
 

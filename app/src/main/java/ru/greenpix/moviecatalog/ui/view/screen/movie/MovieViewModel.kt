@@ -112,10 +112,10 @@ class MovieViewModel(
         _ageState.value = movie.ageLimit
         _genresState.addAll(movie.genres.mapNotNull { it.name })
         _myReviewState.value = movie.reviews
-            .find { it.author.nickName == uniqueName }
+            .find { it.author?.nickName == uniqueName }
             ?.let { parseModel(it) }
         _otherReviewsState.addAll(movie.reviews
-            .filter { it.author.nickName != uniqueName }
+            .filter { it.author?.nickName != uniqueName }
             .map { parseModel(it) }
         )
         _loadState.value = ViewState.LOADED
@@ -163,8 +163,8 @@ class MovieViewModel(
     private fun parseModel(review: ReviewModel): MovieReview {
         return MovieReview(
             id = review.id,
-            author = review.author.nickName ?: "",
-            avatarUrl = review.author.avatar ?: "",
+            author = review.author?.nickName ?: "",
+            avatarUrl = review.author?.avatar ?: "",
             comment = review.reviewText ?: "",
             anonymous = review.isAnonymous,
             date = LocalDateTime

@@ -48,7 +48,7 @@ import ru.greenpix.moviecatalog.util.format
 
 @Composable
 fun MainScreen(
-    onDirectToMovie: (String) -> Unit,
+    onDirectToMovie: (String, Boolean) -> Unit,
     viewModel: MainViewModel = getViewModel()
 ) {
     val loadState by remember { viewModel.loadState }
@@ -67,7 +67,9 @@ fun MainScreen(
             MainContent(
                 favorites = favorites,
                 gallery = gallery,
-                onGoToMovie = onDirectToMovie,
+                onGoToMovie = {
+                    onDirectToMovie(it, it in favorites)
+                },
                 onDeleteFavorite = viewModel::onDeleteFavorite
             )
         }
@@ -357,7 +359,7 @@ private fun MovieView(
                     modifier = Modifier
                         .size(56.dp, 28.dp)
                         .background(
-                            color = if (rating < 1) {
+                            color = if (rating.isNaN()) {
                                 Gray
                             } else {
                                 Color.hsv(hue, .99f, .67f)
@@ -367,7 +369,7 @@ private fun MovieView(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (rating < 1) {
+                        text = if (rating.isNaN()) {
                             "—"
                         } else {
                             rating.format(1)

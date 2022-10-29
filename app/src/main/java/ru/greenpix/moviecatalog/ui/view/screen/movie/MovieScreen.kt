@@ -48,10 +48,10 @@ private const val WEIGHT_COLUMN_VALUE = 1 - WEIGHT_COLUMN_KEY
 @Composable
 fun MovieScreen(
     onBack: () -> Unit,
-    onAddReview: () -> Unit,
-    onEditReview: (comment: String, rating: Int, isAnonymous: Boolean) -> Unit,
-    movieId: String = "b6c5228b-91fb-43a1-a2ac-08d9b9f3d2a2", // TODO убрать значение по умолчанию
-    isFavorite: Boolean = false, // TODO убрать значение по умолчанию
+    onAddReview: (movieId: String) -> Unit,
+    onEditReview: (movieId: String, reviewId: String, comment: String, rating: Int, isAnonymous: Boolean) -> Unit,
+    movieId: String,
+    isFavorite: Boolean,
     viewModel: MovieViewModel = getViewModel()
 ) {
     val loadState by remember { viewModel.loadState }
@@ -94,13 +94,20 @@ fun MovieScreen(
             otherReviews = otherReviews,
             onBack = onBack,
             onToggleFavorite = viewModel::onToggleFavorite,
-            onAddReview = onAddReview,
+            onAddReview = {
+                onAddReview(movieId)
+            },
             onEditReview = {
-                onEditReview(
-                    myReview?.comment ?: "",
-                    myReview?.rating ?: 0,
-                    myReview?.anonymous ?: false
-                )
+                val review = myReview
+                if (review != null) {
+                    onEditReview(
+                        movieId,
+                        review.id,
+                        review.comment,
+                        review.rating,
+                        review.anonymous
+                    )
+                }
             },
             onDeleteReview = viewModel::onDeleteReview
         )

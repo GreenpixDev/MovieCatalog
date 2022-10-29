@@ -85,8 +85,8 @@ private fun NavGraphBuilder.navigationMain(navController: NavController) {
         composable(route = Destination.Main.Gallery.route) {
             MainNavigationScaffold(navController = navController) {
                 MainScreen(
-                    onDirectToMovie = { movieId ->
-                        navController.navigate(Destination.Movie.buildRoute(movieId, false))
+                    onDirectToMovie = { movieId, isFavorite ->
+                        navController.navigate(Destination.Movie.buildRoute(movieId, isFavorite))
                     }
                 )
             }
@@ -126,9 +126,11 @@ private fun NavGraphBuilder.navigationMovie(navController: NavController) {
             movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
             isFavorite = checkNotNull(isFavorite) { "Required value 'isFavorite' was null." },
             onBack = { navController.navigateUp() },
-            onAddReview = { navController.navigate(Destination.Review.Add.buildRoute()) },
-            onEditReview = { comment, rating, isAnonymous ->
-                navController.navigate(Destination.Review.Edit.buildRoute(comment, rating, isAnonymous))
+            onAddReview = { movieId ->
+                navController.navigate(Destination.Review.Add.buildRoute(movieId))
+            },
+            onEditReview = { movieId, reviewId, comment, rating, isAnonymous ->
+                navController.navigate(Destination.Review.Edit.buildRoute(movieId, reviewId, comment, rating, isAnonymous))
             }
         )
     }
@@ -139,14 +141,29 @@ private fun NavGraphBuilder.navigationReview(navController: NavController) {
         route = Destination.Review.route,
         startDestination = Destination.Review.Add.route
     ) {
-        dialog(route = Destination.Review.Add.route) {
+        dialog(
+            route = Destination.Review.Add.route,
+            arguments = listOf(
+                navArgument(Destination.Review.Add.MOVIE_ID) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val movieId = it.arguments?.getString(Destination.Review.Add.MOVIE_ID)
             ReviewDialog(
+                movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
                 onDismissRequest = { navController.navigateUp() }
             )
         }
         dialog(
             route = Destination.Review.Edit.route,
             arguments = listOf(
+                navArgument(Destination.Review.Edit.MOVIE_ID) {
+                    type = NavType.StringType
+                },
+                navArgument(Destination.Review.Edit.REVIEW_ID) {
+                    type = NavType.StringType
+                },
                 navArgument(Destination.Review.Edit.COMMENT) {
                     type = NavType.StringType
                 },
@@ -158,10 +175,14 @@ private fun NavGraphBuilder.navigationReview(navController: NavController) {
                 }
             )
         ) {
+            val movieId = it.arguments?.getString(Destination.Review.Edit.MOVIE_ID)
+            val reviewId = it.arguments?.getString(Destination.Review.Edit.REVIEW_ID)
             val comment = it.arguments?.getString(Destination.Review.Edit.COMMENT)
             val rating = it.arguments?.getInt(Destination.Review.Edit.RATING)
             val isAnonymous = it.arguments?.getBoolean(Destination.Review.Edit.IS_ANONYMOUS)
             ReviewDialog(
+                movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
+                reviewId = checkNotNull(reviewId) { "Required value 'reviewId' was null." },
                 initComment = checkNotNull(comment) { "Required value 'comment' was null." },
                 initRating = checkNotNull(rating) { "Required value 'rating' was null." },
                 initAnonymous = checkNotNull(isAnonymous) { "Required value 'isAnonymous' was null." },

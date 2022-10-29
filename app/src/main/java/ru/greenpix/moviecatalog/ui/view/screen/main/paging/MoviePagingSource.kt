@@ -32,8 +32,6 @@ class MoviePagingSource(
                             .map { it.rating }
                             .average()
                             .toFloat()
-                            .takeIf { !it.isNaN() }
-                            ?: 0f
                     )
                 },
             prevKey = if (page.pageInfo.currentPage == 1) {
