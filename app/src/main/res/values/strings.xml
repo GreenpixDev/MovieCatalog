@@ -25,6 +25,7 @@
     <string name="passwords_not_match">Пароли не совпадают</string>
     <string name="password_length_limit">Пароль должен не менее 6 символов</string>
     <string name="invalid_email">Указан некорректный email</string>
+    <string name="invalid_login">Указан некорректный логин</string>
     <string name="invalid_birthday">Указана некорректная дата рождения</string>
     <!-- Меню с разделами -->
     <string name="main">Главное</string>

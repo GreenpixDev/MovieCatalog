@@ -16,6 +16,7 @@ sealed class SignUpViewState {
     sealed class ValidateError(@StringRes id: Int) : Error(id)
     object PasswordsNotMatch : ValidateError(R.string.passwords_not_match)
     object PasswordLengthLimit : ValidateError(R.string.password_length_limit)
+    object InvalidLogin : ValidateError(R.string.invalid_login)
     object InvalidEmail : ValidateError(R.string.invalid_email)
     object InvalidBirthday : ValidateError(R.string.invalid_birthday)
 }

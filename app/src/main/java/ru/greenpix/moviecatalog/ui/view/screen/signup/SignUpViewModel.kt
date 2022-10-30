@@ -9,17 +9,16 @@ import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
+import ru.greenpix.moviecatalog.usecase.ValidationUseCase
+import ru.greenpix.moviecatalog.usecase.model.ValidationResult
 import java.net.SocketException
 import java.net.UnknownHostException
 import java.time.LocalDate
 
 class SignUpViewModel(
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
+    private val validationUseCase: ValidationUseCase
 ) : ViewModel() {
-
-    private companion object {
-        const val MIN_PASSWORD_LENGTH = 6
-    }
 
     private val _viewState = mutableStateOf<SignUpViewState>(SignUpViewState.Default)
     private val _loginState = mutableStateOf("")
@@ -121,7 +120,6 @@ class SignUpViewModel(
         }
     }
 
-    // TODO валидация в usecase
     private fun validate() {
         if (viewState.value is SignUpViewState.ValidateError) {
             _viewState.value = SignUpViewState.Default
@@ -136,16 +134,25 @@ class SignUpViewModel(
                 && genderState.value != Gender.NONE
         if (!_canSignUpState.value) return
 
-        if (!emailState.value.contains("@")) { // TODO норм валидация email
+        if (validationUseCase.validateLogin(loginState.value) is ValidationResult.Failed) {
+            _canSignUpState.value = false
+            _viewState.value = SignUpViewState.InvalidLogin
+            return
+        }
+
+        if (validationUseCase.validateEmail(emailState.value) is ValidationResult.Failed) {
             _canSignUpState.value = false
             _viewState.value = SignUpViewState.InvalidEmail
             return
         }
 
-        if (passwordState.value.length < MIN_PASSWORD_LENGTH) {
+        val viewState: SignUpViewState? = when (validationUseCase.validatePassword(passwordState.value)) {
+            is ValidationResult.Failed.Password.MinLength -> SignUpViewState.PasswordLengthLimit
+            else -> null
+        }
+        if (viewState != null) {
             _canSignUpState.value = false
-            _viewState.value = SignUpViewState.PasswordLengthLimit
-            return
+            _viewState.value = viewState
         }
 
         if (passwordState.value != repeatPasswordState.value) {
@@ -154,7 +161,7 @@ class SignUpViewModel(
             return
         }
 
-        if (birthdayState.value?.isAfter(LocalDate.now()) == true) {
+        if (validationUseCase.validateBirthday(birthdayState.value) is ValidationResult.Failed) {
             _canSignUpState.value = false
             _viewState.value = SignUpViewState.InvalidBirthday
             return

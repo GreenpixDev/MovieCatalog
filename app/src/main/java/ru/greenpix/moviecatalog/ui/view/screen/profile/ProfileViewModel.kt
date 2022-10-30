@@ -11,13 +11,16 @@ import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.repository.UserRepository
 import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
+import ru.greenpix.moviecatalog.usecase.ValidationUseCase
+import ru.greenpix.moviecatalog.usecase.model.ValidationResult
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ProfileViewModel(
     private val authenticationRepository: AuthenticationRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val validationUseCase: ValidationUseCase
 ) : ViewModel() {
 
     // TODO ОБЯЗАТЕЛЬНО УБРАТЬ И ВЫНЕСТИ
@@ -152,5 +155,25 @@ class ProfileViewModel(
                 && emailState.value.isNotBlank()
                 && nameState.value.isNotBlank()
                 && genderState.value != Gender.NONE
+        if (!_canSaveState.value) return
+
+        if (validationUseCase.validateEmail(emailState.value) is ValidationResult.Failed) {
+            _canSaveState.value = false
+            // TODO change view state
+            return
+        }
+
+        if (avatarUrlState.value.isNotBlank()
+            && validationUseCase.validateUrl(avatarUrlState.value) is ValidationResult.Failed) {
+            _canSaveState.value = false
+            // TODO change view state
+            return
+        }
+
+        if (validationUseCase.validateBirthday(birthdayState.value) is ValidationResult.Failed) {
+            _canSaveState.value = false
+            // TODO change view state
+            return
+        }
     }
 }

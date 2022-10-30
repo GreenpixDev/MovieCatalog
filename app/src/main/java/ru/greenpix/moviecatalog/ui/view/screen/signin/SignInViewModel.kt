@@ -71,7 +71,6 @@ class SignInViewModel(
         }
     }
 
-    // TODO валидация в usecase
     private fun validate() {
         _canSignInState.value = loginState.value.isNotBlank()
                 && passwordState.value.isNotBlank()

@@ -21,7 +21,9 @@ import ru.greenpix.moviecatalog.ui.view.screen.profile.ProfileViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.signin.SignInViewModel
 import ru.greenpix.moviecatalog.ui.view.screen.signup.SignUpViewModel
 import ru.greenpix.moviecatalog.usecase.AuthorizationUseCase
+import ru.greenpix.moviecatalog.usecase.ValidationUseCase
 import ru.greenpix.moviecatalog.usecase.impl.AuthorizeUseCaseImpl
+import ru.greenpix.moviecatalog.usecase.impl.ValidationUseCaseImpl
 
 val appModule = module {
     single { Gson() }
@@ -46,6 +48,7 @@ val appModule = module {
     singleOf(::ReviewRepositoryImpl) { bind<ReviewRepository>() }
 
     singleOf(::AuthorizeUseCaseImpl) { bind<AuthorizationUseCase>() }
+    singleOf(::ValidationUseCaseImpl) { bind<ValidationUseCase>() }
 
     viewModelOf(::SignInViewModel)
     viewModelOf(::SignUpViewModel)
