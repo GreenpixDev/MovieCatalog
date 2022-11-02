@@ -5,14 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.ReviewModifyModel
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.ReviewRepository
+import ru.greenpix.moviecatalog.ui.view.dialog.review.model.ReviewViewState
+import java.net.SocketException
+import java.net.UnknownHostException
 
 class ReviewViewModel(
     private val reviewRepository: ReviewRepository,
 ) : ViewModel() {
 
+    private var _viewState = mutableStateOf<ReviewViewState>(ReviewViewState.Default)
     private var _anonymousState = mutableStateOf(false)
     private var _commentState = mutableStateOf("")
     private var _ratingState = mutableStateOf(0)
@@ -20,6 +25,8 @@ class ReviewViewModel(
     private var movieId: String = "null"
     private var reviewId: String? = null
 
+    val viewState: State<ReviewViewState>
+        get() = _viewState
     val anonymousState: State<Boolean>
         get() = _anonymousState
     val commentState: State<String>
@@ -74,11 +81,17 @@ class ReviewViewModel(
                 onSuccess.invoke()
             }
             catch (e: AuthorizationException) {
-                // TODO перенаправляем на экран авторизации
+                _viewState.value = ReviewViewState.AuthorizationFailed
             }
             catch (e: Exception) {
-                // TODO надо бы сделать обработку ошибок
-                e.printStackTrace()
+                _viewState.value = when(e) {
+                    is HttpException -> ReviewViewState.HttpError
+                    is UnknownHostException, is SocketException -> ReviewViewState.NetworkError
+                    else -> {
+                        e.printStackTrace()
+                        ReviewViewState.UnknownError
+                    }
+                }
             }
         }
     }

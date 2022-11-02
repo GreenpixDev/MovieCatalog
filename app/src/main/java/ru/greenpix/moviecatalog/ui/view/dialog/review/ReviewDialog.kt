@@ -30,6 +30,7 @@ import androidx.compose.ui.window.DialogProperties
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
+import ru.greenpix.moviecatalog.ui.view.dialog.review.model.ReviewViewState
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
 import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
 
@@ -41,9 +42,11 @@ fun ReviewDialog(
     initRating: Int = 0,
     initAnonymous: Boolean = false,
     onDismissRequest: () -> Unit,
+    onDirectToAuth: () -> Unit,
     properties: DialogProperties = DialogProperties(),
     viewModel: ReviewViewModel = getViewModel()
 ) {
+    val viewState by remember { viewModel.viewState }
     val anonymous by remember { viewModel.anonymousState }
     val comment by remember { viewModel.commentState }
     val rating by remember { viewModel.ratingState }
@@ -76,6 +79,12 @@ fun ReviewDialog(
             rating = initRating,
             anonymous = initAnonymous
         )
+    })
+
+    LaunchedEffect(key1 = viewState, block = {
+        if (viewState is ReviewViewState.AuthorizationFailed) {
+            onDirectToAuth.invoke()
+        }
     })
 }
 

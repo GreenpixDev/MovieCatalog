@@ -87,7 +87,8 @@ private fun NavGraphBuilder.navigationMain(navController: NavController) {
                 MainScreen(
                     onDirectToMovie = { movieId, isFavorite ->
                         navController.navigate(Destination.Movie.buildRoute(movieId, isFavorite))
-                    }
+                    },
+                    onDirectToAuth = { navController.navigateToAuth() }
                 )
             }
         }
@@ -95,13 +96,7 @@ private fun NavGraphBuilder.navigationMain(navController: NavController) {
             MainNavigationScaffold(navController = navController) {
                 ProfileScreen(
                     onBack = { navController.navigateUp() },
-                    onDirectToSignIn = {
-                        navController.navigate(Destination.Auth.buildRoute()) {
-                            popUpTo(Destination.Main.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
+                    onDirectToAuth = { navController.navigateToAuth() }
                 )
             }
         }
@@ -126,12 +121,13 @@ private fun NavGraphBuilder.navigationMovie(navController: NavController) {
             movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
             isFavorite = checkNotNull(isFavorite) { "Required value 'isFavorite' was null." },
             onBack = { navController.navigateUp() },
-            onAddReview = { movieId ->
-                navController.navigate(Destination.Review.Add.buildRoute(movieId))
+            onAddReview = { movieReviewId ->
+                navController.navigate(Destination.Review.Add.buildRoute(movieReviewId))
             },
-            onEditReview = { movieId, reviewId, comment, rating, isAnonymous ->
-                navController.navigate(Destination.Review.Edit.buildRoute(movieId, reviewId, comment, rating, isAnonymous))
-            }
+            onEditReview = { movieReviewId, reviewId, comment, rating, isAnonymous ->
+                navController.navigate(Destination.Review.Edit.buildRoute(movieReviewId, reviewId, comment, rating, isAnonymous))
+            },
+            onDirectToAuth = { navController.navigateToAuth() }
         )
     }
 }
@@ -152,7 +148,8 @@ private fun NavGraphBuilder.navigationReview(navController: NavController) {
             val movieId = it.arguments?.getString(Destination.Review.Add.MOVIE_ID)
             ReviewDialog(
                 movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
-                onDismissRequest = { navController.navigateUp() }
+                onDismissRequest = { navController.navigateUp() },
+                onDirectToAuth = { navController.navigateToAuth() }
             )
         }
         dialog(
@@ -186,8 +183,17 @@ private fun NavGraphBuilder.navigationReview(navController: NavController) {
                 initComment = checkNotNull(comment) { "Required value 'comment' was null." },
                 initRating = checkNotNull(rating) { "Required value 'rating' was null." },
                 initAnonymous = checkNotNull(isAnonymous) { "Required value 'isAnonymous' was null." },
-                onDismissRequest = { navController.navigateUp() }
+                onDismissRequest = { navController.navigateUp() },
+                onDirectToAuth = { navController.navigateToAuth() }
             )
+        }
+    }
+}
+
+private fun NavController.navigateToAuth() {
+    navigate(Destination.Auth.buildRoute()) {
+        popUpTo(Destination.Main.route) {
+            inclusive = true
         }
     }
 }

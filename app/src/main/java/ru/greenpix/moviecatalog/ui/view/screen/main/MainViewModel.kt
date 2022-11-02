@@ -10,24 +10,27 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainFavorite
 import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainViewState
 import ru.greenpix.moviecatalog.ui.view.screen.main.paging.MoviePagingSource
-import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
+import java.net.SocketException
+import java.net.UnknownHostException
 
 class MainViewModel(
     private val movieRepository: MovieRepository,
     private val favoriteRepository: FavoriteRepository,
 ) : ViewModel() {
 
-    private val _loadState = mutableStateOf(ViewState.UNLOADED)
+    private val _viewState = mutableStateOf<MainViewState>(MainViewState.Loading)
     private val _favoritesState = mutableStateMapOf<String, MainFavorite>()
 
-    val loadState: State<ViewState>
-        get() = _loadState
+    val viewState: State<MainViewState>
+        get() = _viewState
     val favoritesState: Map<String, MainFavorite>
         get() = _favoritesState
 
@@ -36,26 +39,32 @@ class MainViewModel(
     }.flow.cachedIn(viewModelScope)
 
     suspend fun load() {
-        try {
-            if (loadState.value == ViewState.LOADED) {
-                return
-            }
-            _loadState.value = ViewState.LOADING
-            _favoritesState.clear()
+        if (viewState.value is MainViewState.Default) {
+            return
+        }
+        _viewState.value = MainViewState.Loading
+        _favoritesState.clear()
 
-            _favoritesState.putAll(
-                favoriteRepository.getAllFavoriteMovies()
-                    .associateBy { it.id }
-                    .mapValues { MainFavorite(imageUrl = it.value.poster ?: "") }
-            )
-            _loadState.value = ViewState.LOADED
+        try {
+            val favorites = favoriteRepository.getAllFavoriteMovies()
+                .associateBy { it.id }
+                .mapValues { MainFavorite(imageUrl = it.value.poster ?: "") }
+
+            _favoritesState.putAll(favorites)
+            _viewState.value = MainViewState.Default
         }
         catch (e: AuthorizationException) {
-            // TODO перенаправляем на экран авторизации
+            _viewState.value = MainViewState.AuthorizationFailed
         }
         catch (e: Exception) {
-            e.printStackTrace()
-            // TODO надо бы сделать обработку ошибок
+            _viewState.value = when(e) {
+                is HttpException -> MainViewState.HttpError
+                is UnknownHostException, is SocketException -> MainViewState.NetworkError
+                else -> {
+                    e.printStackTrace()
+                    MainViewState.UnknownError
+                }
+            }
         }
     }
 

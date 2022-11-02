@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.H1
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
+import ru.greenpix.moviecatalog.ui.view.screen.signup.model.SignUpViewState
 import ru.greenpix.moviecatalog.ui.view.shared.*
 import java.time.LocalDate
 
@@ -58,11 +60,15 @@ fun SignUpScreen(
         onRepeatPasswordChange = viewModel::onRepeatPasswordChange,
         onBirthdayChange = viewModel::onBirthdayChange,
         onGenderChange = viewModel::onGenderChange,
-        onSignUpClick = {
-            viewModel.onSignUp(onSuccess = onSuccessSignUp)
-        },
+        onSignUpClick = viewModel::onSignUp,
         onGoToSignInClick = onDirectToSignIn
     )
+
+    LaunchedEffect(key1 = viewState) {
+        if (viewState is SignUpViewState.SignUpSuccessful) {
+            onSuccessSignUp.invoke()
+        }
+    }
 }
 
 @Composable

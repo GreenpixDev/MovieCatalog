@@ -1,4 +1,4 @@
-package ru.greenpix.moviecatalog.ui.view.screen.signin
+package ru.greenpix.moviecatalog.ui.view.screen.signin.model
 
 import androidx.annotation.StringRes
 import ru.greenpix.moviecatalog.R

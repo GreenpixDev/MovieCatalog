@@ -59,6 +59,7 @@ class AuthenticationRepositoryImpl(
                     }
                 }
             }
+            e.printStackTrace()
             throw e
         }
     }
@@ -81,6 +82,7 @@ class AuthenticationRepositoryImpl(
                     throw AuthenticationException(response)
                 }
             }
+            e.printStackTrace()
             throw e
         }
     }

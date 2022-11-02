@@ -9,6 +9,7 @@ import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
+import ru.greenpix.moviecatalog.ui.view.screen.signup.model.SignUpViewState
 import ru.greenpix.moviecatalog.usecase.ValidationUseCase
 import ru.greenpix.moviecatalog.usecase.model.ValidationResult
 import java.net.SocketException
@@ -84,9 +85,7 @@ class SignUpViewModel(
         validate()
     }
 
-    fun onSignUp(
-        onSuccess: () -> Unit
-    ) {
+    fun onSignUp() {
         val login = loginState.value
         val email = emailState.value
         val name = nameState.value
@@ -107,14 +106,16 @@ class SignUpViewModel(
                     gender = gender
                 )
                 _viewState.value = SignUpViewState.SignUpSuccessful
-                onSuccess.invoke()
             }
             catch (e: Exception) {
                 _viewState.value = when(e) {
                     is DuplicateUserNameException -> SignUpViewState.DuplicateUserName
                     is HttpException -> SignUpViewState.HttpError
                     is UnknownHostException, is SocketException -> SignUpViewState.NetworkError
-                    else -> SignUpViewState.UnknownError
+                    else -> {
+                        e.printStackTrace()
+                        SignUpViewState.UnknownError
+                    }
                 }
             }
         }

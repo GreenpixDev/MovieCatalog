@@ -7,6 +7,7 @@
     <string name="unknown_error">Произошла неизвестная ошибка, обратитесь к разработчикам приложения</string>
     <string name="http_error">Произошла ошибка при обращении к серверу, обратитесь к разработчикам приложения</string>
     <string name="network_error">Не удается подключиться к серверу</string>
+    <string name="repeat">Повторить попытку</string>
     <!-- Авторизация -->
     <string name="login">Логин</string>
     <string name="password">Пароль</string>
@@ -25,6 +26,7 @@
     <string name="passwords_not_match">Пароли не совпадают</string>
     <string name="password_length_limit">Пароль должен не менее 6 символов</string>
     <string name="invalid_email">Указан некорректный email</string>
+    <string name="invalid_url">Указана некорректная ссылка</string>
     <string name="invalid_login">Указан некорректный логин</string>
     <string name="invalid_birthday">Указана некорректная дата рождения</string>
     <!-- Меню с разделами -->
@@ -34,6 +36,7 @@
     <string name="favorites">Избранное</string>
     <string name="gallery">Галерея</string>
     <string name="watch">Смотреть</string>
+    <string name="empty_content">На данный момент никакие фильмы не опубликованы</string>
     <!-- Профиль -->
     <string name="avatar_url">Ссылка на аватарку</string>
     <string name="save">Сохранить</string>

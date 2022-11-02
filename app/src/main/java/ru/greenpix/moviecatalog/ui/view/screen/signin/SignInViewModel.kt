@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.greenpix.moviecatalog.exception.AuthenticationException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
+import ru.greenpix.moviecatalog.ui.view.screen.signin.model.SignInViewState
 import java.net.SocketException
 import java.net.UnknownHostException
 
@@ -29,12 +30,6 @@ class SignInViewModel(
     val canSignInState: State<Boolean>
         get() = _canSignInState
 
-    fun ifAuthenticated(onAuthenticated: () -> Unit) {
-        if (authenticationRepository.isAuthenticated()) {
-            onAuthenticated.invoke()
-        }
-    }
-
     fun onLoginChange(login: String) {
         _loginState.value = login
         validate()
@@ -45,9 +40,7 @@ class SignInViewModel(
         validate()
     }
 
-    fun onSignIn(
-        onSuccess: () -> Unit
-    ) {
+    fun onSignIn() {
         val login = loginState.value
         val password = passwordState.value
 
@@ -58,14 +51,16 @@ class SignInViewModel(
                     password = password
                 )
                 _viewState.value = SignInViewState.SignInSuccessful
-                onSuccess.invoke()
             }
             catch (e: Exception) {
                 _viewState.value = when(e) {
                     is AuthenticationException -> SignInViewState.SignInFailed
                     is HttpException -> SignInViewState.HttpError
                     is UnknownHostException, is SocketException -> SignInViewState.NetworkError
-                    else -> SignInViewState.UnknownError
+                    else -> {
+                        e.printStackTrace()
+                        SignInViewState.UnknownError
+                    }
                 }
             }
         }

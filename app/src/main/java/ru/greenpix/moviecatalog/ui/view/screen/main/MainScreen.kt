@@ -41,42 +41,54 @@ import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.*
 import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainFavorite
 import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.view.screen.main.model.MainViewState
+import ru.greenpix.moviecatalog.ui.view.shared.EmptyContentScreen
+import ru.greenpix.moviecatalog.ui.view.shared.ErrorScreen
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
-import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import ru.greenpix.moviecatalog.util.format
 
 @Composable
 fun MainScreen(
     onDirectToMovie: (String, Boolean) -> Unit,
+    onDirectToAuth: () -> Unit,
     viewModel: MainViewModel = getViewModel()
 ) {
-    val loadState by remember { viewModel.loadState }
+    val viewState = remember { viewModel.viewState }.value
     val gallery = viewModel.galleryFlow.collectAsLazyPagingItems()
 
-    if (loadState != ViewState.LOADED || gallery.isFirstLoading()) {
+    if (viewState is MainViewState.Loading || gallery.isFirstLoading()) {
         LoadingScreen()
     }
-    else {
-        if (gallery.isEmpty()) {
-            // TODO ничего
-        }
-        else {
-            val favorites = remember { viewModel.favoritesState }
+    else when (viewState) {
+        is MainViewState.Error -> ErrorScreen(text = stringResource(id = viewState.id))
+        else -> {
+            if (gallery.isEmpty()) {
+                EmptyContentScreen()
+            }
+            else {
+                val favorites = remember { viewModel.favoritesState }
 
-            MainContent(
-                favorites = favorites,
-                gallery = gallery,
-                onGoToMovie = {
-                    onDirectToMovie(it, it in favorites)
-                },
-                onDeleteFavorite = viewModel::onDeleteFavorite
-            )
+                MainContent(
+                    favorites = favorites,
+                    gallery = gallery,
+                    onGoToMovie = {
+                        onDirectToMovie(it, it in favorites)
+                    },
+                    onDeleteFavorite = viewModel::onDeleteFavorite
+                )
+            }
         }
     }
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.load()
+    })
+
+    LaunchedEffect(key1 = viewState, block = {
+        if (viewState is MainViewState.AuthorizationFailed) {
+            onDirectToAuth.invoke()
+        }
     })
 }
 

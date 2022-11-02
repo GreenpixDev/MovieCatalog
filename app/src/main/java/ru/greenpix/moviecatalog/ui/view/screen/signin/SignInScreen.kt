@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
+import ru.greenpix.moviecatalog.ui.view.screen.signin.model.SignInViewState
 import ru.greenpix.moviecatalog.ui.view.shared.*
 
 @Composable
@@ -39,11 +41,15 @@ fun SignInScreen(
         canSignIn = canSignIn,
         onLoginChange = viewModel::onLoginChange,
         onPasswordChange = viewModel::onPasswordChange,
-        onSignInClick = {
-            viewModel.onSignIn(onSuccess = onSuccessSignIn)
-        },
+        onSignInClick = viewModel::onSignIn,
         onGoToSignUpClick = onDirectToSignUp
     )
+
+    LaunchedEffect(key1 = viewState) {
+        if (viewState is SignInViewState.SignInSuccessful) {
+            onSuccessSignIn.invoke()
+        }
+    }
 }
 
 @Composable

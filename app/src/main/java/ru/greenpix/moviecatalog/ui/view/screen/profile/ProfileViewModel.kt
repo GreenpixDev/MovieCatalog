@@ -5,14 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.domain.ProfileModel
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.repository.UserRepository
-import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
+import ru.greenpix.moviecatalog.ui.view.screen.profile.model.ProfileViewState
 import ru.greenpix.moviecatalog.usecase.ValidationUseCase
 import ru.greenpix.moviecatalog.usecase.model.ValidationResult
+import java.net.SocketException
+import java.net.UnknownHostException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -28,7 +31,7 @@ class ProfileViewModel(
         val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
     }
 
-    private val _loadState = mutableStateOf(ViewState.UNLOADED)
+    private val _viewState = mutableStateOf<ProfileViewState>(ProfileViewState.Loading)
     private val _loginState = mutableStateOf("")
     private val _avatarUrlState = mutableStateOf("")
     private val _emailState = mutableStateOf("")
@@ -39,8 +42,8 @@ class ProfileViewModel(
 
     private var userId: String = ""
 
-    val loadState: State<ViewState>
-        get() = _loadState
+    val viewState: State<ProfileViewState>
+        get() = _viewState
     val loginState: State<String>
         get() = _loginState
     val avatarUrlState: State<String>
@@ -57,23 +60,38 @@ class ProfileViewModel(
         get() = _canSaveState
 
     suspend fun load() {
-        if (loadState.value == ViewState.LOADED) {
+        if (viewState.value is ProfileViewState.Default) {
             return
         }
-        _loadState.value = ViewState.LOADING
+        _viewState.value = ProfileViewState.Loading
 
-        val profile = userRepository.getProfile()
-        userId = profile.id
-        _loginState.value = profile.username
-        _emailState.value = profile.email
-        _nameState.value = profile.name
-        _birthdayState.value = LocalDateTime
-            .parse(profile.birthday)
-            .toLocalDate()
-        _genderState.value = Gender.values()[profile.gender + 1]
+        try {
+            val profile = userRepository.getProfile()
+            userId = profile.id
+            _loginState.value = profile.username
+            _emailState.value = profile.email
+            _nameState.value = profile.name
+            _birthdayState.value = LocalDateTime
+                .parse(profile.birthday)
+                .toLocalDate()
+            _genderState.value = Gender.values()[profile.gender + 1]
 
-        validate()
-        _loadState.value = ViewState.LOADED
+            validate()
+            _viewState.value = ProfileViewState.Default
+        }
+        catch (e: AuthorizationException) {
+            _viewState.value = ProfileViewState.AuthorizationFailed
+        }
+        catch (e: Exception) {
+            _viewState.value = when(e) {
+                is HttpException -> ProfileViewState.HttpError
+                is UnknownHostException, is SocketException -> ProfileViewState.NetworkError
+                else -> {
+                    e.printStackTrace()
+                    ProfileViewState.UnknownError
+                }
+            }
+        }
     }
 
     fun onAvatarUrlChange(avatarUrl: String) {
@@ -101,9 +119,7 @@ class ProfileViewModel(
         validate()
     }
 
-    fun onSave(
-        onSuccess: () -> Unit,
-    ) {
+    fun onSave() {
         val login = loginState.value
         val email = emailState.value
         val avatarUrl = avatarUrlState.value
@@ -122,35 +138,48 @@ class ProfileViewModel(
                     birthday = birthday.atStartOfDay().format(FORMATTER),
                     gender = gender.ordinal - 1
                 ))
-                onSuccess.invoke()
+                _viewState.value = ProfileViewState.SaveSuccessful
             }
             catch (e: AuthorizationException) {
-                // TODO перенаправлять на авторизацию
+                _viewState.value = ProfileViewState.AuthorizationFailed
             }
             catch (e: Exception) {
-                e.printStackTrace()
-                // TODO возможно сделать более широкую обработку ошибок
+                _viewState.value = when(e) {
+                    is HttpException -> ProfileViewState.HttpError
+                    is UnknownHostException, is SocketException -> ProfileViewState.NetworkError
+                    else -> {
+                        e.printStackTrace()
+                        ProfileViewState.UnknownError
+                    }
+                }
             }
         }
     }
 
-    fun onLogout(
-        onSuccess: () -> Unit,
-    ) {
+    fun onLogout() {
         viewModelScope.launch {
             try {
                 authenticationRepository.logout()
-                onSuccess.invoke()
+                _viewState.value = ProfileViewState.LogoutSuccessful
             }
             catch (e: Exception) {
-                e.printStackTrace()
-                // TODO возможно сделать более широкую обработку ошибок
+                _viewState.value = when(e) {
+                    is HttpException -> ProfileViewState.HttpError
+                    is UnknownHostException, is SocketException -> ProfileViewState.NetworkError
+                    else -> {
+                        e.printStackTrace()
+                        ProfileViewState.UnknownError
+                    }
+                }
             }
         }
     }
 
-    // TODO валидация в usecase
     private fun validate() {
+        if (viewState.value is ProfileViewState.ValidateError) {
+            _viewState.value = ProfileViewState.Default
+        }
+
         _canSaveState.value = loginState.value.isNotBlank()
                 && emailState.value.isNotBlank()
                 && nameState.value.isNotBlank()
@@ -159,20 +188,20 @@ class ProfileViewModel(
 
         if (validationUseCase.validateEmail(emailState.value) is ValidationResult.Failed) {
             _canSaveState.value = false
-            // TODO change view state
+            _viewState.value = ProfileViewState.InvalidEmail
             return
         }
 
         if (avatarUrlState.value.isNotBlank()
             && validationUseCase.validateUrl(avatarUrlState.value) is ValidationResult.Failed) {
             _canSaveState.value = false
-            // TODO change view state
+            _viewState.value = ProfileViewState.InvalidUrl
             return
         }
 
         if (validationUseCase.validateBirthday(birthdayState.value) is ValidationResult.Failed) {
             _canSaveState.value = false
-            // TODO change view state
+            _viewState.value = ProfileViewState.InvalidBirthday
             return
         }
     }

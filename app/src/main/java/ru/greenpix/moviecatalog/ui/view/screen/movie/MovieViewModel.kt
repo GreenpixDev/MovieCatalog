@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.ReviewModel
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
@@ -14,8 +15,10 @@ import ru.greenpix.moviecatalog.repository.JwtRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.repository.ReviewRepository
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
-import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
+import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieViewState
 import ru.greenpix.moviecatalog.util.decodeJwt
+import java.net.SocketException
+import java.net.UnknownHostException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -32,7 +35,7 @@ class MovieViewModel(
         val VIEW_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
 
-    private val _loadState = mutableStateOf(ViewState.UNLOADED)
+    private val _viewState = mutableStateOf<MovieViewState>(MovieViewState.Loading)
     private val _favoriteState = mutableStateOf(false)
     private val _nameState = mutableStateOf("")
     private val _movieImageUrlState = mutableStateOf("")
@@ -51,8 +54,8 @@ class MovieViewModel(
 
     private var movieId: String = ""
 
-    val loadState: State<ViewState>
-        get() = _loadState
+    val viewState: State<MovieViewState>
+        get() = _viewState
     val favoriteState: State<Boolean>
         get() = _favoriteState
     val nameState: State<String>
@@ -85,40 +88,55 @@ class MovieViewModel(
         get() = _otherReviewsState
 
     suspend fun load(movieId: String, isFavorite: Boolean) {
-        if (this.loadState.value == ViewState.LOADED && this.movieId == movieId) {
+        if (this.viewState.value is MovieViewState.Default && this.movieId == movieId) {
             return
         }
-        _loadState.value = ViewState.LOADING
+        _viewState.value = MovieViewState.Loading
         _genresState.clear()
         _otherReviewsState.clear()
         this.movieId = movieId
 
-        val movie = movieRepository.getDetails(movieId)
-        val rawToken = jwtRepository.getToken()
-        checkNotNull(rawToken) {"jwt token cannot be null"}
-        val uniqueName = gson.decodeJwt(rawToken).uniqueName
+        try {
+            val movie = movieRepository.getDetails(movieId)
+            val rawToken = jwtRepository.getToken()
+            checkNotNull(rawToken) {"jwt token cannot be null"}
+            val uniqueName = gson.decodeJwt(rawToken).uniqueName
 
-        _favoriteState.value = isFavorite
-        _nameState.value = movie.name ?: ""
-        _movieImageUrlState.value = movie.poster ?: ""
-        _descriptionState.value = movie.description ?: ""
-        _yearState.value = movie.year
-        _countryState.value = movie.country ?: ""
-        _durationState.value = movie.time
-        _taglineState.value = movie.tagline ?: ""
-        _producerState.value = movie.director ?: ""
-        _budgetState.value = movie.budget ?: -1
-        _feesState.value = movie.fees ?: -1
-        _ageState.value = movie.ageLimit
-        _genresState.addAll(movie.genres.mapNotNull { it.name })
-        _myReviewState.value = movie.reviews
-            .find { it.author?.nickName == uniqueName }
-            ?.let { parseModel(it) }
-        _otherReviewsState.addAll(movie.reviews
-            .filter { it.author?.nickName != uniqueName }
-            .map { parseModel(it) }
-        )
-        _loadState.value = ViewState.LOADED
+            _favoriteState.value = isFavorite
+            _nameState.value = movie.name ?: ""
+            _movieImageUrlState.value = movie.poster ?: ""
+            _descriptionState.value = movie.description ?: ""
+            _yearState.value = movie.year
+            _countryState.value = movie.country ?: ""
+            _durationState.value = movie.time
+            _taglineState.value = movie.tagline ?: ""
+            _producerState.value = movie.director ?: ""
+            _budgetState.value = movie.budget ?: -1
+            _feesState.value = movie.fees ?: -1
+            _ageState.value = movie.ageLimit
+            _genresState.addAll(movie.genres.mapNotNull { it.name })
+            _myReviewState.value = movie.reviews
+                .find { it.author?.nickName == uniqueName }
+                ?.let { parseModel(it) }
+            _otherReviewsState.addAll(movie.reviews
+                .filter { it.author?.nickName != uniqueName }
+                .map { parseModel(it) }
+            )
+            _viewState.value = MovieViewState.Default
+        }
+        catch (e: AuthorizationException) {
+            _viewState.value = MovieViewState.AuthorizationFailed
+        }
+        catch (e: Exception) {
+            _viewState.value = when(e) {
+                is HttpException -> MovieViewState.HttpError
+                is UnknownHostException, is SocketException -> MovieViewState.NetworkError
+                else -> {
+                    e.printStackTrace()
+                    MovieViewState.UnknownError
+                }
+            }
+        }
     }
 
     fun onToggleFavorite() = viewModelScope.launch {
@@ -133,11 +151,17 @@ class MovieViewModel(
             _favoriteState.value = newStatus
         }
         catch (e: AuthorizationException) {
-            // TODO перенаправляем на экран авторизации
+            _viewState.value = MovieViewState.AuthorizationFailed
         }
         catch (e: Exception) {
-            e.printStackTrace()
-            // TODO надо бы сделать обработку ошибок
+            _viewState.value = when(e) {
+                is HttpException -> MovieViewState.HttpError
+                is UnknownHostException, is SocketException -> MovieViewState.NetworkError
+                else -> {
+                    e.printStackTrace()
+                    MovieViewState.UnknownError
+                }
+            }
         }
     }
 
@@ -150,11 +174,17 @@ class MovieViewModel(
                 _myReviewState.value = null
             }
             catch (e: AuthorizationException) {
-                // TODO перенаправляем на экран авторизации
+                _viewState.value = MovieViewState.AuthorizationFailed
             }
             catch (e: Exception) {
-                e.printStackTrace()
-                // TODO надо бы сделать обработку ошибок
+                _viewState.value = when(e) {
+                    is HttpException -> MovieViewState.HttpError
+                    is UnknownHostException, is SocketException -> MovieViewState.NetworkError
+                    else -> {
+                        e.printStackTrace()
+                        MovieViewState.UnknownError
+                    }
+                }
             }
         }
     }

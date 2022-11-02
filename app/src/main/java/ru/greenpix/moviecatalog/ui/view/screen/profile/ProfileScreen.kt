@@ -21,19 +21,19 @@ import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.domain.Gender
 import ru.greenpix.moviecatalog.ui.theme.*
+import ru.greenpix.moviecatalog.ui.view.screen.profile.model.ProfileViewState
 import ru.greenpix.moviecatalog.ui.view.shared.*
-import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import java.time.LocalDate
 
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,
-    onDirectToSignIn: () -> Unit,
+    onDirectToAuth: () -> Unit,
     viewModel: ProfileViewModel = getViewModel()
 ) {
-    val loadState by remember { viewModel.loadState }
+    val viewState by remember { viewModel.viewState }
 
-    if (loadState != ViewState.LOADED) {
+    if (viewState is ProfileViewState.Loading) {
         LoadingScreen()
     }
     else {
@@ -46,6 +46,7 @@ fun ProfileScreen(
         val canSave by remember { viewModel.canSaveState }
 
         ProfileContent(
+            viewState = viewState,
             login = login,
             email = email,
             avatarUrl = avatarUrl,
@@ -58,22 +59,28 @@ fun ProfileScreen(
             onNameChange = viewModel::onNameChange,
             onBirthdayChange = viewModel::onBirthdayChange,
             onGenderChange = viewModel::onGenderChange,
-            onSave = {
-                viewModel.onSave(onSuccess = onBack)
-            },
-            onLogout = {
-                viewModel.onLogout(onSuccess = onDirectToSignIn)
-            }
+            onSave = viewModel::onSave,
+            onLogout = viewModel::onLogout
         )
     }
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.load()
     })
+
+    LaunchedEffect(key1 = viewState, block = {
+        when (viewState) {
+            is ProfileViewState.AuthorizationFailed,
+            is ProfileViewState.LogoutSuccessful -> onDirectToAuth.invoke()
+            is ProfileViewState.SaveSuccessful -> onBack.invoke()
+            else -> {}
+        }
+    })
 }
 
 @Composable
 fun ProfileContent(
+    viewState: ProfileViewState,
     login: String,
     email: String,
     avatarUrl: String,
@@ -113,6 +120,15 @@ fun ProfileContent(
             onGenderChange = onGenderChange
         )
         Spacer(modifier = Modifier.height(32.dp))
+        StyledErrorText(
+            visible = viewState is ProfileViewState.Error,
+            text = if (viewState is ProfileViewState.Error) {
+                stringResource(id = viewState.id)
+            } else {
+                ""
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         StyledButton(
             onClick = onSave,
             enabled = canSave,
@@ -248,6 +264,7 @@ private fun ProfileScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             ProfileContent(
+                viewState = ProfileViewState.Default,
                 login = "Test",
                 email = "",
                 avatarUrl = "",

@@ -37,9 +37,10 @@ import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.firstItemScrollProgress
 import ru.greenpix.moviecatalog.ui.util.roundedAtBottom
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
+import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieViewState
 import ru.greenpix.moviecatalog.ui.view.shared.Avatar
+import ru.greenpix.moviecatalog.ui.view.shared.ErrorScreen
 import ru.greenpix.moviecatalog.ui.view.shared.LoadingScreen
-import ru.greenpix.moviecatalog.ui.view.shared.model.ViewState
 import ru.greenpix.moviecatalog.util.formatGrouped
 
 private const val WEIGHT_COLUMN_KEY = .3125f
@@ -50,71 +51,77 @@ fun MovieScreen(
     onBack: () -> Unit,
     onAddReview: (movieId: String) -> Unit,
     onEditReview: (movieId: String, reviewId: String, comment: String, rating: Int, isAnonymous: Boolean) -> Unit,
+    onDirectToAuth: () -> Unit,
     movieId: String,
     isFavorite: Boolean,
     viewModel: MovieViewModel = getViewModel()
 ) {
-    val loadState by remember { viewModel.loadState }
+    val viewState = remember { viewModel.viewState }.value
     val myReview by remember { viewModel.myReviewState }
 
-    if (loadState != ViewState.LOADED) {
-        LoadingScreen()
-    }
-    else {
-        val favorite by remember { viewModel.favoriteState }
-        val name by remember { viewModel.nameState }
-        val movieImageUrl by remember { viewModel.movieImageUrlState }
-        val description by remember { viewModel.descriptionState }
-        val year by remember { viewModel.yearState }
-        val country by remember { viewModel.countryState }
-        val duration by remember { viewModel.durationState }
-        val tagline by remember { viewModel.taglineState }
-        val producer by remember { viewModel.producerState }
-        val budget by remember { viewModel.budgetState }
-        val fees by remember { viewModel.feesState }
-        val age by remember { viewModel.ageState }
-        val genres = remember { viewModel.genresState }
-        val otherReviews = remember { viewModel.otherReviewsState }
+    when (viewState) {
+        is MovieViewState.Loading -> LoadingScreen()
+        is MovieViewState.Error -> ErrorScreen(text = stringResource(id = viewState.id))
+        else -> {
+            val favorite by remember { viewModel.favoriteState }
+            val name by remember { viewModel.nameState }
+            val movieImageUrl by remember { viewModel.movieImageUrlState }
+            val description by remember { viewModel.descriptionState }
+            val year by remember { viewModel.yearState }
+            val country by remember { viewModel.countryState }
+            val duration by remember { viewModel.durationState }
+            val tagline by remember { viewModel.taglineState }
+            val producer by remember { viewModel.producerState }
+            val budget by remember { viewModel.budgetState }
+            val fees by remember { viewModel.feesState }
+            val age by remember { viewModel.ageState }
+            val genres = remember { viewModel.genresState }
+            val otherReviews = remember { viewModel.otherReviewsState }
 
-        MovieContent(
-            name = name,
-            favorite = favorite,
-            movieImageUrl = movieImageUrl,
-            description = description,
-            year = year,
-            country = country,
-            duration = duration,
-            tagline = tagline,
-            producer = producer,
-            budget = budget,
-            fees = fees,
-            age = age,
-            genres = genres,
-            myReview = myReview,
-            otherReviews = otherReviews,
-            onBack = onBack,
-            onToggleFavorite = viewModel::onToggleFavorite,
-            onAddReview = {
-                onAddReview(movieId)
-            },
-            onEditReview = {
-                val review = myReview
-                if (review != null) {
-                    onEditReview(
-                        movieId,
-                        review.id,
-                        review.comment,
-                        review.rating,
-                        review.anonymous
-                    )
-                }
-            },
-            onDeleteReview = viewModel::onDeleteReview
-        )
+            MovieContent(
+                name = name,
+                favorite = favorite,
+                movieImageUrl = movieImageUrl,
+                description = description,
+                year = year,
+                country = country,
+                duration = duration,
+                tagline = tagline,
+                producer = producer,
+                budget = budget,
+                fees = fees,
+                age = age,
+                genres = genres,
+                myReview = myReview,
+                otherReviews = otherReviews,
+                onBack = onBack,
+                onToggleFavorite = viewModel::onToggleFavorite,
+                onAddReview = { onAddReview(movieId) },
+                onEditReview = {
+                    val review = myReview
+                    if (review != null) {
+                        onEditReview(
+                            movieId,
+                            review.id,
+                            review.comment,
+                            review.rating,
+                            review.anonymous
+                        )
+                    }
+                },
+                onDeleteReview = viewModel::onDeleteReview
+            )
+        }
     }
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.load(movieId, isFavorite)
+    })
+
+    LaunchedEffect(key1 = viewState, block = {
+        if (viewState is MovieViewState.AuthorizationFailed) {
+            onDirectToAuth.invoke()
+        }
     })
 }
 
@@ -321,7 +328,7 @@ private fun HeaderView(
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .clickable(onClick = onBack)
+                        .clickable(onClick = onToggleFavorite)
                 ) {
                     Image(
                         painter = if (favorite) {

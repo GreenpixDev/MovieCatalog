@@ -29,6 +29,7 @@ class AuthorizeUseCaseImpl(
                 authenticationRepository.logout()
                 throw AuthorizationException()
             }
+            e.printStackTrace()
             throw e
         }
     }
