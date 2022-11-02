@@ -1,8 +1,6 @@
 package ru.greenpix.moviecatalog.ui.view.shared
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,21 +10,24 @@ import ru.greenpix.moviecatalog.R
 
 @Composable
 fun ErrorScreen(
-    text: String
+    text: String,
+    onRetry: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         StyledErrorText(
             visible = true,
             text = text
         )
+        Spacer(modifier = Modifier.padding(8.dp))
         StyledButton(
-            text = stringResource(id = R.string.repeat),
-            onClick = {}
+            text = stringResource(id = R.string.retry),
+            onClick = onRetry
         )
     }
 }

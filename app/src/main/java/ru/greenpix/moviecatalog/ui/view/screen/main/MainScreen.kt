@@ -15,10 +15,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +51,7 @@ fun MainScreen(
     onDirectToAuth: () -> Unit,
     viewModel: MainViewModel = getViewModel()
 ) {
+    var reconnectCount by remember { mutableStateOf(0) }
     val viewState = remember { viewModel.viewState }.value
     val gallery = viewModel.galleryFlow.collectAsLazyPagingItems()
 
@@ -61,7 +59,10 @@ fun MainScreen(
         LoadingScreen()
     }
     else when (viewState) {
-        is MainViewState.Error -> ErrorScreen(text = stringResource(id = viewState.id))
+        is MainViewState.Error -> ErrorScreen(
+            text = stringResource(id = viewState.id),
+            onRetry = { reconnectCount++ }
+        )
         else -> {
             if (gallery.isEmpty()) {
                 EmptyContentScreen()
@@ -81,7 +82,8 @@ fun MainScreen(
         }
     }
 
-    LaunchedEffect(key1 = Unit, block = {
+    LaunchedEffect(key1 = reconnectCount, block = {
+        gallery.retry()
         viewModel.load()
     })
 

@@ -7,7 +7,7 @@
     <string name="unknown_error">Произошла неизвестная ошибка, обратитесь к разработчикам приложения</string>
     <string name="http_error">Произошла ошибка при обращении к серверу, обратитесь к разработчикам приложения</string>
     <string name="network_error">Не удается подключиться к серверу</string>
-    <string name="repeat">Повторить попытку</string>
+    <string name="retry">Повторить попытку</string>
     <!-- Авторизация -->
     <string name="login">Логин</string>
     <string name="password">Пароль</string>

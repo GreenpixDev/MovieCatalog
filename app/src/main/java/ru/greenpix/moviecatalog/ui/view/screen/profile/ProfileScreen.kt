@@ -6,10 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,40 +28,45 @@ fun ProfileScreen(
     onDirectToAuth: () -> Unit,
     viewModel: ProfileViewModel = getViewModel()
 ) {
-    val viewState by remember { viewModel.viewState }
+    var reconnectCount by remember { mutableStateOf(0) }
+    val viewState = remember { viewModel.viewState }.value
 
-    if (viewState is ProfileViewState.Loading) {
-        LoadingScreen()
-    }
-    else {
-        val login by remember { viewModel.loginState }
-        val email by remember { viewModel.emailState }
-        val avatarUrl by remember { viewModel.avatarUrlState }
-        val name by remember { viewModel.nameState }
-        val birthday by remember { viewModel.birthdayState }
-        val gender by remember { viewModel.genderState }
-        val canSave by remember { viewModel.canSaveState }
-
-        ProfileContent(
-            viewState = viewState,
-            login = login,
-            email = email,
-            avatarUrl = avatarUrl,
-            name = name,
-            birthday = birthday,
-            gender = gender,
-            canSave = canSave,
-            onEmailChange = viewModel::onEmailChange,
-            onAvatarUrlChange = viewModel::onAvatarUrlChange,
-            onNameChange = viewModel::onNameChange,
-            onBirthdayChange = viewModel::onBirthdayChange,
-            onGenderChange = viewModel::onGenderChange,
-            onSave = viewModel::onSave,
-            onLogout = viewModel::onLogout
+    when {
+        viewState is ProfileViewState.Loading -> LoadingScreen()
+        viewState is ProfileViewState.Error && viewState.isLoadingError -> ErrorScreen(
+            text = stringResource(id = viewState.id),
+            onRetry = { reconnectCount++ }
         )
+        else -> {
+            val login by remember { viewModel.loginState }
+            val email by remember { viewModel.emailState }
+            val avatarUrl by remember { viewModel.avatarUrlState }
+            val name by remember { viewModel.nameState }
+            val birthday by remember { viewModel.birthdayState }
+            val gender by remember { viewModel.genderState }
+            val canSave by remember { viewModel.canSaveState }
+
+            ProfileContent(
+                viewState = viewState,
+                login = login,
+                email = email,
+                avatarUrl = avatarUrl,
+                name = name,
+                birthday = birthday,
+                gender = gender,
+                canSave = canSave,
+                onEmailChange = viewModel::onEmailChange,
+                onAvatarUrlChange = viewModel::onAvatarUrlChange,
+                onNameChange = viewModel::onNameChange,
+                onBirthdayChange = viewModel::onBirthdayChange,
+                onGenderChange = viewModel::onGenderChange,
+                onSave = viewModel::onSave,
+                onLogout = viewModel::onLogout
+            )
+        }
     }
 
-    LaunchedEffect(key1 = Unit, block = {
+    LaunchedEffect(key1 = reconnectCount, block = {
         viewModel.load()
     })
 
@@ -121,7 +123,7 @@ fun ProfileContent(
         )
         Spacer(modifier = Modifier.height(32.dp))
         StyledErrorText(
-            visible = viewState is ProfileViewState.Error,
+            visible = viewState is ProfileViewState.Error && !viewState.isLoadingError,
             text = if (viewState is ProfileViewState.Error) {
                 stringResource(id = viewState.id)
             } else {

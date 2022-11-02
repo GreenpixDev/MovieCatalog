@@ -10,12 +10,12 @@ sealed class ProfileViewState {
     object LogoutSuccessful: ProfileViewState()
     object AuthorizationFailed: ProfileViewState()
 
-    sealed class Error(@StringRes val id: Int) : ProfileViewState()
-    object NetworkError : Error(R.string.network_error)
-    object HttpError : Error(R.string.http_error)
-    object UnknownError : Error(R.string.unknown_error)
+    sealed class Error(@StringRes val id: Int, val isLoadingError: Boolean) : ProfileViewState()
+    class NetworkError(isLoadingError: Boolean) : Error(R.string.network_error, isLoadingError)
+    class HttpError(isLoadingError: Boolean) : Error(R.string.http_error, isLoadingError)
+    class UnknownError(isLoadingError: Boolean) : Error(R.string.unknown_error, isLoadingError)
 
-    sealed class ValidateError(@StringRes id: Int) : Error(id)
+    sealed class ValidateError(@StringRes id: Int) : Error(id, false)
     object InvalidUrl : ValidateError(R.string.invalid_url)
     object InvalidEmail : ValidateError(R.string.invalid_email)
     object InvalidBirthday : ValidateError(R.string.invalid_birthday)

@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,7 +34,9 @@ import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.view.dialog.review.model.ReviewViewState
 import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
 import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
+import ru.greenpix.moviecatalog.ui.view.shared.StyledErrorText
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ReviewDialog(
     movieId: String,
@@ -53,9 +56,10 @@ fun ReviewDialog(
 
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = properties
+        properties = properties,
     ) {
         ReviewDialogContent(
+            viewState = viewState,
             anonymous = anonymous,
             comment = comment,
             rating = rating,
@@ -90,6 +94,7 @@ fun ReviewDialog(
 
 @Composable
 private fun ReviewDialogContent(
+    viewState: ReviewViewState,
     anonymous: Boolean,
     comment: String,
     rating: Int,
@@ -125,6 +130,7 @@ private fun ReviewDialogContent(
                 onValueChange = onAnonymousChange
             )
             Buttons(
+                viewState = viewState,
                 onSave = onSave,
                 onCancel = onCancel
             )
@@ -221,12 +227,21 @@ private fun AnonymousField(
 
 @Composable
 private fun Buttons(
+    viewState: ReviewViewState,
     onSave: () -> Unit,
     onCancel: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        StyledErrorText(
+            visible = viewState is ReviewViewState.Error,
+            text = if (viewState is ReviewViewState.Error) {
+                stringResource(id = viewState.id)
+            } else {
+                ""
+            }
+        )
         StyledButton(
            onClick = onSave,
            text = stringResource(id = R.string.save)
@@ -265,6 +280,7 @@ private fun StarImage(
 private fun ReviewDialogPreview() {
     MovieCatalogTheme {
         ReviewDialogContent(
+            viewState = ReviewViewState.Default,
             anonymous = true,
             comment = "",
             rating = 5,

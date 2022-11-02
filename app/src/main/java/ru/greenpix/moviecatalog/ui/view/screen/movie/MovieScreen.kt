@@ -14,10 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,12 +53,16 @@ fun MovieScreen(
     isFavorite: Boolean,
     viewModel: MovieViewModel = getViewModel()
 ) {
+    var reconnectCount by remember { mutableStateOf(0) }
     val viewState = remember { viewModel.viewState }.value
     val myReview by remember { viewModel.myReviewState }
 
     when (viewState) {
         is MovieViewState.Loading -> LoadingScreen()
-        is MovieViewState.Error -> ErrorScreen(text = stringResource(id = viewState.id))
+        is MovieViewState.Error -> ErrorScreen(
+            text = stringResource(id = viewState.id),
+            onRetry = { reconnectCount++ }
+        )
         else -> {
             val favorite by remember { viewModel.favoriteState }
             val name by remember { viewModel.nameState }
@@ -114,7 +115,7 @@ fun MovieScreen(
         }
     }
 
-    LaunchedEffect(key1 = Unit, block = {
+    LaunchedEffect(key1 = reconnectCount, block = {
         viewModel.load(movieId, isFavorite)
     })
 

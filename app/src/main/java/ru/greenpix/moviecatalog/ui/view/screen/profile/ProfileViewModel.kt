@@ -60,7 +60,7 @@ class ProfileViewModel(
         get() = _canSaveState
 
     suspend fun load() {
-        if (viewState.value is ProfileViewState.Default) {
+        if (viewState.value is ProfileViewState.Default || viewState.value is ProfileViewState.ValidateError) {
             return
         }
         _viewState.value = ProfileViewState.Loading
@@ -84,11 +84,11 @@ class ProfileViewModel(
         }
         catch (e: Exception) {
             _viewState.value = when(e) {
-                is HttpException -> ProfileViewState.HttpError
-                is UnknownHostException, is SocketException -> ProfileViewState.NetworkError
+                is HttpException -> ProfileViewState.HttpError(true)
+                is UnknownHostException, is SocketException -> ProfileViewState.NetworkError(true)
                 else -> {
                     e.printStackTrace()
-                    ProfileViewState.UnknownError
+                    ProfileViewState.UnknownError(true)
                 }
             }
         }
@@ -145,11 +145,11 @@ class ProfileViewModel(
             }
             catch (e: Exception) {
                 _viewState.value = when(e) {
-                    is HttpException -> ProfileViewState.HttpError
-                    is UnknownHostException, is SocketException -> ProfileViewState.NetworkError
+                    is HttpException -> ProfileViewState.HttpError(false)
+                    is UnknownHostException, is SocketException -> ProfileViewState.NetworkError(false)
                     else -> {
                         e.printStackTrace()
-                        ProfileViewState.UnknownError
+                        ProfileViewState.UnknownError(false)
                     }
                 }
             }
@@ -164,11 +164,11 @@ class ProfileViewModel(
             }
             catch (e: Exception) {
                 _viewState.value = when(e) {
-                    is HttpException -> ProfileViewState.HttpError
-                    is UnknownHostException, is SocketException -> ProfileViewState.NetworkError
+                    is HttpException -> ProfileViewState.HttpError(false)
+                    is UnknownHostException, is SocketException -> ProfileViewState.NetworkError(false)
                     else -> {
                         e.printStackTrace()
-                        ProfileViewState.UnknownError
+                        ProfileViewState.UnknownError(false)
                     }
                 }
             }
