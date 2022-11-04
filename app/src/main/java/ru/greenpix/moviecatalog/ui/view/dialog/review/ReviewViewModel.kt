@@ -22,7 +22,7 @@ class ReviewViewModel(
     private var _commentState = mutableStateOf("")
     private var _ratingState = mutableStateOf(0)
 
-    private var movieId: String = "null"
+    private var movieId: String = ""
     private var reviewId: String? = null
 
     val viewState: State<ReviewViewState>

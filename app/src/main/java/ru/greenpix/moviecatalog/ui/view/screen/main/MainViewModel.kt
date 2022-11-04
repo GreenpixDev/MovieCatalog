@@ -1,7 +1,7 @@
 package ru.greenpix.moviecatalog.ui.view.screen.main
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +10,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
@@ -27,30 +28,43 @@ class MainViewModel(
 ) : ViewModel() {
 
     private val _viewState = mutableStateOf<MainViewState>(MainViewState.Loading)
-    private val _favoritesState = mutableStateMapOf<String, MainFavorite>()
+    private val _favoritesState = mutableStateListOf<MainFavorite>()
+    private val _deletedFavoritesState = mutableStateListOf<MainFavorite>()
+
+    private val favoriteIdMap = mutableMapOf<String, MainFavorite>()
 
     val viewState: State<MainViewState>
         get() = _viewState
-    val favoritesState: Map<String, MainFavorite>
+    val favoritesState: List<MainFavorite>
         get() = _favoritesState
+    val deletedFavoritesState: List<MainFavorite>
+        get() = _deletedFavoritesState
 
     val galleryFlow: Flow<PagingData<MainMovie>> = Pager(PagingConfig(pageSize = 6)) {
         MoviePagingSource(movieRepository)
     }.flow.cachedIn(viewModelScope)
 
     suspend fun load() {
-        if (viewState.value is MainViewState.Default) {
-            return
+        if (viewState.value !is MainViewState.Default) {
+            _viewState.value = MainViewState.Loading
         }
-        _viewState.value = MainViewState.Loading
-        _favoritesState.clear()
 
         try {
             val favorites = favoriteRepository.getAllFavoriteMovies()
-                .associateBy { it.id }
-                .mapValues { MainFavorite(imageUrl = it.value.poster ?: "") }
+                .map {
+                    MainFavorite(
+                        movieId = it.id,
+                        imageUrl = it.poster ?: ""
+                    )
+                }
 
-            _favoritesState.putAll(favorites)
+            _favoritesState.clear()
+            _deletedFavoritesState.clear()
+            favoriteIdMap.clear()
+
+            _favoritesState.addAll(favorites)
+            favorites.forEach { favoriteIdMap[it.movieId] = it }
+
             _viewState.value = MainViewState.Default
         }
         catch (e: AuthorizationException) {
@@ -68,9 +82,28 @@ class MainViewModel(
         }
     }
 
-    fun onDeleteFavorite(movieId: String) {
-        // TODO обращаемся к репозиторию
-        _favoritesState.remove(movieId)
+    fun onDeleteFavorite(movieId: String) = viewModelScope.launch {
+        try {
+            favoriteIdMap[movieId]?.let { _deletedFavoritesState.add(it) }
+            favoriteIdMap.remove(movieId)
+            favoriteRepository.deleteFavoriteMovie(movieId)
+        }
+        catch (e: AuthorizationException) {
+            _viewState.value = MainViewState.AuthorizationFailed
+        }
+        catch (e: Exception) {
+            _viewState.value = when(e) {
+                is HttpException -> MainViewState.HttpError
+                is UnknownHostException, is SocketException -> MainViewState.NetworkError
+                else -> {
+                    e.printStackTrace()
+                    MainViewState.UnknownError
+                }
+            }
+        }
     }
 
+    fun isFavoriteMovie(movieId: String): Boolean {
+        return movieId in favoriteIdMap
+    }
 }

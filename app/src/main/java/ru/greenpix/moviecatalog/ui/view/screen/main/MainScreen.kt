@@ -1,14 +1,13 @@
 package ru.greenpix.moviecatalog.ui.view.screen.main
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -69,12 +68,14 @@ fun MainScreen(
             }
             else {
                 val favorites = remember { viewModel.favoritesState }
+                val deletedFavorites = remember { viewModel.deletedFavoritesState }
 
                 MainContent(
                     favorites = favorites,
+                    deletedFavorites = deletedFavorites,
                     gallery = gallery,
                     onGoToMovie = {
-                        onDirectToMovie(it, it in favorites)
+                        onDirectToMovie(it, viewModel.isFavoriteMovie(it))
                     },
                     onDeleteFavorite = viewModel::onDeleteFavorite
                 )
@@ -96,7 +97,8 @@ fun MainScreen(
 
 @Composable
 private fun MainContent(
-    favorites: Map<String, MainFavorite>,
+    favorites: List<MainFavorite>,
+    deletedFavorites: List<MainFavorite>,
     gallery: LazyPagingItems<MainMovie>,
     onGoToMovie: (String) -> Unit,
     onDeleteFavorite: (String) -> Unit
@@ -113,6 +115,7 @@ private fun MainContent(
         }
         itemsFavorites(
             favorites = favorites,
+            deletedFavorites = deletedFavorites,
             onDeleteFavorite = onDeleteFavorite,
             onGoToMovie = onGoToMovie
         )
@@ -179,42 +182,50 @@ private fun BannerView(
 }
 
 private fun LazyListScope.itemsFavorites(
-    favorites: Map<String, MainFavorite>,
+    favorites: List<MainFavorite>,
+    deletedFavorites: List<MainFavorite>,
     onGoToMovie: (String) -> Unit,
     onDeleteFavorite: (String) -> Unit
 ) {
-    if (favorites.isNotEmpty()) {
-        item {
-            Text(
-                text = stringResource(R.string.favorites),
-                style = H1,
-                color = Accent,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 8.dp)
-            )
-        }
-        item {
-            // Поиск центрального элемента
-            // https://stackoverflow.com/questions/71832396/jetpack-compose-lazylist-possible-to-zoom-the-center-item
-            val lazyRowState = rememberLazyListState()
-            val centerPosition by rememberLazyListFirstPosition(state = lazyRowState)
+    item {
+        AnimatedVisibility(
+            visible = favorites.size - deletedFavorites.size > 0
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.favorites),
+                    style = H1,
+                    color = Accent,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 8.dp)
+                )
+                // Поиск центрального элемента
+                // https://stackoverflow.com/questions/71832396/jetpack-compose-lazylist-possible-to-zoom-the-center-item
+                val lazyRowState = rememberLazyListState()
+                val centerPosition by rememberLazyListFirstPosition(state = lazyRowState)
 
-            LazyRow(
-                modifier = Modifier
-                    .height(172.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                state = lazyRowState
-            ) {
-                itemsIndexed(favorites) { index, id, item ->
-                    FavoriteView(
-                        imageUrl = item.imageUrl,
-                        selected = index == centerPosition,
-                        onClick = { onGoToMovie.invoke(id) },
-                        onDelete = { onDeleteFavorite.invoke(id) }
-                    )
+                LazyRow(
+                    modifier = Modifier
+                        .height(172.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    state = lazyRowState
+                ) {
+                    itemsIndexed(favorites) { index, item ->
+                        AnimatedVisibility(
+                            visible = item !in deletedFavorites,
+                            exit = shrinkHorizontally()
+                        ) {
+                            FavoriteView(
+                                imageUrl = item.imageUrl,
+                                selected = index == centerPosition,
+                                onClick = { onGoToMovie.invoke(item.movieId) },
+                                onDelete = { onDeleteFavorite.invoke(item.movieId) }
+                            )
+                        }
+                    }
+                    item { Spacer(modifier = Modifier.width(16.dp)) }
                 }
-                item { Spacer(modifier = Modifier.width(16.dp)) }
             }
         }
     }
@@ -267,15 +278,14 @@ private fun FavoriteView(
     imageUrl: String,
     selected: Boolean,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+        .padding(start = 16.dp)
 ) {
     val width by animateDpAsState(if (selected) 120.dp else 100.dp)
     val height by animateDpAsState(if (selected) 172.dp else 144.dp)
 
-    Box(
-        modifier = Modifier
-            .padding(start = 16.dp)
-    ) {
+    Box(modifier = modifier) {
         Box(
             modifier = Modifier
                 .size(width, height)
@@ -406,9 +416,13 @@ private fun MainScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             MainContent(
-                favorites = mapOf(
-                    "1" to MainFavorite(imageUrl = "")
+                favorites = listOf(
+                    MainFavorite(
+                        movieId = "",
+                        imageUrl = ""
+                    )
                 ),
+                deletedFavorites = emptyList(),
                 gallery = flow<PagingData<MainMovie>> {}.collectAsLazyPagingItems(),
                 onGoToMovie = {},
                 onDeleteFavorite = {}

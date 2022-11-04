@@ -88,6 +88,8 @@ class MovieViewModel(
         get() = _otherReviewsState
 
     suspend fun load(movieId: String, isFavorite: Boolean) {
+        println("load MovieViewModel(${viewState.value}, ${this.movieId}) with id $movieId")
+
         if (this.viewState.value is MovieViewState.Default && this.movieId == movieId) {
             return
         }
