@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -36,7 +35,6 @@ import ru.greenpix.moviecatalog.ui.view.shared.StyledButton
 import ru.greenpix.moviecatalog.ui.view.shared.StyledClickableText
 import ru.greenpix.moviecatalog.ui.view.shared.StyledErrorText
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ReviewDialog(
     movieId: String,
@@ -53,6 +51,7 @@ fun ReviewDialog(
     val anonymous by remember { viewModel.anonymousState }
     val comment by remember { viewModel.commentState }
     val rating by remember { viewModel.ratingState }
+    val canSave by remember { viewModel.canSaveState }
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -63,6 +62,7 @@ fun ReviewDialog(
             anonymous = anonymous,
             comment = comment,
             rating = rating,
+            canSave = canSave,
             onAnonymousChange = viewModel::onAnonymousChange,
             onCommentChange = viewModel::onCommentChange,
             onRatingChange = viewModel::onRatingChange,
@@ -98,6 +98,7 @@ private fun ReviewDialogContent(
     anonymous: Boolean,
     comment: String,
     rating: Int,
+    canSave: Boolean,
     onAnonymousChange: (Boolean) -> Unit,
     onCommentChange: (String) -> Unit,
     onRatingChange: (Int) -> Unit,
@@ -131,6 +132,7 @@ private fun ReviewDialogContent(
             )
             Buttons(
                 viewState = viewState,
+                canSave = canSave,
                 onSave = onSave,
                 onCancel = onCancel
             )
@@ -228,6 +230,7 @@ private fun AnonymousField(
 @Composable
 private fun Buttons(
     viewState: ReviewViewState,
+    canSave: Boolean,
     onSave: () -> Unit,
     onCancel: () -> Unit
 ) {
@@ -243,8 +246,9 @@ private fun Buttons(
             }
         )
         StyledButton(
-           onClick = onSave,
-           text = stringResource(id = R.string.save)
+            onClick = onSave,
+            enabled = canSave,
+            text = stringResource(id = R.string.save)
         )
         StyledClickableText(
             onClick = onCancel,
@@ -284,6 +288,7 @@ private fun ReviewDialogPreview() {
             anonymous = true,
             comment = "",
             rating = 5,
+            canSave = true,
             onAnonymousChange = {},
             onCommentChange = {},
             onRatingChange = {},

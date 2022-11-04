@@ -55,7 +55,6 @@ fun MovieScreen(
 ) {
     var reconnectCount by remember { mutableStateOf(0) }
     val viewState = remember { viewModel.viewState }.value
-    val myReview by remember { viewModel.myReviewState }
 
     when (viewState) {
         is MovieViewState.Loading -> LoadingScreen()
@@ -77,6 +76,8 @@ fun MovieScreen(
             val fees by remember { viewModel.feesState }
             val age by remember { viewModel.ageState }
             val genres = remember { viewModel.genresState }
+            val myReview by remember { viewModel.myReviewState }
+            val myReviewDeleted by remember { viewModel.myReviewDeletedState }
             val otherReviews = remember { viewModel.otherReviewsState }
 
             MovieContent(
@@ -94,13 +95,14 @@ fun MovieScreen(
                 age = age,
                 genres = genres,
                 myReview = myReview,
+                myReviewDeleted = myReviewDeleted,
                 otherReviews = otherReviews,
                 onBack = onBack,
                 onToggleFavorite = viewModel::onToggleFavorite,
                 onAddReview = { onAddReview(movieId) },
                 onEditReview = {
                     val review = myReview
-                    if (review != null) {
+                    if (review != null && !myReviewDeleted) {
                         onEditReview(
                             movieId,
                             review.id,
@@ -142,6 +144,7 @@ private fun MovieContent(
     age: Int,
     genres: List<String>,
     myReview: MovieReview?,
+    myReviewDeleted: Boolean,
     otherReviews: List<MovieReview>,
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
@@ -197,29 +200,35 @@ private fun MovieContent(
         }
         item {
             ReviewsSubtitleView(
-                hiddenAddReview = myReview != null,
+                hiddenAddReview = myReview != null && !myReviewDeleted,
                 onAddReview = onAddReview
             )
         }
-        if (myReview != null) {
-            item {
-                ReviewView(
-                    author = myReview.author,
-                    avatarUrl = myReview.avatarUrl,
-                    comment = myReview.comment,
-                    date = myReview.date,
-                    rating = myReview.rating,
-                    hue = myReview.hue,
-                    isMine = true,
-                    onEdit = onEditReview,
-                    onDelete = onDeleteReview
-                )
+        item {
+            AnimatedVisibility(
+                visible = myReview != null && !myReviewDeleted
+            ) {
+                if (myReview != null) {
+                    ReviewView(
+                        isAnonymous = myReview.anonymous,
+                        author = myReview.author,
+                        avatarUrl = myReview.avatarUrl,
+                        comment = myReview.comment,
+                        date = myReview.date,
+                        rating = myReview.rating,
+                        hue = myReview.hue,
+                        isMine = true,
+                        onEdit = onEditReview,
+                        onDelete = onDeleteReview
+                    )
+                }
             }
         }
         items(otherReviews) {
             ReviewView(
-                author = if (it.anonymous) stringResource(id = R.string.anonymous_review) else it.author,
-                avatarUrl = if (it.anonymous) "" else it.avatarUrl,
+                isAnonymous = it.anonymous,
+                author = it.author,
+                avatarUrl = it.avatarUrl,
                 comment = it.comment,
                 date = it.date,
                 rating = it.rating,
@@ -463,6 +472,7 @@ private fun ReviewsSubtitleView(
 
 @Composable
 private fun ReviewView(
+    isAnonymous: Boolean,
     author: String,
     avatarUrl: String,
     comment: String,
@@ -490,12 +500,12 @@ private fun ReviewView(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Avatar(
-                    url = avatarUrl,
+                    url = if (isAnonymous) "" else avatarUrl,
                     modifier = Modifier.size(40.dp)
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = author,
+                        text = if (isAnonymous) stringResource(id = R.string.anonymous_review) else author,
                         style = Body,
                         color = BrightWhite
                     )
@@ -618,6 +628,7 @@ private fun MovieScreenPreview() {
                 age = 16,
                 genres = listOf("драма", "боевик", "фантастика", "мелодрама"),
                 myReview = null,
+                myReviewDeleted = false,
                 otherReviews = emptyList(),
                 onBack = {},
                 onToggleFavorite = {},
@@ -637,6 +648,7 @@ private fun ReviewViewPreview() {
             color = MaterialTheme.colors.background
         ) {
             ReviewView(
+                isAnonymous = false,
                 author = "Роман",
                 avatarUrl = "",
                 comment = "Сразу скажу, что фильм мне понравился. Люблю Фримэна, уважаю Роббинса. Читаю Кинга. Но рецензия красненькая.",

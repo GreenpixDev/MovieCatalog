@@ -21,6 +21,7 @@ class ReviewViewModel(
     private var _anonymousState = mutableStateOf(false)
     private var _commentState = mutableStateOf("")
     private var _ratingState = mutableStateOf(0)
+    private val _canSaveState = mutableStateOf(false)
 
     private var movieId: String = ""
     private var reviewId: String? = null
@@ -33,6 +34,8 @@ class ReviewViewModel(
         get() = _commentState
     val ratingState: State<Int>
         get() = _ratingState
+    val canSaveState: State<Boolean>
+        get() = _canSaveState
 
     fun load(
         movieId: String,
@@ -49,15 +52,19 @@ class ReviewViewModel(
     }
 
     fun onAnonymousChange(anonymous: Boolean) {
-        _anonymousState.value = anonymous
+        if (isNewReview()) {
+            _anonymousState.value = anonymous
+        }
     }
 
     fun onCommentChange(comment: String) {
         _commentState.value = comment
+        validate()
     }
 
     fun onRatingChange(rating: Int) {
         _ratingState.value = rating
+        validate()
     }
 
     fun onSave(
@@ -96,4 +103,12 @@ class ReviewViewModel(
         }
     }
 
+    private fun isNewReview(): Boolean {
+        return reviewId == null
+    }
+
+    private fun validate() {
+        _canSaveState.value = commentState.value.isNotBlank()
+                && ratingState.value in 1..10
+    }
 }

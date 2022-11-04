@@ -50,6 +50,7 @@ class MovieViewModel(
     private val _ageState = mutableStateOf(0)
     private val _genresState = mutableStateListOf<String>()
     private val _myReviewState = mutableStateOf<MovieReview?>(null)
+    private val _myReviewDeletedState = mutableStateOf<Boolean>(false)
     private val _otherReviewsState = mutableStateListOf<MovieReview>()
 
     private var movieId: String = ""
@@ -84,6 +85,8 @@ class MovieViewModel(
         get() = _genresState
     val myReviewState: State<MovieReview?>
         get() = _myReviewState
+    val myReviewDeletedState: State<Boolean>
+        get() = _myReviewDeletedState
     val otherReviewsState: List<MovieReview>
         get() = _otherReviewsState
 
@@ -172,8 +175,8 @@ class MovieViewModel(
 
         viewModelScope.launch {
             try {
+                _myReviewDeletedState.value = true
                 reviewRepository.deleteReview(movieId, reviewId)
-                _myReviewState.value = null
             }
             catch (e: AuthorizationException) {
                 _viewState.value = MovieViewState.AuthorizationFailed
