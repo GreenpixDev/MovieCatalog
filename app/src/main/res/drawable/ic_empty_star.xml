@@ -5,7 +5,7 @@
     android:viewportHeight="18">
     <group>
         <path
-            android:strokeColor="#FFD1D1D1"
+            android:strokeColor="#FFFFFFFF"
             android:strokeWidth="1"
             android:strokeLineCap="round"
             android:strokeLineJoin="round"

@@ -1,6 +1,7 @@
 package ru.greenpix.moviecatalog.ui.view.dialog.review
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -57,6 +59,7 @@ fun ReviewDialog(
         comment = comment,
         rating = rating,
         canSave = canSave,
+        isNewReview = reviewId == null,
         onAnonymousChange = viewModel::onAnonymousChange,
         onCommentChange = viewModel::onCommentChange,
         onRatingChange = viewModel::onRatingChange,
@@ -90,6 +93,7 @@ private fun ReviewDialogContent(
     comment: String,
     rating: Int,
     canSave: Boolean,
+    isNewReview: Boolean,
     onAnonymousChange: (Boolean) -> Unit,
     onCommentChange: (String) -> Unit,
     onRatingChange: (Int) -> Unit,
@@ -119,6 +123,7 @@ private fun ReviewDialogContent(
             )
             AnonymousField(
                 value = anonymous,
+                enabled = isNewReview,
                 onValueChange = onAnonymousChange
             )
             Buttons(
@@ -189,6 +194,7 @@ private fun CommentField(
 @Composable
 private fun AnonymousField(
     value: Boolean,
+    enabled: Boolean,
     onValueChange: (Boolean) -> Unit
 ) {
     Row(
@@ -201,16 +207,16 @@ private fun AnonymousField(
             modifier = Modifier.weight(1f)
         )
         Box(
-            modifier = Modifier
+            modifier = (if (enabled) Modifier.clickable { onValueChange.invoke(!value) } else Modifier)
                 .size(24.dp)
                 .clip(Shapes.medium)
-                .border(1.dp, GrayFaded, Shapes.medium)
-                .clickable { onValueChange.invoke(!value) },
+                .border(1.dp, GrayFaded, Shapes.medium),
             contentAlignment = Alignment.Center
         ) {
             if (value) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_check_mark),
+                    colorFilter = ColorFilter.tint(if (enabled) Accent else Gray),
                     contentDescription = null
                 )
             }
@@ -254,10 +260,11 @@ private fun StarImage(
     onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .padding(3.dp)
+        modifier = (if (filled) Modifier.background(Accent.copy(alpha = .1f), CircleShape) else Modifier)
+            .size(24.dp)
             .clip(CircleShape)
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
     ) {
         Image(
             painter = if (filled) {
@@ -265,6 +272,7 @@ private fun StarImage(
             } else {
                 painterResource(id = R.drawable.ic_empty_star)
             },
+            colorFilter = ColorFilter.tint(if (filled) Accent else GrayFaded),
             contentDescription = null
         )
     }
@@ -280,6 +288,7 @@ private fun ReviewDialogPreview() {
             comment = "",
             rating = 5,
             canSave = true,
+            isNewReview = true,
             onAnonymousChange = {},
             onCommentChange = {},
             onRatingChange = {},
