@@ -1,3 +1,66 @@
 <resources>
     <string name="app_name">MovieCatalog</string>
+    <string name="server_url">https://react-midterm.kreosoft.space</string>
+    <string name="preference_jwt">jwt</string>
+    <string name="key_token">token</string>
+    <!-- Общее -->
+    <string name="unknown_error">Произошла неизвестная ошибка, обратитесь к разработчикам приложения</string>
+    <string name="http_error">Произошла ошибка при обращении к серверу, обратитесь к разработчикам приложения</string>
+    <string name="network_error">Не удается подключиться к серверу</string>
+    <string name="retry">Повторить попытку</string>
+    <!-- Авторизация -->
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="email">E-mail</string>
+    <string name="name">Имя</string>
+    <string name="repeat_password">Подтвердите пароль</string>
+    <string name="birthday">Дата рождения</string>
+    <string name="male">Мужчина</string>
+    <string name="female">Женщина</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="registration">Регистрация</string>
+    <string name="have_account">У меня уже есть аккаунт</string>
+    <string name="login_failed">Неверный логин или пароль</string>
+    <string name="duplicate_username">Пользователь с таким логином уже зарегистрирован</string>
+    <string name="passwords_not_match">Пароли не совпадают</string>
+    <string name="password_length_limit">Пароль должен не менее 6 символов</string>
+    <string name="invalid_email">Указан некорректный email</string>
+    <string name="invalid_url">Указана некорректная ссылка</string>
+    <string name="invalid_login">Указан некорректный логин</string>
+    <string name="invalid_birthday">Указана некорректная дата рождения</string>
+    <!-- Меню с разделами -->
+    <string name="main">Главное</string>
+    <string name="profile">Профиль</string>
+    <!-- Главная -->
+    <string name="favorites">Избранное</string>
+    <string name="gallery">Галерея</string>
+    <string name="watch">Смотреть</string>
+    <string name="empty_content">На данный момент никакие фильмы не опубликованы</string>
+    <!-- Профиль -->
+    <string name="avatar_url">Ссылка на аватарку</string>
+    <string name="save">Сохранить</string>
+    <string name="logout">Выйти из аккаунта</string>
+    <string name="gender">Пол</string>
+    <string name="example_email">Напишите свой E-mail</string>
+    <string name="example_avatar_url">Вставьте ссылку на аватарку</string>
+    <string name="example_name">Напишите своё имя</string>
+    <!-- Фильм -->
+    <string name="about_movie">О фильме</string>
+    <string name="year">Год</string>
+    <string name="country">Страна</string>
+    <string name="duration">Время</string>
+    <string name="tagline">Слоган</string>
+    <string name="producer">Режиссёр</string>
+    <string name="budget">Бюджет</string>
+    <string name="fees_in_the_world">Сборы в мире</string>
+    <string name="age">Возраст</string>
+    <string name="genres">Жанры</string>
+    <string name="reviews">Отзывы</string>
+    <string name="my_review">мой отзыв</string>
+    <!-- Отзыв -->
+    <string name="post_review">Оставить отзыв</string>
+    <string name="review">Отзыв</string>
+    <string name="anonymous_review">Анонимный отзыв</string>
+    <string name="cancel">Отмена</string>
 </resources>
