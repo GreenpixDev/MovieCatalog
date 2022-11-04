@@ -91,21 +91,19 @@ class MovieViewModel(
         get() = _otherReviewsState
 
     suspend fun load(movieId: String, isFavorite: Boolean) {
-        println("load MovieViewModel(${viewState.value}, ${this.movieId}) with id $movieId")
-
-        if (this.viewState.value is MovieViewState.Default && this.movieId == movieId) {
-            return
+        if (this.viewState.value !is MovieViewState.Default || this.movieId != movieId) {
+            _viewState.value = MovieViewState.Loading
+            this.movieId = movieId
         }
-        _viewState.value = MovieViewState.Loading
-        _genresState.clear()
-        _otherReviewsState.clear()
-        this.movieId = movieId
 
         try {
             val movie = movieRepository.getDetails(movieId)
             val rawToken = jwtRepository.getToken()
             checkNotNull(rawToken) {"jwt token cannot be null"}
             val uniqueName = gson.decodeJwt(rawToken).uniqueName
+
+            _genresState.clear()
+            _otherReviewsState.clear()
 
             _favoriteState.value = isFavorite
             _nameState.value = movie.name ?: ""

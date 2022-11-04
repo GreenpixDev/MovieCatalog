@@ -148,7 +148,8 @@ private fun NavGraphBuilder.navigationReview(navController: NavController) {
             val movieId = it.arguments?.getString(Destination.Review.Add.MOVIE_ID)
             ReviewDialog(
                 movieId = checkNotNull(movieId) { "Required value 'movieId' was null." },
-                onDismissRequest = { navController.navigateUp() },
+                onCancel = { navController.navigateUp() },
+                onSave = { navController.navigateUp() },
                 onDirectToAuth = { navController.navigateToAuth() }
             )
         }
@@ -183,7 +184,8 @@ private fun NavGraphBuilder.navigationReview(navController: NavController) {
                 initComment = checkNotNull(comment) { "Required value 'comment' was null." },
                 initRating = checkNotNull(rating) { "Required value 'rating' was null." },
                 initAnonymous = checkNotNull(isAnonymous) { "Required value 'isAnonymous' was null." },
-                onDismissRequest = { navController.navigateUp() },
+                onCancel = { navController.navigateUp() },
+                onSave = { navController.navigateUp() },
                 onDirectToAuth = { navController.navigateToAuth() }
             )
         }

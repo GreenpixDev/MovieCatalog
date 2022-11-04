@@ -67,9 +67,7 @@ class ReviewViewModel(
         validate()
     }
 
-    fun onSave(
-        onSuccess: () -> Unit
-    ) {
+    fun onSave() {
         val reviewId = this.reviewId
         val reviewModel = ReviewModifyModel(
             reviewText = commentState.value,
@@ -85,7 +83,7 @@ class ReviewViewModel(
                 else {
                     reviewRepository.updateReview(movieId, reviewId, reviewModel)
                 }
-                onSuccess.invoke()
+                _viewState.value = ReviewViewState.Saved
             }
             catch (e: AuthorizationException) {
                 _viewState.value = ReviewViewState.AuthorizationFailed

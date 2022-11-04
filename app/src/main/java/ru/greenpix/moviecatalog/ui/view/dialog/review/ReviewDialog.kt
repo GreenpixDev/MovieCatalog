@@ -25,8 +25,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
@@ -42,9 +40,9 @@ fun ReviewDialog(
     initComment: String = "",
     initRating: Int = 0,
     initAnonymous: Boolean = false,
-    onDismissRequest: () -> Unit,
+    onCancel: () -> Unit,
+    onSave: () -> Unit,
     onDirectToAuth: () -> Unit,
-    properties: DialogProperties = DialogProperties(),
     viewModel: ReviewViewModel = getViewModel()
 ) {
     val viewState by remember { viewModel.viewState }
@@ -53,27 +51,18 @@ fun ReviewDialog(
     val rating by remember { viewModel.ratingState }
     val canSave by remember { viewModel.canSaveState }
 
-    Dialog(
-        onDismissRequest = onDismissRequest,
-        properties = properties,
-    ) {
-        ReviewDialogContent(
-            viewState = viewState,
-            anonymous = anonymous,
-            comment = comment,
-            rating = rating,
-            canSave = canSave,
-            onAnonymousChange = viewModel::onAnonymousChange,
-            onCommentChange = viewModel::onCommentChange,
-            onRatingChange = viewModel::onRatingChange,
-            onSave = {
-                viewModel.onSave(
-                    onSuccess = onDismissRequest
-                )
-            },
-            onCancel = onDismissRequest
-        )
-    }
+    ReviewDialogContent(
+        viewState = viewState,
+        anonymous = anonymous,
+        comment = comment,
+        rating = rating,
+        canSave = canSave,
+        onAnonymousChange = viewModel::onAnonymousChange,
+        onCommentChange = viewModel::onCommentChange,
+        onRatingChange = viewModel::onRatingChange,
+        onSave = viewModel::onSave,
+        onCancel = onCancel
+    )
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.load(
@@ -86,8 +75,10 @@ fun ReviewDialog(
     })
 
     LaunchedEffect(key1 = viewState, block = {
-        if (viewState is ReviewViewState.AuthorizationFailed) {
-            onDirectToAuth.invoke()
+        when (viewState) {
+            is ReviewViewState.AuthorizationFailed -> onDirectToAuth.invoke()
+            is ReviewViewState.Saved -> onSave.invoke()
+            else -> {}
         }
     })
 }

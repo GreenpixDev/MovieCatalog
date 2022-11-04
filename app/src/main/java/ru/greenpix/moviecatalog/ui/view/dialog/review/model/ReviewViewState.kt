@@ -6,6 +6,7 @@ import ru.greenpix.moviecatalog.R
 sealed class ReviewViewState {
     object Default : ReviewViewState()
     object AuthorizationFailed : ReviewViewState()
+    object Saved : ReviewViewState()
 
     sealed class Error(@StringRes val id: Int) : ReviewViewState()
     object NetworkError : Error(R.string.network_error)

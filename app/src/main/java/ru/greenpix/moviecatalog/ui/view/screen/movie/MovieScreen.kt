@@ -22,16 +22,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import coil.compose.AsyncImage
 import com.google.accompanist.flowlayout.FlowRow
 import org.koin.androidx.compose.getViewModel
 import ru.greenpix.moviecatalog.R
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.firstItemScrollProgress
+import ru.greenpix.moviecatalog.ui.util.observeAsState
 import ru.greenpix.moviecatalog.ui.util.roundedAtBottom
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieReview
 import ru.greenpix.moviecatalog.ui.view.screen.movie.model.MovieViewState
@@ -53,6 +56,9 @@ fun MovieScreen(
     isFavorite: Boolean,
     viewModel: MovieViewModel = getViewModel()
 ) {
+    // Нужно для обновления экрана, когда закрывается диалог с добавлением review
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.observeAsState()
+
     var reconnectCount by remember { mutableStateOf(0) }
     val viewState = remember { viewModel.viewState }.value
 
@@ -117,8 +123,10 @@ fun MovieScreen(
         }
     }
 
-    LaunchedEffect(key1 = reconnectCount, block = {
-        viewModel.load(movieId, isFavorite)
+    LaunchedEffect(key1 = reconnectCount, key2 = lifecycleState, block = {
+        if (lifecycleState == Lifecycle.Event.ON_RESUME) {
+            viewModel.load(movieId, isFavorite)
+        }
     })
 
     LaunchedEffect(key1 = viewState, block = {
