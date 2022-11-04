@@ -52,9 +52,7 @@ class ReviewViewModel(
     }
 
     fun onAnonymousChange(anonymous: Boolean) {
-        if (isNewReview()) {
-            _anonymousState.value = anonymous
-        }
+        _anonymousState.value = anonymous
     }
 
     fun onCommentChange(comment: String) {
@@ -99,10 +97,6 @@ class ReviewViewModel(
                 }
             }
         }
-    }
-
-    private fun isNewReview(): Boolean {
-        return reviewId == null
     }
 
     private fun validate() {

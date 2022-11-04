@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -312,9 +313,12 @@ private fun HeaderView(
     onToggleFavorite: () -> Unit
 ) {
     val density = LocalDensity.current
+    val visible = scrollProgress > .5f
+    val heartColor by animateColorAsState(targetValue = if (visible) Accent else BaseWhite)
+
     // Код AnimatedVisibility взят с https://developer.android.com/jetpack/compose/animation
     AnimatedVisibility(
-        visible = scrollProgress > .5f,
+        visible = visible,
         enter = slideInVertically {
             with(density) { -40.dp.roundToPx() }
         } + expandVertically(
@@ -326,53 +330,64 @@ private fun HeaderView(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
                 .background(SealBrown)
-                .statusBarsPadding()
+                .statusBarsPadding(),
         ) {
-            Row(
+            Box(
                 modifier = Modifier
-                    .height(56.dp)
-                    .padding(start = 52.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 32.dp)
+                    .padding(vertical = 12.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     text = name,
                     style = H1,
                     color = BrightWhite,
-                    modifier = Modifier.weight(1f)
-                )
-                Box(
                     modifier = Modifier
-                        .clip(CircleShape)
-                        .clickable(onClick = onToggleFavorite)
-                ) {
-                    Image(
-                        painter = if (favorite) {
-                            painterResource(R.drawable.ic_filled_heart)
-                        } else {
-                            painterResource(R.drawable.ic_empty_heart)
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                        .padding(horizontal = 52.dp),
+                )
             }
         }
     }
-
     Box(
-        modifier = Modifier
-            .statusBarsPadding()
-            .clip(CircleShape)
-            .clickable(onClick = onBack)
+        modifier = Modifier.statusBarsPadding()
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_back),
-            contentDescription = null,
-            modifier = Modifier.padding(16.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(onClick = onBack)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_arrow_back),
+                    contentDescription = null,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(onClick = onToggleFavorite)
+            ) {
+                Image(
+                    painter = if (favorite) {
+                        painterResource(R.drawable.ic_filled_heart)
+                    } else {
+                        painterResource(R.drawable.ic_empty_heart)
+                    },
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(heartColor),
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
     }
 }
 
@@ -469,6 +484,7 @@ private fun ReviewsSubtitleView(
         if (!hiddenAddReview) {
             Image(
                 painter = painterResource(R.drawable.ic_plus),
+                colorFilter = ColorFilter.tint(Accent),
                 contentDescription = null,
                 modifier = Modifier
                     .clip(CircleShape)

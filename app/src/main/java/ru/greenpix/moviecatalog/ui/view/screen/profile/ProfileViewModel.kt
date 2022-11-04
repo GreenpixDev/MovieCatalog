@@ -76,7 +76,6 @@ class ProfileViewModel(
                 .toLocalDate()
             _genderState.value = Gender.values()[profile.gender + 1]
 
-            validate()
             _viewState.value = ProfileViewState.Default
         }
         catch (e: AuthorizationException) {
