@@ -115,6 +115,7 @@ class MovieViewModel(
             _myReviewState.value = movie.reviews
                 .find { it.author?.username == uniqueName }
                 ?.let { movieReviewMapper.map(it) }
+                ?.apply { _myReviewDeletedState.value = false }
             _otherReviewsState.addAll(movie.reviews
                 .filter { it.author?.username != uniqueName }
                 .map { movieReviewMapper.map(it) }

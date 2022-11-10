@@ -15,7 +15,7 @@ data class UserRegisterDto(
     @SerializedName("email")
     val email: String,
 
-    @SerializedName("birthday")
+    @SerializedName("birthDate")
     val birthday: String,
 
     @SerializedName("gender")

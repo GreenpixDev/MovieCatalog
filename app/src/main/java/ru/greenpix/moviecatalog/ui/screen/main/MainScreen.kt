@@ -40,7 +40,9 @@ fun MainScreen(
     val viewState = remember { viewModel.viewState }.value
     val gallery = viewModel.galleryFlow.collectAsLazyPagingItems()
 
-    if (viewState is MainViewState.Loading || gallery.isFirstLoading()) {
+    if (viewState is MainViewState.Loading
+        || viewState is MainViewState.AuthorizationFailed
+        || gallery.isFirstLoading()) {
         LoadingScreen()
     }
     else when (viewState) {
