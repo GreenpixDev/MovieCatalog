@@ -2,8 +2,11 @@ package ru.greenpix.moviecatalog.util
 
 import com.google.gson.Gson
 import retrofit2.Response
-import ru.greenpix.moviecatalog.domain.ErrorModel
+import ru.greenpix.moviecatalog.dto.ErrorDto
 
-fun Gson.fromErrorBody(response: Response<*>?): ErrorModel? {
-    return fromJson(response?.errorBody()?.string(), ErrorModel::class.java)
+/**
+ * Функция преобразования [ответа от сервера][Response], содердащего ошибку, в [ErrorDto]
+ */
+fun Gson.fromErrorBody(response: Response<*>?): ErrorDto? {
+    return fromJson(response?.errorBody()?.string(), ErrorDto::class.java)
 }

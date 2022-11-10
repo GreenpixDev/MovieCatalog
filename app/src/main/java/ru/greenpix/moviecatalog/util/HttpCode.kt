@@ -1,5 +1,8 @@
 package ru.greenpix.moviecatalog.util
 
+/**
+ * Объект с константами [HTTP кодов](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+ */
 object HttpCode {
 
     const val BAD_REQUEST = 400

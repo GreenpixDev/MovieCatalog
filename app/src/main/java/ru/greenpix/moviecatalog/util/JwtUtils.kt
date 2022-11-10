@@ -4,12 +4,18 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
+/**
+ * Функция преобразования [строки с jwt токеном][jwtToken] в объект [JwtToken]
+ */
 fun Gson.decodeJwt(jwtToken: String): JwtToken {
     val split = jwtToken.split(".")
     val body = String(Base64.getDecoder().decode(split[1]), Charsets.UTF_8)
     return fromJson(body, JwtToken::class.java)
 }
 
+/**
+ * Дата класс [JWT токена](https://jwt.io)
+ */
 data class JwtToken(
     @SerializedName("unique_name")
     val uniqueName: String,

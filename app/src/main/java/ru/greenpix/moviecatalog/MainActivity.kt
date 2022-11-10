@@ -15,7 +15,7 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import ru.greenpix.moviecatalog.di.appModule
+import ru.greenpix.moviecatalog.di.*
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.ui.navigation.Destination
 import ru.greenpix.moviecatalog.ui.navigation.view.RootNavHost
@@ -28,7 +28,14 @@ class MainActivity : ComponentActivity() {
         startKoin {
             androidLogger()
             androidContext(this@MainActivity)
-            modules(appModule)
+            modules(
+                applicationModule,
+                viewModelModule,
+                repositoryModule,
+                retrofitModule,
+                useCaseModule,
+                mapperModule
+            )
         }
 
         // TODO переделать без deprecated

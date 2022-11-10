@@ -4,6 +4,9 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.unit.dp
 
+/**
+ * Функция загругления фигуры в начале (слева)
+ */
 fun CornerBasedShape.roundedAtStart(): CornerBasedShape {
     return copy(
         topStart = topStart,
@@ -13,6 +16,9 @@ fun CornerBasedShape.roundedAtStart(): CornerBasedShape {
     )
 }
 
+/**
+ * Функция загругления фигуры в конце (справа)
+ */
 fun CornerBasedShape.roundedAtEnd(): CornerBasedShape {
     return copy(
         topStart = CornerSize(0.dp),
@@ -22,6 +28,9 @@ fun CornerBasedShape.roundedAtEnd(): CornerBasedShape {
     )
 }
 
+/**
+ * Функция загругления фигуры сверху
+ */
 fun CornerBasedShape.roundedAtTop(): CornerBasedShape {
     return copy(
         topStart = topStart,
@@ -31,6 +40,9 @@ fun CornerBasedShape.roundedAtTop(): CornerBasedShape {
     )
 }
 
+/**
+ * Функция загругления фигуры снизу
+ */
 fun CornerBasedShape.roundedAtBottom(): CornerBasedShape {
     return copy(
         topStart = CornerSize(0.dp),

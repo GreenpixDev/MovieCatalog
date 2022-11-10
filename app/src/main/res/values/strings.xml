@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MovieCatalog</string>
     <string name="server_url">https://react-midterm.kreosoft.space</string>
+    <!--<string name="server_url">https://moviecatalog.markridge.space</string>-->
     <string name="preference_jwt">jwt</string>
     <string name="key_token">token</string>
     <!-- Общее -->

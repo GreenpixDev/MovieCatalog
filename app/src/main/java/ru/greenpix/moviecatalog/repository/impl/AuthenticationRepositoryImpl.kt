@@ -3,17 +3,17 @@ package ru.greenpix.moviecatalog.repository.impl
 import com.google.gson.Gson
 import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.domain.LoginCredentials
-import ru.greenpix.moviecatalog.domain.UserRegisterModel
+import ru.greenpix.moviecatalog.dto.LoginCredentialsDto
+import ru.greenpix.moviecatalog.dto.UserRegisterDto
 import ru.greenpix.moviecatalog.exception.AuthenticationException
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
+import ru.greenpix.moviecatalog.repository.util.ServerDateTime
 import ru.greenpix.moviecatalog.retrofit.AuthenticationApi
 import ru.greenpix.moviecatalog.util.HttpCode
 import ru.greenpix.moviecatalog.util.fromErrorBody
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class AuthenticationRepositoryImpl(
     private val jwtRepository: JwtRepository,
@@ -22,7 +22,6 @@ class AuthenticationRepositoryImpl(
 ) : AuthenticationRepository {
 
     private companion object {
-        val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         const val DUPLICATE_USER_NAME = "DuplicateUserName"
     }
 
@@ -39,12 +38,12 @@ class AuthenticationRepositoryImpl(
         gender: Gender
     ) {
         try {
-            val jwt = authenticationApi.register(UserRegisterModel(
+            val jwt = authenticationApi.register(UserRegisterDto(
                 username = login,
                 email = email,
                 name = name,
                 password = password,
-                birthday = birthday.atStartOfDay().format(FORMATTER),
+                birthday = birthday.atStartOfDay().format(ServerDateTime.formatter),
                 gender = gender.ordinal - 1
             ))
             jwtRepository.saveToken(jwt.token)
@@ -69,7 +68,7 @@ class AuthenticationRepositoryImpl(
         password: String
     ) {
         try {
-            val jwt = authenticationApi.login(LoginCredentials(
+            val jwt = authenticationApi.login(LoginCredentialsDto(
                 username = login,
                 password = password
             ))

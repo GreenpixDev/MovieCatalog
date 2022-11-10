@@ -1,12 +1,22 @@
 package ru.greenpix.moviecatalog.repository
 
-import ru.greenpix.moviecatalog.domain.MovieDetailsModel
-import ru.greenpix.moviecatalog.domain.MoviePagedListModel
+import ru.greenpix.moviecatalog.domain.Movie
+import ru.greenpix.moviecatalog.domain.MovieDetails
+import ru.greenpix.moviecatalog.domain.Page
 
+/**
+ * Репозиторий для взаимодействия с фильмами
+ */
 interface MovieRepository {
 
-    suspend fun getPage(pageNumber: Int): MoviePagedListModel
+    /**
+     * Получить [страницу][Page] [фильмов][Movie] номер [pageNumber]
+     */
+    suspend fun getPage(pageNumber: Int): Page<Movie>
 
-    suspend fun getDetails(movieId: String): MovieDetailsModel
+    /**
+     * Получить [детальную информацию о фильме][MovieDetails] с идентификатором [movieId]
+     */
+    suspend fun getDetails(movieId: String): MovieDetails
 
 }

@@ -1,11 +1,20 @@
 package ru.greenpix.moviecatalog.repository
 
-import ru.greenpix.moviecatalog.domain.ProfileModel
+import ru.greenpix.moviecatalog.domain.Profile
 
+/**
+ * Репозиторий для взаимодействия с пользователем
+ */
 interface UserRepository {
 
-    suspend fun getProfile(): ProfileModel
+    /**
+     * Получить [профиль][Profile] текущего авторизированного пользователя
+     */
+    suspend fun getProfile(): Profile
 
-    suspend fun updateProfile(profile: ProfileModel)
+    /**
+     * Обновить [профиль][Profile] текущего авторизированного пользователя
+     */
+    suspend fun updateProfile(profile: Profile)
 
 }
