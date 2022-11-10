@@ -1,8 +1,8 @@
-package ru.greenpix.moviecatalog.domain
+package ru.greenpix.moviecatalog.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class UserRegisterModel(
+data class UserRegisterDto(
     @SerializedName("userName")
     val username: String,
 

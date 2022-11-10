@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import ru.greenpix.moviecatalog.domain.ReviewModel
+import ru.greenpix.moviecatalog.domain.Review
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
@@ -19,7 +19,6 @@ import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieViewState
 import ru.greenpix.moviecatalog.util.decodeJwt
 import java.net.SocketException
 import java.net.UnknownHostException
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class MovieViewModel(
@@ -117,12 +116,12 @@ class MovieViewModel(
             _budgetState.value = movie.budget ?: -1
             _feesState.value = movie.fees ?: -1
             _ageState.value = movie.ageLimit
-            _genresState.addAll(movie.genres.mapNotNull { it.name })
+            _genresState.addAll(movie.genres)
             _myReviewState.value = movie.reviews
-                .find { it.author?.nickName == uniqueName }
+                .find { it.author?.username == uniqueName }
                 ?.let { parseModel(it) }
             _otherReviewsState.addAll(movie.reviews
-                .filter { it.author?.nickName != uniqueName }
+                .filter { it.author?.username != uniqueName }
                 .map { parseModel(it) }
             )
             _viewState.value = MovieViewState.Default
@@ -193,15 +192,14 @@ class MovieViewModel(
     }
 
     // TODO думаю viewmodel не лучшое место для парсинга
-    private fun parseModel(review: ReviewModel): MovieReviewModel {
+    private fun parseModel(review: Review): MovieReviewModel {
         return MovieReviewModel(
             id = review.id,
-            author = review.author?.nickName ?: "",
+            author = review.author?.username ?: "",
             avatarUrl = review.author?.avatar ?: "",
             comment = review.reviewText ?: "",
             anonymous = review.isAnonymous,
-            date = LocalDateTime
-                .parse(review.createDateTime)
+            date = review.createDateTime
                 .toLocalDate()
                 .format(VIEW_FORMATTER),
             rating = review.rating

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import ru.greenpix.moviecatalog.domain.ReviewModifyModel
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.ReviewRepository
 import ru.greenpix.moviecatalog.ui.dialog.review.model.ReviewViewState
@@ -67,19 +66,28 @@ class ReviewViewModel(
 
     fun onSave() {
         val reviewId = this.reviewId
-        val reviewModel = ReviewModifyModel(
-            reviewText = commentState.value,
-            rating = ratingState.value,
-            isAnonymous = anonymousState.value
-        )
+        val rating = ratingState.value
+        val comment = commentState.value
+        val isAnonymous = anonymousState.value
 
         viewModelScope.launch {
             try {
                 if (reviewId == null) {
-                    reviewRepository.addReview(movieId, reviewModel)
+                    reviewRepository.addReview(
+                        movieId = movieId,
+                        rating = rating,
+                        reviewText = comment,
+                        isAnonymous = isAnonymous
+                    )
                 }
                 else {
-                    reviewRepository.updateReview(movieId, reviewId, reviewModel)
+                    reviewRepository.updateReview(
+                        movieId = movieId,
+                        reviewId = reviewId,
+                        rating = rating,
+                        reviewText = comment,
+                        isAnonymous = isAnonymous
+                    )
                 }
                 _viewState.value = ReviewViewState.Saved
             }

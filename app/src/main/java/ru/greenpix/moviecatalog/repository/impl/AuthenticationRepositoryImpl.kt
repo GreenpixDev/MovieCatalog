@@ -3,8 +3,8 @@ package ru.greenpix.moviecatalog.repository.impl
 import com.google.gson.Gson
 import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.domain.LoginCredentials
-import ru.greenpix.moviecatalog.domain.UserRegisterModel
+import ru.greenpix.moviecatalog.dto.LoginCredentialsDto
+import ru.greenpix.moviecatalog.dto.UserRegisterDto
 import ru.greenpix.moviecatalog.exception.AuthenticationException
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
@@ -21,6 +21,7 @@ class AuthenticationRepositoryImpl(
     private val gson: Gson
 ) : AuthenticationRepository {
 
+    // TODO вынести в общее
     private companion object {
         val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         const val DUPLICATE_USER_NAME = "DuplicateUserName"
@@ -39,7 +40,7 @@ class AuthenticationRepositoryImpl(
         gender: Gender
     ) {
         try {
-            val jwt = authenticationApi.register(UserRegisterModel(
+            val jwt = authenticationApi.register(UserRegisterDto(
                 username = login,
                 email = email,
                 name = name,
@@ -69,7 +70,7 @@ class AuthenticationRepositoryImpl(
         password: String
     ) {
         try {
-            val jwt = authenticationApi.login(LoginCredentials(
+            val jwt = authenticationApi.login(LoginCredentialsDto(
                 username = login,
                 password = password
             ))

@@ -1,8 +1,8 @@
-package ru.greenpix.moviecatalog.domain
+package ru.greenpix.moviecatalog.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieElementModel(
+data class MovieElementDto(
     @SerializedName("id")
     val id: String,
 
@@ -19,8 +19,8 @@ data class MovieElementModel(
     val country: String?,
 
     @SerializedName("genres")
-    val genres: List<GenreModel>,
+    val genres: List<GenreDto>,
 
     @SerializedName("reviews")
-    val reviews: List<ReviewShortModel>
+    val reviews: List<ReviewShortDto>
 )

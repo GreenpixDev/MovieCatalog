@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.greenpix.moviecatalog.domain.Gender
-import ru.greenpix.moviecatalog.domain.ProfileModel
+import ru.greenpix.moviecatalog.domain.Profile
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.repository.UserRepository
@@ -17,19 +17,12 @@ import ru.greenpix.moviecatalog.usecase.model.ValidationResult
 import java.net.SocketException
 import java.net.UnknownHostException
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class ProfileViewModel(
     private val authenticationRepository: AuthenticationRepository,
     private val userRepository: UserRepository,
     private val validationUseCase: ValidationUseCase
 ) : ViewModel() {
-
-    // TODO ОБЯЗАТЕЛЬНО УБРАТЬ И ВЫНЕСТИ
-    private companion object {
-        val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-    }
 
     private val _viewState = mutableStateOf<ProfileViewState>(ProfileViewState.Loading)
     private val _loginState = mutableStateOf("")
@@ -71,10 +64,8 @@ class ProfileViewModel(
             _loginState.value = profile.username
             _emailState.value = profile.email
             _nameState.value = profile.name
-            _birthdayState.value = LocalDateTime
-                .parse(profile.birthday)
-                .toLocalDate()
-            _genderState.value = Gender.values()[profile.gender + 1]
+            _birthdayState.value = profile.birthday
+            _genderState.value = profile.gender
 
             _viewState.value = ProfileViewState.Default
         }
@@ -128,14 +119,14 @@ class ProfileViewModel(
 
         viewModelScope.launch {
             try {
-                userRepository.updateProfile(ProfileModel(
+                userRepository.updateProfile(Profile(
                     id = userId,
                     username = login,
                     avatarLink = avatarUrl,
                     email = email,
                     name = name,
-                    birthday = birthday.atStartOfDay().format(FORMATTER),
-                    gender = gender.ordinal - 1
+                    birthday = birthday,
+                    gender = gender
                 ))
                 _viewState.value = ProfileViewState.SaveSuccessful
             }

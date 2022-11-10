@@ -1,7 +1,7 @@
 package ru.greenpix.moviecatalog.retrofit
 
 import retrofit2.http.*
-import ru.greenpix.moviecatalog.domain.MoviesListModel
+import ru.greenpix.moviecatalog.dto.MoviesListDto
 import ru.greenpix.moviecatalog.util.HttpHeader
 
 interface FavoriteApi {
@@ -9,7 +9,7 @@ interface FavoriteApi {
     @GET("/api/favorites")
     suspend fun getAll(
         @Header(HttpHeader.AUTHORIZATION) authorizationValue: String
-    ): MoviesListModel
+    ): MoviesListDto
 
     @POST("/api/favorites/{id}/add")
     suspend fun add(

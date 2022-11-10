@@ -1,8 +1,8 @@
-package ru.greenpix.moviecatalog.domain
+package ru.greenpix.moviecatalog.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class PageInfoModel(
+data class PageInfoDto(
     @SerializedName("pageSize")
     val pageSize: Int,
 

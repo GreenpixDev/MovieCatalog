@@ -1,8 +1,8 @@
-package ru.greenpix.moviecatalog.domain
+package ru.greenpix.moviecatalog.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class ReviewModel(
+data class ReviewDto(
     @SerializedName("id")
     val id: String,
 
@@ -19,5 +19,5 @@ data class ReviewModel(
     val createDateTime: String,
 
     @SerializedName("author")
-    val author: UserShortModel?
+    val author: UserShortDto?
 )
