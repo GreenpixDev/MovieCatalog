@@ -11,12 +11,16 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.greenpix.moviecatalog.R
+import ru.greenpix.moviecatalog.mapper.*
 import ru.greenpix.moviecatalog.repository.*
 import ru.greenpix.moviecatalog.repository.impl.*
 import ru.greenpix.moviecatalog.retrofit.*
 import ru.greenpix.moviecatalog.ui.dialog.review.ReviewViewModel
 import ru.greenpix.moviecatalog.ui.screen.main.MainViewModel
+import ru.greenpix.moviecatalog.ui.screen.main.mapper.MainFavoriteMapper
+import ru.greenpix.moviecatalog.ui.screen.main.mapper.MainMovieMapper
 import ru.greenpix.moviecatalog.ui.screen.movie.MovieViewModel
+import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieReviewModel
 import ru.greenpix.moviecatalog.ui.screen.profile.ProfileViewModel
 import ru.greenpix.moviecatalog.ui.screen.signin.SignInViewModel
 import ru.greenpix.moviecatalog.ui.screen.signup.SignUpViewModel
@@ -49,6 +53,15 @@ val appModule = module {
 
     singleOf(::AuthorizeUseCaseImpl) { bind<AuthorizationUseCase>() }
     singleOf(::ValidationUseCaseImpl) { bind<ValidationUseCase>() }
+
+    singleOf(::UserMapper)
+    singleOf(::ReviewMapper)
+    singleOf(::MovieDetailsMapper)
+    singleOf(::MovieMapper)
+    singleOf(::MoviesPageMapper)
+    singleOf(::MovieReviewModel)
+    singleOf(::MainFavoriteMapper)
+    singleOf(::MainMovieMapper)
 
     viewModelOf(::SignInViewModel)
     viewModelOf(::SignUpViewModel)

@@ -9,11 +9,11 @@ import ru.greenpix.moviecatalog.exception.AuthenticationException
 import ru.greenpix.moviecatalog.exception.DuplicateUserNameException
 import ru.greenpix.moviecatalog.repository.AuthenticationRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
+import ru.greenpix.moviecatalog.repository.util.ServerDateTime
 import ru.greenpix.moviecatalog.retrofit.AuthenticationApi
 import ru.greenpix.moviecatalog.util.HttpCode
 import ru.greenpix.moviecatalog.util.fromErrorBody
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class AuthenticationRepositoryImpl(
     private val jwtRepository: JwtRepository,
@@ -21,9 +21,7 @@ class AuthenticationRepositoryImpl(
     private val gson: Gson
 ) : AuthenticationRepository {
 
-    // TODO вынести в общее
     private companion object {
-        val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         const val DUPLICATE_USER_NAME = "DuplicateUserName"
     }
 
@@ -45,7 +43,7 @@ class AuthenticationRepositoryImpl(
                 email = email,
                 name = name,
                 password = password,
-                birthday = birthday.atStartOfDay().format(FORMATTER),
+                birthday = birthday.atStartOfDay().format(ServerDateTime.formatter),
                 gender = gender.ordinal - 1
             ))
             jwtRepository.saveToken(jwt.token)

@@ -8,31 +8,26 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import ru.greenpix.moviecatalog.domain.Review
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.repository.ReviewRepository
+import ru.greenpix.moviecatalog.ui.screen.movie.mapper.MovieReviewMapper
 import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieReviewModel
 import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieViewState
 import ru.greenpix.moviecatalog.util.decodeJwt
 import java.net.SocketException
 import java.net.UnknownHostException
-import java.time.format.DateTimeFormatter
 
 class MovieViewModel(
     private val movieRepository: MovieRepository,
     private val favoriteRepository: FavoriteRepository,
     private val reviewRepository: ReviewRepository,
     private val jwtRepository: JwtRepository,
-    private val gson: Gson
+    private val gson: Gson,
+    private val movieReviewMapper: MovieReviewMapper
 ) : ViewModel() {
-
-    // TODO ОДНОЗНАЧНО ПЕРЕДЕЛАТЬ! СДЕЛАТЬ ОТДЕЛЬНЫЕ МОДЕЛИ ДЛЯ РЕТРОФИТА, РЕПОЗИТОРИЯ И ВЬЮШЕК!
-    private companion object {
-        val VIEW_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    }
 
     private val _viewState = mutableStateOf<MovieViewState>(MovieViewState.Loading)
     private val _favoriteState = mutableStateOf(false)
@@ -119,10 +114,10 @@ class MovieViewModel(
             _genresState.addAll(movie.genres)
             _myReviewState.value = movie.reviews
                 .find { it.author?.username == uniqueName }
-                ?.let { parseModel(it) }
+                ?.let { movieReviewMapper.map(it) }
             _otherReviewsState.addAll(movie.reviews
                 .filter { it.author?.username != uniqueName }
-                .map { parseModel(it) }
+                .map { movieReviewMapper.map(it) }
             )
             _viewState.value = MovieViewState.Default
         }
@@ -189,20 +184,5 @@ class MovieViewModel(
                 }
             }
         }
-    }
-
-    // TODO думаю viewmodel не лучшое место для парсинга
-    private fun parseModel(review: Review): MovieReviewModel {
-        return MovieReviewModel(
-            id = review.id,
-            author = review.author?.username ?: "",
-            avatarUrl = review.author?.avatar ?: "",
-            comment = review.reviewText ?: "",
-            anonymous = review.isAnonymous,
-            date = review.createDateTime
-                .toLocalDate()
-                .format(VIEW_FORMATTER),
-            rating = review.rating
-        )
     }
 }

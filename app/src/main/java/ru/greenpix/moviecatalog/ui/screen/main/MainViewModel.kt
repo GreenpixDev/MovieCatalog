@@ -15,6 +15,8 @@ import retrofit2.HttpException
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
+import ru.greenpix.moviecatalog.ui.screen.main.mapper.MainFavoriteMapper
+import ru.greenpix.moviecatalog.ui.screen.main.mapper.MainMovieMapper
 import ru.greenpix.moviecatalog.ui.screen.main.model.MainFavoriteModel
 import ru.greenpix.moviecatalog.ui.screen.main.model.MainMovieModel
 import ru.greenpix.moviecatalog.ui.screen.main.model.MainViewState
@@ -25,6 +27,8 @@ import java.net.UnknownHostException
 class MainViewModel(
     private val movieRepository: MovieRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val mainFavoriteMapper: MainFavoriteMapper,
+    private val mainMovieMapper: MainMovieMapper
 ) : ViewModel() {
 
     private val _viewState = mutableStateOf<MainViewState>(MainViewState.Loading)
@@ -41,7 +45,7 @@ class MainViewModel(
         get() = _deletedFavoritesState
 
     val galleryFlow: Flow<PagingData<MainMovieModel>> = Pager(PagingConfig(pageSize = 6)) {
-        MoviePagingSource(movieRepository)
+        MoviePagingSource(movieRepository, mainMovieMapper)
     }.flow.cachedIn(viewModelScope)
 
     suspend fun load() {
@@ -51,12 +55,7 @@ class MainViewModel(
 
         try {
             val favorites = favoriteRepository.getAllFavoriteMovies()
-                .map {
-                    MainFavoriteModel(
-                        movieId = it.id,
-                        imageUrl = it.poster ?: ""
-                    )
-                }
+                .map { mainFavoriteMapper.map(it) }
 
             _favoritesState.clear()
             _deletedFavoritesState.clear()
