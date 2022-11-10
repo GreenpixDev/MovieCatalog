@@ -5,13 +5,13 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import ru.greenpix.moviecatalog.ui.dialog.review.ReviewDialog
 import ru.greenpix.moviecatalog.ui.navigation.Destination
-import ru.greenpix.moviecatalog.ui.view.dialog.review.ReviewDialog
-import ru.greenpix.moviecatalog.ui.view.screen.main.MainScreen
-import ru.greenpix.moviecatalog.ui.view.screen.movie.MovieScreen
-import ru.greenpix.moviecatalog.ui.view.screen.profile.ProfileScreen
-import ru.greenpix.moviecatalog.ui.view.screen.signin.SignInScreen
-import ru.greenpix.moviecatalog.ui.view.screen.signup.SignUpScreen
+import ru.greenpix.moviecatalog.ui.screen.main.MainScreen
+import ru.greenpix.moviecatalog.ui.screen.movie.MovieScreen
+import ru.greenpix.moviecatalog.ui.screen.profile.ProfileScreen
+import ru.greenpix.moviecatalog.ui.screen.signin.SignInScreen
+import ru.greenpix.moviecatalog.ui.screen.signup.SignUpScreen
 
 @Composable
 fun RootNavHost(
