@@ -5,7 +5,7 @@ import org.koin.dsl.module
 import ru.greenpix.moviecatalog.mapper.*
 import ru.greenpix.moviecatalog.ui.screen.main.mapper.MainFavoriteMapper
 import ru.greenpix.moviecatalog.ui.screen.main.mapper.MainMovieMapper
-import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieReviewModel
+import ru.greenpix.moviecatalog.ui.screen.movie.mapper.MovieReviewMapper
 
 val mapperModule = module {
     singleOf(::UserMapper)
@@ -14,7 +14,7 @@ val mapperModule = module {
     singleOf(::MovieMapper)
     singleOf(::MoviesPageMapper)
 
-    singleOf(::MovieReviewModel)
+    singleOf(::MovieReviewMapper)
     singleOf(::MainFavoriteMapper)
     singleOf(::MainMovieMapper)
 }

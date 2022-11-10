@@ -62,6 +62,7 @@ class ProfileViewModel(
             val profile = userRepository.getProfile()
             userId = profile.id
             _loginState.value = profile.username
+            _avatarUrlState.value = profile.avatarLink ?: ""
             _emailState.value = profile.email
             _nameState.value = profile.name
             _birthdayState.value = profile.birthday
