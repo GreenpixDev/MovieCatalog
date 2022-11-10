@@ -8,6 +8,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
 
+/**
+ * Экран ошибки.
+ *
+ * @param text текст ошибки
+ * @param onRetry - обратный вызов, который запускается, когда пользователь нажимает на кнопку "Повторить попытку".
+ */
 @Composable
 fun ErrorScreen(
     text: String,

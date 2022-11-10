@@ -11,14 +11,22 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalFocusManager
 
-inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier = composed {
+/**
+ * Функция добавления к [Modifier] кликабельного события [onClick]. Сами клики не будут излучать системную рябь.
+ */
+inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
     clickable(indication = null,
         interactionSource = remember { MutableInteractionSource() }) {
         onClick()
     }
 }
 
-// https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres
+/**
+ * Функция добавления к [Modifier] отчистки фокуса на [поле][androidx.compose.material.TextField],
+ * когда системная клавиатура закрывается.
+ *
+ * Источник: [stackoverflow.com](https://stackoverflow.com/questions/68389802/how-to-clear-textfield-focus-when-closing-the-keyboard-and-prevent-two-back-pres)
+ */
 @OptIn(ExperimentalLayoutApi::class)
 fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
     var isFocused by remember { mutableStateOf(false) }

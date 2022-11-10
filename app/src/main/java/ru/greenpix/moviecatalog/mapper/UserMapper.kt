@@ -8,6 +8,6 @@ class UserMapper : Mapper<UserShortDto, User> {
     override fun map(source: UserShortDto): User = User(
         userId = source.userId,
         username = source.nickName,
-        avatar = source.avatar
+        avatarUrl = source.avatar
     )
 }

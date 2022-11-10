@@ -8,7 +8,7 @@ class MovieMapper : Mapper<MovieElementDto, Movie> {
     override fun map(source: MovieElementDto): Movie = Movie(
         id = source.id,
         name = source.name,
-        poster = source.poster,
+        posterUrl = source.poster,
         year = source.year,
         country = source.country,
         genres = source.genres

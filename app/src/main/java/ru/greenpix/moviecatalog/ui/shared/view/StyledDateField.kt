@@ -21,6 +21,12 @@ import java.time.format.DateTimeFormatter
 
 private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
+/**
+ * Стилизированная под приложение поле ввода [даты][LocalDate].
+ *
+ * @param value дата ввода, которая будет показана в поле ввода даты
+ * @param onValueChange обратный вызов, который запускается, когда служба ввода обновляет дату. Обновленная дата приходит как параметр обратного вызова
+ */
 @Composable
 fun StyledDateField(
     value: LocalDate?,

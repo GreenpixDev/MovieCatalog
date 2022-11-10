@@ -14,7 +14,7 @@ class MovieReviewMapper : Mapper<Review, MovieReviewModel> {
     override fun map(source: Review): MovieReviewModel = MovieReviewModel(
         id = source.id,
         author = source.author?.username ?: "",
-        avatarUrl = source.author?.avatar ?: "",
+        avatarUrl = source.author?.avatarUrl ?: "",
         comment = source.reviewText ?: "",
         anonymous = source.isAnonymous,
         date = source.createDateTime

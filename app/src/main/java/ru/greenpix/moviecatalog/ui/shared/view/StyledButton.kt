@@ -13,6 +13,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.ui.theme.*
 
+/**
+ * Стилизированная под приложение кнопка.
+ *
+ * @param onClick - вызывается, когда пользователь нажимает кнопку
+ * @param enabled - контролирует включенное состояние кнопки. При false эта кнопка не будет нажиматься.
+ * @param text - текст кнопки
+ */
 @Composable
 fun StyledButton(
     onClick: () -> Unit,

@@ -22,6 +22,12 @@ import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.ui.theme.*
 import ru.greenpix.moviecatalog.ui.util.clearFocusOnKeyboardDismiss
 
+/**
+ * Стилизированная под приложение поле ввода текста.
+ *
+ * @param value текст ввода, который будет показан в поле ввода текста
+ * @param onValueChange обратный вызов, который запускается, когда служба ввода обновляет текст. Обновленный текст приходит как параметр обратного вызова
+ */
 @Composable
 fun StyledTextField(
     value: String,

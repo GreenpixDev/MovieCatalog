@@ -5,9 +5,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 
 /**
- * Функция отслеживания изменения состояния [жизненного цикла](Lifecycle).
+ * Функция отслеживания изменения состояния [жизненного цикла][Lifecycle].
  *
- * Код взят со [stackoverflow](https://stackoverflow.com/questions/66546962/jetpack-compose-how-do-i-refresh-a-screen-when-app-returns-to-foreground)
+ * Источник: [stackoverflow.com](https://stackoverflow.com/questions/66546962/jetpack-compose-how-do-i-refresh-a-screen-when-app-returns-to-foreground)
  */
 @Composable
 fun Lifecycle.observeAsState(): State<Lifecycle.Event> {

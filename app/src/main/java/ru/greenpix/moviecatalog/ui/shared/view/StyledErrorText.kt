@@ -15,6 +15,12 @@ import ru.greenpix.moviecatalog.ui.theme.Accent
 import ru.greenpix.moviecatalog.ui.theme.BodySmall
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 
+/**
+ * Стилизированный под приложение текст ошибки.
+ *
+ * @param visible - true, если нужно отображать текст ошибки
+ * @param text - текст ошибки
+ */
 @Composable
 fun StyledErrorText(
     visible: Boolean,

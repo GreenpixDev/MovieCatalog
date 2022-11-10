@@ -14,6 +14,12 @@ import ru.greenpix.moviecatalog.ui.theme.Body
 import ru.greenpix.moviecatalog.ui.theme.MovieCatalogTheme
 import ru.greenpix.moviecatalog.ui.util.noRippleClickable
 
+/**
+ * Стилизированный под приложение кликабельный текст.
+ *
+ * @param onClick - вызывается, когда пользователь нажимает на текст
+ * @param text - текст
+ */
 @Composable
 fun StyledClickableText(
     onClick: () -> Unit,

@@ -62,7 +62,7 @@ class ProfileViewModel(
             val profile = userRepository.getProfile()
             userId = profile.id
             _loginState.value = profile.username
-            _avatarUrlState.value = profile.avatarLink ?: ""
+            _avatarUrlState.value = profile.avatarUrl ?: ""
             _emailState.value = profile.email
             _nameState.value = profile.name
             _birthdayState.value = profile.birthday
@@ -123,7 +123,7 @@ class ProfileViewModel(
                 userRepository.updateProfile(Profile(
                     id = userId,
                     username = login,
-                    avatarLink = avatarUrl,
+                    avatarUrl = avatarUrl,
                     email = email,
                     name = name,
                     birthday = birthday,

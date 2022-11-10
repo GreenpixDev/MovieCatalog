@@ -20,7 +20,7 @@ class UserRepositoryImpl(
                 id = dto.id,
                 username = dto.username,
                 email = dto.email,
-                avatarLink = dto.avatarLink,
+                avatarUrl = dto.avatarLink,
                 name = dto.name,
                 birthday = LocalDateTime.parse(dto.birthday).toLocalDate(),
                 gender = Gender.values()[dto.gender + 1]
@@ -33,7 +33,7 @@ class UserRepositoryImpl(
             id = profile.id,
             username = profile.username,
             email = profile.email,
-            avatarLink = profile.avatarLink,
+            avatarLink = profile.avatarUrl,
             name = profile.name,
             birthday = profile.birthday.atStartOfDay().format(ServerDateTime.formatter),
             gender = profile.gender.ordinal - 1

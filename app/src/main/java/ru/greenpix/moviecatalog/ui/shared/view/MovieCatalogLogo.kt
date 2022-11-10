@@ -12,6 +12,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.greenpix.moviecatalog.R
 
+/**
+ * Логотип приложения
+ *
+ * @param animate - true, если нужно анимировать логотип
+ * @param scaled - true, если логотип должен быть увеличен
+ * @param modifier - [Modifier] для этого логотипа
+ */
 @Composable
 fun MovieCatalogLogo(
     animate: Boolean = true,

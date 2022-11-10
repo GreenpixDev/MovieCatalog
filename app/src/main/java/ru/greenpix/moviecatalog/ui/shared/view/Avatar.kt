@@ -10,6 +10,12 @@ import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import ru.greenpix.moviecatalog.R
 
+/**
+ * Аватар пользователя.
+ *
+ * @param url - ссылка на изображение аватара
+ * @param modifier - [Modifier] для этого аватара
+ */
 @Composable
 fun Avatar(
     url: String,

@@ -101,7 +101,7 @@ class MovieViewModel(
 
             _favoriteState.value = isFavorite
             _nameState.value = movie.name ?: ""
-            _movieImageUrlState.value = movie.poster ?: ""
+            _movieImageUrlState.value = movie.posterUrl ?: ""
             _descriptionState.value = movie.description ?: ""
             _yearState.value = movie.year
             _countryState.value = movie.country ?: ""

@@ -8,6 +8,6 @@ class MainFavoriteMapper : Mapper<Movie, MainFavoriteModel> {
 
     override fun map(source: Movie): MainFavoriteModel = MainFavoriteModel(
         movieId = source.id,
-        imageUrl = source.poster ?: ""
+        imageUrl = source.posterUrl ?: ""
     )
 }

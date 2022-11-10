@@ -9,7 +9,7 @@ class MainMovieMapper : Mapper<Movie, MainMovieModel> {
     override fun map(source: Movie): MainMovieModel = MainMovieModel(
         id = source.id,
         name = checkNotNull(source.name) { "name of movie (id: ${source.id}) cannot be null" },
-        imageUrl = source.poster ?: "",
+        imageUrl = source.posterUrl ?: "",
         country = checkNotNull(source.country) { "country of movie (id: ${source.id}) cannot be null" },
         year = source.year,
         genres = source.genres.joinToString(),

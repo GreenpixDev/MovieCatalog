@@ -20,6 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 
+/**
+ * Расширенное заполняемое текстовое поле.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExtendedTextField(
@@ -96,6 +99,9 @@ fun ExtendedTextField(
     )
 }
 
+/**
+ * Расширенное заполняемое текстовое поле.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExtendedTextField(

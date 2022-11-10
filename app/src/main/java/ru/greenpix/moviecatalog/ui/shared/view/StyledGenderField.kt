@@ -20,8 +20,10 @@ import ru.greenpix.moviecatalog.ui.util.roundedAtEnd
 import ru.greenpix.moviecatalog.ui.util.roundedAtStart
 
 /**
- * Поля выбора пола.
- * Если [value] true, то поле выберет мужской пол, в противном женский.
+ * Стилизированная под приложение поле ввода [пола][Gender].
+ *
+ * @param value пол ввода, который будет показан в поле ввода пола
+ * @param onValueChange обратный вызов, который запускается, когда служба ввода обновляет пол. Обновленный пол приходит как параметр обратного вызова
  */
 @Composable
 fun StyledGenderField(

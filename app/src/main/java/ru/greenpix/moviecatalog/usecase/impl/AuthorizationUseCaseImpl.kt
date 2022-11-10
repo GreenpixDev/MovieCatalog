@@ -7,7 +7,7 @@ import ru.greenpix.moviecatalog.repository.JwtRepository
 import ru.greenpix.moviecatalog.usecase.AuthorizationUseCase
 import ru.greenpix.moviecatalog.util.HttpCode
 
-class AuthorizeUseCaseImpl(
+class AuthorizationUseCaseImpl(
     private val jwtRepository: JwtRepository,
     private val authenticationRepository: AuthenticationRepository
 ) : AuthorizationUseCase {
