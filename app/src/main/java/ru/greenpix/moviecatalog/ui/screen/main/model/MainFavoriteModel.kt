@@ -1,6 +1,6 @@
 package ru.greenpix.moviecatalog.ui.screen.main.model
 
-data class MainFavorite(
+data class MainFavoriteModel(
     val movieId: String,
     val imageUrl: String
 )

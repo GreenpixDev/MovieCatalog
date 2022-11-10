@@ -2,7 +2,7 @@ package ru.greenpix.moviecatalog.ui.screen.main.model
 
 import ru.greenpix.moviecatalog.util.calcHueByRating
 
-data class MainMovie(
+data class MainMovieModel(
     val id: String,
     val name: String,
     val imageUrl: String,

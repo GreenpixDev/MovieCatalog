@@ -3,24 +3,24 @@ package ru.greenpix.moviecatalog.ui.screen.main.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import ru.greenpix.moviecatalog.repository.MovieRepository
-import ru.greenpix.moviecatalog.ui.screen.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.screen.main.model.MainMovieModel
 
 class MoviePagingSource(
     private val movieRepository: MovieRepository
-) : PagingSource<Int, MainMovie>() {
+) : PagingSource<Int, MainMovieModel>() {
 
-    override fun getRefreshKey(state: PagingState<Int, MainMovie>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, MainMovieModel>): Int? {
         return state.anchorPosition
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MainMovie> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MainMovieModel> {
         try {
             val page = movieRepository.getPage(params.key ?: 1)
 
             return LoadResult.Page(
                 data = page.movies
                     .map { movie ->
-                        MainMovie(
+                        MainMovieModel(
                             id = movie.id,
                             name = movie.name ?: "", // TODO норм обработать null?
                             imageUrl = movie.poster ?: "",

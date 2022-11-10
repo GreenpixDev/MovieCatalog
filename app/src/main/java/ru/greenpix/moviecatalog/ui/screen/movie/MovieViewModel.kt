@@ -14,7 +14,7 @@ import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.JwtRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
 import ru.greenpix.moviecatalog.repository.ReviewRepository
-import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieReview
+import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieReviewModel
 import ru.greenpix.moviecatalog.ui.screen.movie.model.MovieViewState
 import ru.greenpix.moviecatalog.util.decodeJwt
 import java.net.SocketException
@@ -49,9 +49,9 @@ class MovieViewModel(
     private val _feesState = mutableStateOf(0)
     private val _ageState = mutableStateOf(0)
     private val _genresState = mutableStateListOf<String>()
-    private val _myReviewState = mutableStateOf<MovieReview?>(null)
+    private val _myReviewState = mutableStateOf<MovieReviewModel?>(null)
     private val _myReviewDeletedState = mutableStateOf<Boolean>(false)
-    private val _otherReviewsState = mutableStateListOf<MovieReview>()
+    private val _otherReviewsState = mutableStateListOf<MovieReviewModel>()
 
     private var movieId: String = ""
 
@@ -83,11 +83,11 @@ class MovieViewModel(
         get() = _ageState
     val genresState: List<String>
         get() = _genresState
-    val myReviewState: State<MovieReview?>
+    val myReviewState: State<MovieReviewModel?>
         get() = _myReviewState
     val myReviewDeletedState: State<Boolean>
         get() = _myReviewDeletedState
-    val otherReviewsState: List<MovieReview>
+    val otherReviewsState: List<MovieReviewModel>
         get() = _otherReviewsState
 
     suspend fun load(movieId: String, isFavorite: Boolean) {
@@ -193,8 +193,8 @@ class MovieViewModel(
     }
 
     // TODO думаю viewmodel не лучшое место для парсинга
-    private fun parseModel(review: ReviewModel): MovieReview {
-        return MovieReview(
+    private fun parseModel(review: ReviewModel): MovieReviewModel {
+        return MovieReviewModel(
             id = review.id,
             author = review.author?.nickName ?: "",
             avatarUrl = review.author?.avatar ?: "",

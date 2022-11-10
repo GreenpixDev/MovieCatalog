@@ -15,8 +15,8 @@ import retrofit2.HttpException
 import ru.greenpix.moviecatalog.exception.AuthorizationException
 import ru.greenpix.moviecatalog.repository.FavoriteRepository
 import ru.greenpix.moviecatalog.repository.MovieRepository
-import ru.greenpix.moviecatalog.ui.screen.main.model.MainFavorite
-import ru.greenpix.moviecatalog.ui.screen.main.model.MainMovie
+import ru.greenpix.moviecatalog.ui.screen.main.model.MainFavoriteModel
+import ru.greenpix.moviecatalog.ui.screen.main.model.MainMovieModel
 import ru.greenpix.moviecatalog.ui.screen.main.model.MainViewState
 import ru.greenpix.moviecatalog.ui.screen.main.paging.MoviePagingSource
 import java.net.SocketException
@@ -28,19 +28,19 @@ class MainViewModel(
 ) : ViewModel() {
 
     private val _viewState = mutableStateOf<MainViewState>(MainViewState.Loading)
-    private val _favoritesState = mutableStateListOf<MainFavorite>()
-    private val _deletedFavoritesState = mutableStateListOf<MainFavorite>()
+    private val _favoritesState = mutableStateListOf<MainFavoriteModel>()
+    private val _deletedFavoritesState = mutableStateListOf<MainFavoriteModel>()
 
-    private val favoriteIdMap = mutableMapOf<String, MainFavorite>()
+    private val favoriteIdMap = mutableMapOf<String, MainFavoriteModel>()
 
     val viewState: State<MainViewState>
         get() = _viewState
-    val favoritesState: List<MainFavorite>
+    val favoritesState: List<MainFavoriteModel>
         get() = _favoritesState
-    val deletedFavoritesState: List<MainFavorite>
+    val deletedFavoritesState: List<MainFavoriteModel>
         get() = _deletedFavoritesState
 
-    val galleryFlow: Flow<PagingData<MainMovie>> = Pager(PagingConfig(pageSize = 6)) {
+    val galleryFlow: Flow<PagingData<MainMovieModel>> = Pager(PagingConfig(pageSize = 6)) {
         MoviePagingSource(movieRepository)
     }.flow.cachedIn(viewModelScope)
 
@@ -52,7 +52,7 @@ class MainViewModel(
         try {
             val favorites = favoriteRepository.getAllFavoriteMovies()
                 .map {
-                    MainFavorite(
+                    MainFavoriteModel(
                         movieId = it.id,
                         imageUrl = it.poster ?: ""
                     )
